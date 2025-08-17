@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  study-portal:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DATABASE_URL=jdbc:h2:file:/app/data/studydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+      - AI_SERVICE_ENABLED=true
+    volumes:
+      - study_data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - study-network
+
+  # Optional: Add PostgreSQL for production database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: studydb
+      POSTGRES_USER: studyuser
+      POSTGRES_PASSWORD: studypass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - study-network
+    profiles:
+      - postgres
+
+volumes:
+  study_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  study-network:
+    driver: bridge
