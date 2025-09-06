@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: adhyayan-sangha
+    env: java
+    plan: free
+    buildCommand: ./gradlew build -x test
+    startCommand: java -Dspring.profiles.active=prod -Dserver.port=$PORT -jar build/libs/*.jar
+    envVars:
+      - key: JAVA_TOOL_OPTIONS
+        value: "-XX:MaxRAMPercentage=75.0"
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DATABASE_URL
+        value: jdbc:h2:mem:adhyayan_sangha
+    healthCheckPath: /actuator/health
+

@@ -21,12 +21,13 @@ dependencies {
 
     // Database
     runtimeOnly 'com.h2database:h2'
-
-    // Optional: PostgreSQL for production
     runtimeOnly 'org.postgresql:postgresql'
 
     // For AI integration
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // Internationalization support
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // Testing - Fixed configuration
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
