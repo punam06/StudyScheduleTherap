@@ -1,0 +1,16 @@
+{
+  "name": "adhyayan-sangha",
+  "version": "1.0.0",
+  "description": "অধ্যয়ন সঙ্ঘ - AI-Enhanced Study Scheduling Portal",
+  "scripts": {
+    "build": "gradle build -x test",
+    "deploy": "surge dist/ --domain adhyayan-sangha.surge.sh"
+  },
+  "keywords": ["study", "scheduling", "ai", "bengali", "education"],
+  "author": "Java Fest 2025",
+  "license": "MIT",
+  "devDependencies": {
+    "surge": "^0.23.1"
+  }
+}
+
