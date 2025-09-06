@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Study Group - Study Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .availability-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .time-slot {
+            aspect-ratio: 1;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            background: white;
+        }
+        .time-slot:hover {
+            background: #e3f2fd;
+        }
+        .time-slot.selected {
+            background: #2196f3;
+            color: white;
+        }
+        .time-slot.header {
+            background: #6c757d;
+            color: white;
+            cursor: default;
+            font-weight: bold;
+        }
+        .ai-suggestion {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-graduation-cap me-2"></i>Study Portal
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/groups">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Groups
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Page Header -->
+                <div class="text-center mb-5">
+                    <h1 class="display-6 fw-bold">
+                        <i class="fas fa-plus-circle text-primary me-3"></i>
+                        Create Study Group
+                    </h1>
+                    <p class="lead text-muted">Start a collaborative learning group with smart matching</p>
+                </div>
+
+                <!-- AI Suggestion Box -->
+                <div class="ai-suggestion mb-4">
+                    <h6><i class="fas fa-robot me-2"></i>AI Recommendations</h6>
+                    <ul class="mb-0 small">
+                        <li>Groups of 4-6 members show 25% better learning outcomes</li>
+                        <li>Mixed learning styles improve group dynamics by 30%</li>
+                        <li>Morning slots (9-11 AM) have highest attendance rates</li>
+                    </ul>
+                </div>
+
+                <!-- Main Form -->
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        <form th:action="@{/groups/create}" method="post" th:object="${group}">
+                            <!-- Basic Information -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="border-bottom pb-2 mb-3">
+                                        <i class="fas fa-info-circle text-primary me-2"></i>
+                                        Basic Information
+                                    </h5>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Group Name *</label>
+                                    <input type="text" class="form-control" id="name" th:field="*{name}"
+                                           placeholder="e.g., Calculus Study Squad" required>
+                                    <div class="form-text">Choose an engaging name that reflects your study focus</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="subject" class="form-label">Subject *</label>
+                                    <select class="form-select" id="subject" th:field="*{subject}" required>
+                                        <option value="">Select Subject</option>
+                                        <option value="Mathematics">Mathematics</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="Biology">Biology</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="History">History</option>
+                                        <option value="Literature">Literature</option>
+                                        <option value="Economics">Economics</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" th:field="*{description}" rows="3"
+                                              placeholder="Describe your group's goals, study style, and what you hope to achieve together"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Group Settings -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="border-bottom pb-2 mb-3">
+                                        <i class="fas fa-cogs text-success me-2"></i>
+                                        Group Settings
+                                    </h5>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="maxMembers" class="form-label">Maximum Members</label>
+                                    <select class="form-select" id="maxMembers" th:field="*{maxMembers}">
+                                        <option value="3">3 members</option>
+                                        <option value="4" selected>4 members (Recommended)</option>
+                                        <option value="5">5 members</option>
+                                        <option value="6">6 members</option>
+                                        <option value="8">8 members</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="learningFocus" class="form-label">Learning Focus</label>
+                                    <select class="form-select" id="learningFocus" th:field="*{learningFocus}">
+                                        <option value="EXAM_PREP">Exam Preparation</option>
+                                        <option value="ASSIGNMENT_HELP">Assignment Help</option>
+                                        <option value="CONCEPT_REVIEW">Concept Review</option>
+                                        <option value="PROJECT_WORK">Project Work</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="coordinatorId" class="form-label">Coordinator</label>
+                                    <select class="form-select" id="coordinatorId" name="coordinatorId" required>
+                                        <option value="">Select Coordinator</option>
+                                        <option th:each="student : ${students}"
+                                                th:value="${student.id}"
+                                                th:text="${student.name}">Student Name</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Interactive Availability Grid -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="border-bottom pb-2 mb-3">
+                                        <i class="fas fa-calendar-alt text-warning me-2"></i>
+                                        Weekly Availability Grid
+                                        <small class="text-muted">(Click to select your available time slots)</small>
+                                    </h5>
+
+                                    <div class="availability-grid mb-3" id="availabilityGrid">
+                                        <!-- Grid will be populated by JavaScript -->
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <div class="time-slot selected me-2" style="width: 20px; height: 20px;"></div>
+                                            <small class="text-muted me-3">Selected</small>
+                                            <div class="time-slot me-2" style="width: 20px; height: 20px; background: white; border: 1px solid #dee2e6;"></div>
+                                            <small class="text-muted">Available</small>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearSelection()">
+                                            <i class="fas fa-eraser me-1"></i>Clear All
+                                        </button>
+                                    </div>
+
+                                    <!-- Hidden input to store selected slots -->
+                                    <input type="hidden" id="selectedSlots" name="availabilitySlots" value="">
+                                </div>
+                            </div>
+
+                            <!-- Smart Matching Preferences -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="border-bottom pb-2 mb-3">
+                                        <i class="fas fa-brain text-info me-2"></i>
+                                        Smart Matching Preferences
+                                    </h5>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Preferred Learning Styles (for matching)</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="VISUAL" id="visual">
+                                        <label class="form-check-label" for="visual">Visual Learners</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="AUDITORY" id="auditory">
+                                        <label class="form-check-label" for="auditory">Auditory Learners</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="KINESTHETIC" id="kinesthetic">
+                                        <label class="form-check-label" for="kinesthetic">Kinesthetic Learners</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="READING_WRITING" id="reading">
+                                        <label class="form-check-label" for="reading">Reading/Writing Learners</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">AI Matching Options</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gpaBalance" checked>
+                                        <label class="form-check-label" for="gpaBalance">Balance GPA levels</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="scheduleOptimize" checked>
+                                        <label class="form-check-label" for="scheduleOptimize">Optimize for schedule compatibility</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="learningStyleMix">
+                                        <label class="form-check-label" for="learningStyleMix">Mix different learning styles</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <hr>
+                                    <div class="d-flex justify-content-between">
+                                        <a href="/groups" class="btn btn-outline-secondary">
+                                            <i class="fas fa-times me-2"></i>Cancel
+                                        </a>
+                                        <div>
+                                            <button type="button" class="btn btn-outline-info me-2" onclick="previewGroup()">
+                                                <i class="fas fa-eye me-2"></i>Preview
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-plus me-2"></i>Create Group
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize the availability grid
+        document.addEventListener('DOMContentLoaded', function() {
+            createAvailabilityGrid();
+        });
+
+        function createAvailabilityGrid() {
+            const grid = document.getElementById('availabilityGrid');
+            const days = ['', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+            const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
+
+            // Create header row
+            days.forEach(day => {
+                const slot = document.createElement('div');
+                slot.className = 'time-slot header';
+                slot.textContent = day;
+                grid.appendChild(slot);
+            });
+
+            // Create time slots
+            times.forEach(time => {
+                // Time label
+                const timeLabel = document.createElement('div');
+                timeLabel.className = 'time-slot header';
+                timeLabel.textContent = time;
+                grid.appendChild(timeLabel);
+
+                // Day slots
+                for (let day = 1; day < 8; day++) {
+                    const slot = document.createElement('div');
+                    slot.className = 'time-slot';
+                    slot.dataset.day = days[day];
+                    slot.dataset.time = time;
+                    slot.addEventListener('click', toggleSlot);
+                    grid.appendChild(slot);
+                }
+            });
+        }
+
+        function toggleSlot(event) {
+            const slot = event.target;
+            slot.classList.toggle('selected');
+            updateSelectedSlots();
+        }
+
+        function updateSelectedSlots() {
+            const selectedSlots = [];
+            document.querySelectorAll('.time-slot.selected').forEach(slot => {
+                if (slot.dataset.day && slot.dataset.time) {
+                    selectedSlots.push(`${slot.dataset.day}_${slot.dataset.time}-${getEndTime(slot.dataset.time)}`);
+                }
+            });
+            document.getElementById('selectedSlots').value = selectedSlots.join(',');
+        }
+
+        function getEndTime(startTime) {
+            const [hour, minute] = startTime.split(':').map(Number);
+            const endHour = hour + 1;
+            return `${endHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        }
+
+        function clearSelection() {
+            document.querySelectorAll('.time-slot.selected').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            updateSelectedSlots();
+        }
+
+        function previewGroup() {
+            const formData = new FormData(document.querySelector('form'));
+            const groupData = Object.fromEntries(formData.entries());
+
+            let preview = `Group Name: ${groupData.name}\n`;
+            preview += `Subject: ${groupData.subject}\n`;
+            preview += `Max Members: ${groupData.maxMembers}\n`;
+            preview += `Learning Focus: ${groupData.learningFocus}\n`;
+            preview += `Selected Time Slots: ${groupData.availabilitySlots || 'None selected'}\n`;
+
+            alert('Group Preview:\n\n' + preview);
+        }
+
+        // Subject-specific AI recommendations
+        document.getElementById('subject').addEventListener('change', function() {
+            const subject = this.value;
+            const suggestions = {
+                'Mathematics': 'Tip: Math groups work best with 90-minute sessions and mixed skill levels',
+                'Computer Science': 'Tip: Programming groups benefit from 2-hour sessions with hands-on coding',
+                'Physics': 'Tip: Physics groups should combine theory discussion with problem-solving practice',
+                'Biology': 'Tip: Biology groups are most effective with visual aids and diagram creation'
+            };
+
+            if (suggestions[subject]) {
+                const aiBox = document.querySelector('.ai-suggestion ul');
+                const tip = document.createElement('li');
+                tip.textContent = suggestions[subject];
+                tip.style.fontWeight = 'bold';
+                tip.style.color = '#ffd700';
+                aiBox.appendChild(tip);
+            }
+        });
+    </script>
+</body>
+</html>

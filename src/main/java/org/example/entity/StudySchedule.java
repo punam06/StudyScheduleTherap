@@ -35,6 +35,21 @@ public class StudySchedule {
     @Column
     private Boolean completed = false;
 
+    // New fields for group collaboration
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id")
+    private Student student;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_group_id")
+    private StudyGroup studyGroup;
+
+    @Column
+    private Boolean isGroupStudy = false;
+
+    @Column
+    private String aiRecommendations;
+
     @Column
     private LocalDateTime createdAt;
 
@@ -88,6 +103,21 @@ public class StudySchedule {
         this.completed = completed;
         this.updatedAt = LocalDateTime.now();
     }
+
+    public Student getStudent() { return student; }
+    public void setStudent(Student student) { this.student = student; }
+
+    public StudyGroup getStudyGroup() { return studyGroup; }
+    public void setStudyGroup(StudyGroup studyGroup) {
+        this.studyGroup = studyGroup;
+        this.isGroupStudy = (studyGroup != null);
+    }
+
+    public Boolean getIsGroupStudy() { return isGroupStudy; }
+    public void setIsGroupStudy(Boolean isGroupStudy) { this.isGroupStudy = isGroupStudy; }
+
+    public String getAiRecommendations() { return aiRecommendations; }
+    public void setAiRecommendations(String aiRecommendations) { this.aiRecommendations = aiRecommendations; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

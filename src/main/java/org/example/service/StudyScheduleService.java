@@ -47,8 +47,43 @@ public class StudyScheduleService {
         if (schedule.getDurationMinutes() == null) {
             schedule.setDurationMinutes(getRecommendedDuration(schedule.getSubject()));
         }
+
+        // Generate AI recommendations for the schedule
+        String aiAdvice = generateAIAdviceForSchedule(schedule);
+        schedule.setAiRecommendations(aiAdvice);
+
         schedule.setUpdatedAt(LocalDateTime.now());
         return scheduleRepository.save(schedule);
+    }
+
+    // Enhanced AI recommendation generation
+    private String generateAIAdviceForSchedule(StudySchedule schedule) {
+        StringBuilder advice = new StringBuilder();
+
+        // Get subject-specific advice
+        var subjectAdvice = aiService.getSubjectSpecificAdvice(schedule.getSubject());
+        advice.append("Recommended technique: ").append(subjectAdvice.get("technique")).append(". ");
+
+        // Time-based recommendations
+        int hour = schedule.getScheduledTime().getHour();
+        if (hour >= 9 && hour <= 11) {
+            advice.append("Excellent timing! Peak concentration hours. ");
+        } else if (hour >= 14 && hour <= 16) {
+            advice.append("Good afternoon timing for focused study. ");
+        } else if (hour >= 19 && hour <= 21) {
+            advice.append("Evening study - great for review and consolidation. ");
+        } else {
+            advice.append("Consider rescheduling to peak hours (9-11 AM) for better focus. ");
+        }
+
+        // Duration recommendations
+        if (schedule.getDurationMinutes() < 30) {
+            advice.append("Consider extending to at least 45 minutes for effective learning. ");
+        } else if (schedule.getDurationMinutes() > 120) {
+            advice.append("Long session - remember to take breaks every 25-30 minutes. ");
+        }
+
+        return advice.toString();
     }
 
     public StudySchedule updateSchedule(Long id, StudySchedule updatedSchedule) {
