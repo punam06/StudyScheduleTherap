@@ -7,6 +7,12 @@ plugins {
 group = 'org.example'
 version = '1.0-SNAPSHOT'
 
+// Ensure consistent JAR naming for Render deployment
+jar {
+    archiveBaseName = 'adhyayan-sangha'
+    archiveVersion = '1.0.0'
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
