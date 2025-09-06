@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Study Scheduling Portal</title>
+    <title>অধ্যয়ন সঙ্ঘ - AI-Enhanced Study Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -46,39 +46,126 @@
             color: white;
             border-radius: 20px;
         }
+        .ai-badge {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+        }
+        .bengali-title {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            font-weight: 600;
+        }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="/"><i class="fas fa-graduation-cap"></i> Study Portal</a>
-            <div class="navbar-nav">
-                <a class="nav-link active" href="/">Home</a>
-                <a class="nav-link" href="/schedules">Schedules</a>
-                <a class="nav-link" href="/ai-recommendations">AI Recommendations</a>
-                <a class="nav-link" href="/about">About</a>
+            <a class="navbar-brand bengali-title" href="/">
+                <i class="fas fa-graduation-cap me-2"></i>
+                অধ্যয়ন সঙ্ঘ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/schedules">
+                            <i class="fas fa-calendar-alt me-1"></i>My Schedule
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/groups">
+                            <i class="fas fa-users me-1"></i>Study Groups
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/sessions">
+                            <i class="fas fa-clock me-1"></i>Sessions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/ai/dashboard">
+                            <i class="fas fa-robot me-1"></i>AI Assistant
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="ai-badge">
+                            <i class="fas fa-brain me-1"></i>AI-Powered
+                        </span>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container text-center">
-            <h1 class="display-4 mb-4">
-                <i class="fas fa-brain"></i> Study Schedule Therapy
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-2 bengali-title">
+                <i class="fas fa-calendar-check me-3"></i>
+                অধ্যয়ন সঙ্ঘ
             </h1>
-            <p class="lead mb-4" th:text="${message}">Welcome to your intelligent study companion</p>
-            <p class="h5 mb-4">Transform your learning with AI-powered study planning</p>
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <p class="mb-4">
-                        Optimize your study habits, track your progress, and receive personalized recommendations
-                        to achieve academic excellence through intelligent scheduling and AI guidance.
-                    </p>
-                    <a href="#quick-actions" class="btn btn-light btn-lg">
-                        <i class="fas fa-arrow-down"></i> Get Started
-                    </a>
+            <h2 class="display-6 mb-4">Study Association Portal</h2>
+            <p class="lead mb-5">
+                Transform your academic collaboration with AI-powered scheduling,
+                smart group matching, and intelligent conflict resolution.
+            </p>
+
+            <!-- Success Metrics -->
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8">
+                    <div class="row text-center">
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="welcome-card p-3 h-100">
+                                <h3 class="h2 mb-1">90%</h3>
+                                <small>Faster Scheduling</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="welcome-card p-3 h-100">
+                                <h3 class="h2 mb-1">4+</h3>
+                                <small>Hours Saved Weekly</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="welcome-card p-3 h-100">
+                                <h3 class="h2 mb-1">70%</h3>
+                                <small>Fewer Conflicts</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="welcome-card p-3 h-100">
+                                <h3 class="h2 mb-1">AI</h3>
+                                <small>Enhanced</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="/groups" class="btn btn-light btn-lg">
+                    <i class="fas fa-users me-2"></i>Find Study Groups
+                </a>
+                <a href="/groups/new" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-plus me-2"></i>Create Group
+                </a>
+                <a href="/ai/dashboard" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-brain me-2"></i>AI Dashboard
+                </a>
             </div>
         </div>
     </section>
