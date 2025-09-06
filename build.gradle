@@ -6,7 +6,12 @@ plugins {
 
 group = 'org.example'
 version = '1.0-SNAPSHOT'
-java.sourceCompatibility = JavaVersion.VERSION_17
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 repositories {
     mavenCentral()
@@ -18,6 +23,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // Database
     runtimeOnly 'com.h2database:h2'
@@ -26,10 +32,7 @@ dependencies {
     // For AI integration
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-    // Internationalization support
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // Testing - Fixed configuration
+    // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -39,6 +42,11 @@ test {
     useJUnitPlatform()
 }
 
-tasks.withType(Test) {
-    useJUnitPlatform()
+// Ensure compatibility
+compileJava {
+    options.release = 17
+}
+
+compileTestJava {
+    options.release = 17
 }
