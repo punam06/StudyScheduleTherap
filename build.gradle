@@ -7,16 +7,21 @@ plugins {
 group = 'org.example'
 version = '1.0-SNAPSHOT'
 
-// Ensure consistent JAR naming for Render deployment
+// Ensure consistent JAR naming
 jar {
+    archiveBaseName = 'adhyayan-sangha'
+    archiveVersion = '1.0.0'
+    enabled = false
+}
+
+bootJar {
     archiveBaseName = 'adhyayan-sangha'
     archiveVersion = '1.0.0'
 }
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
 }
 
 repositories {
@@ -40,19 +45,8 @@ dependencies {
 
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-test {
+tasks.named('test') {
     useJUnitPlatform()
-}
-
-// Ensure compatibility
-compileJava {
-    options.release = 17
-}
-
-compileTestJava {
-    options.release = 17
 }
