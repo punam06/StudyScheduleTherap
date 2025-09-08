@@ -5,10 +5,11 @@
 A comprehensive web-based application for intelligent study scheduling with AI integration, designed to help students optimize their learning experience and achieve academic excellence.
 
 ### 🌐 Live Application
-- **Application URL**: `http://localhost:8080`
+- **🚀 Production URL**: `https://studyscheduletherap.surge.sh`
+- **Health Check**: `https://studyscheduletherap.surge.sh/actuator/health`
+- **AI Dashboard**: `https://studyscheduletherap.surge.sh/ai/dashboard`
+- **Local Development**: `http://localhost:8080` (for development)
 - **H2 Database Console**: `http://localhost:8080/h2-console` (development only)
-- **Health Check**: `http://localhost:8080/actuator/health`
-- **AI Dashboard**: `http://localhost:8080/ai/dashboard`
 
 ### ✨ Key Features
 - **🧠 Smart Study Scheduling**: Create, manage, and track study sessions with AI-powered recommendations
@@ -154,35 +155,40 @@ export DB_PLATFORM="org.hibernate.dialect.PostgreSQLDialect"
 
 ### ☁️ Cloud Deployment
 
-#### Heroku Deployment
+#### Surge Deployment (Current Production)
 ```bash
-# Login to Heroku
-heroku login
+# 1. Install Surge CLI globally
+npm install -g surge
 
-# Create Heroku app
-heroku create your-app-name
+# 2. Build your application for production
+./gradlew build
 
-# Set environment variables
-heroku config:set SPRING_PROFILES_ACTIVE=prod
-heroku config:set JAVA_OPTS="-Xmx300m -Xss512k"
+# 3. Create a dist folder with your static files
+mkdir dist
+cp -r build/libs/* dist/
 
-# Deploy
-git push heroku main
+# 4. Deploy to Surge
+surge dist studyscheduletherap.surge.sh
 
-# Open application
-heroku open
+# Alternative: Deploy with custom domain
+surge dist your-custom-domain.surge.sh
 ```
 
-#### AWS/GCP Deployment
+**Live Application**: https://studyscheduletherap.surge.sh
+
+#### Render Deployment
 ```bash
-# Build production Docker image
-docker build -t study-portal:prod .
+# 1. Connect your GitHub repository to Render
+# 2. Create a new Web Service on Render
+# 3. Set the following configuration:
+#    - Build Command: ./gradlew build
+#    - Start Command: java -jar build/libs/*.jar
+#    - Environment: Docker (if using Dockerfile) or Native
 
-# Tag for registry
-docker tag study-portal:prod your-registry/study-portal:latest
-
-# Push to registry
-docker push your-registry/study-portal:latest
+# Environment variables for Render:
+SPRING_PROFILES_ACTIVE=prod
+JAVA_OPTS=-Xmx512m -Xss512k
+PORT=10000
 ```
 
 ### 🔧 Advanced Configuration
@@ -190,22 +196,24 @@ docker push your-registry/study-portal:latest
 #### Database Configuration
 ```yaml
 # Development (H2)
-spring:
-  datasource:
-    url: jdbc:h2:mem:studydb
-    driver-class-name: org.h2.Driver
-  h2:
-    console:
-      enabled: true
+development:
+  spring:
+    datasource:
+      url: jdbc:h2:mem:studydb
+      driver-class-name: org.h2.Driver
+    h2:
+      console:
+        enabled: true
 
 # Production (PostgreSQL)
-spring:
-  datasource:
-    url: ${DATABASE_URL}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: validate
+production:
+  spring:
+    datasource:
+      url: ${DATABASE_URL}
+      driver-class-name: org.postgresql.Driver
+    jpa:
+      hibernate:
+        ddl-auto: validate
 ```
 
 #### AI Service Integration
