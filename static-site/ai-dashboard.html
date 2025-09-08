@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Dashboard - অধ্যয়ন সঙ্ঘ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand bengali-title" href="index.html">
+                <i class="fas fa-graduation-cap me-2"></i>
+                অধ্যয়ন সঙ্ঘ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="schedules.html">
+                            <i class="fas fa-calendar-alt me-1"></i>My Schedule
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="groups.html">
+                            <i class="fas fa-users me-1"></i>Study Groups
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sessions.html">
+                            <i class="fas fa-clock me-1"></i>Sessions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="ai-dashboard.html">
+                            <i class="fas fa-robot me-1"></i>AI Assistant
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- AI Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="ai-card text-center py-5">
+                    <h1><i class="fas fa-brain me-3"></i>AI Study Assistant</h1>
+                    <p class="lead">Your personalized learning companion powered by artificial intelligence</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card metric-card text-center bg-primary text-white">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line fa-2x mb-2"></i>
+                        <h3>87%</h3>
+                        <p class="mb-0">Study Efficiency</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card metric-card text-center bg-success text-white">
+                    <div class="card-body">
+                        <i class="fas fa-trophy fa-2x mb-2"></i>
+                        <h3>12</h3>
+                        <p class="mb-0">Goals Achieved</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card metric-card text-center bg-info text-white">
+                    <div class="card-body">
+                        <i class="fas fa-clock fa-2x mb-2"></i>
+                        <h3>42h</h3>
+                        <p class="mb-0">Study Time</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card metric-card text-center bg-warning text-white">
+                    <div class="card-body">
+                        <i class="fas fa-fire fa-2x mb-2"></i>
+                        <h3>7</h3>
+                        <p class="mb-0">Day Streak</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Recommendations -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-lightbulb me-2"></i>Personalized Recommendations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="alert alert-info">
+                                    <h6><i class="fas fa-clock me-2"></i>Optimal Study Time</h6>
+                                    <p class="mb-0">Based on your patterns, you're most productive between 9:00 AM - 11:00 AM. Schedule important subjects during this time.</p>
+                                </div>
+                                <div class="alert alert-success">
+                                    <h6><i class="fas fa-book me-2"></i>Subject Focus</h6>
+                                    <p class="mb-0">You've improved 40% in Mathematics this week! Consider tackling more challenging problems.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="alert alert-warning">
+                                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Areas for Improvement</h6>
+                                    <p class="mb-0">Physics study sessions show lower retention. Try breaking down complex concepts into smaller parts.</p>
+                                </div>
+                                <div class="alert alert-primary">
+                                    <h6><i class="fas fa-users me-2"></i>Study Groups</h6>
+                                    <p class="mb-0">Students in study groups show 30% better performance. Consider joining a Programming group.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Chat Interface -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-comments me-2"></i>Ask AI Assistant</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="chat-messages" class="mb-3" style="height: 300px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 5px; padding: 15px;">
+                            <div class="d-flex mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <div class="bg-light p-3 rounded">
+                                        <p class="mb-0">Hello! I'm your AI study assistant. Ask me anything about your study schedule, learning techniques, or academic goals!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="chat-input" placeholder="Ask me anything about studying...">
+                            <button class="btn btn-ai" onclick="sendMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Analytics -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-bar me-2"></i>Study Analytics</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="studyChart" style="height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-bullseye me-2"></i>Weekly Goals</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Mathematics</span>
+                                <span>8/10 hours</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Physics</span>
+                                <span>6/8 hours</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Programming</span>
+                                <span>12/15 hours</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-primary w-100">
+                            <i class="fas fa-plus me-2"></i>Add New Goal
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Mock AI responses
+        const aiResponses = [
+            "Based on your study patterns, I recommend taking a 15-minute break every hour for optimal retention.",
+            "Your Mathematics performance has improved by 25% this week! Keep up the excellent work.",
+            "For better Physics understanding, try the Feynman Technique - explain concepts in simple terms.",
+            "Consider studying Programming in the morning when your focus is at its peak.",
+            "Your study streak is impressive! Consistency is key to long-term success.",
+            "I notice you struggle with complex problems. Break them into smaller, manageable parts.",
+            "Your ideal study session length appears to be 90 minutes based on your performance data."
+        ];
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+
+            if (message) {
+                addMessage(message, 'user');
+                input.value = '';
+
+                // Simulate AI response
+                setTimeout(() => {
+                    const response = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+                    addMessage(response, 'ai');
+                }, 1000);
+            }
+        }
+
+        function addMessage(message, sender) {
+            const chatMessages = document.getElementById('chat-messages');
+            const isUser = sender === 'user';
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `d-flex mb-3 ${isUser ? 'justify-content-end' : ''}`;
+
+            messageDiv.innerHTML = `
+                ${!isUser ? `
+                <div class="flex-shrink-0">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                </div>
+                ` : ''}
+                <div class="flex-grow-1 ${isUser ? 'me-3' : 'ms-3'}">
+                    <div class="${isUser ? 'bg-primary text-white' : 'bg-light'} p-3 rounded">
+                        <p class="mb-0">${message}</p>
+                    </div>
+                </div>
+                ${isUser ? `
+                <div class="flex-shrink-0">
+                    <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                ` : ''}
+            `;
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Initialize chat input
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initialize chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('studyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Study Hours',
+                        data: [3, 4, 2, 5, 6, 4, 3],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Efficiency Score',
+                        data: [75, 82, 70, 88, 92, 85, 87],
+                        borderColor: '#764ba2',
+                        backgroundColor: 'rgba(118, 75, 162, 0.1)',
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Hours'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Efficiency %'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+/* Custom Styles for Study Schedule Portal */
+
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 80px 0;
+}
+
+.feature-card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.quick-action-btn {
+    padding: 20px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: block;
+    color: white;
+}
+
+.quick-action-btn:hover {
+    transform: scale(1.05);
+    color: white;
+}
+
+.stats-badge {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    border-radius: 50px;
+    padding: 5px 15px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.welcome-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border-radius: 20px;
+}
+
+.ai-badge {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-size: 0.8rem;
+}
+
+.bengali-title {
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-weight: 600;
+}
+
+/* Schedule Cards */
+.schedule-card {
+    border-left: 4px solid #007bff;
+    transition: all 0.3s ease;
+}
+
+.schedule-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.priority-high { border-left-color: #dc3545; }
+.priority-medium { border-left-color: #ffc107; }
+.priority-low { border-left-color: #28a745; }
+
+/* AI Dashboard Styles */
+.ai-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+}
+
+.metric-card {
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: scale(1.05);
+}
+
+/* Form Styles */
+.form-floating {
+    margin-bottom: 1rem;
+}
+
+.btn-ai {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border: none;
+    color: white;
+}
+
+.btn-ai:hover {
+    background: linear-gradient(45deg, #5a6fd8, #6a4c93);
+    color: white;
+}
+
+/* Study Group Styles */
+.group-card {
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.group-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.group-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem;
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+    animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 40px 0;
+    }
+
+    .quick-action-btn {
+        padding: 15px;
+        margin-bottom: 1rem;
+    }
+
+    .display-4 {
+        font-size: 2rem;
+    }
+}
