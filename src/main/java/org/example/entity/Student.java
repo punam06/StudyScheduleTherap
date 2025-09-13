@@ -29,21 +29,21 @@ public class Student {
     private String learningStyle; // VISUAL, AUDITORY, KINESTHETIC, READING_WRITING
 
     @Column
-    private Double gpa;
+    private Double gpa = 0.0; // Initialize with 0.0 instead of random value
 
     @Column
-    private String major;
+    private String major; // Initialize as null
 
     @Column
-    private Integer year;
+    private Integer year = 0; // Initialize with 0 instead of random value
 
     @ElementCollection
     @CollectionTable(name = "student_availability", joinColumns = @JoinColumn(name = "student_id"))
     @Column(name = "time_slot")
-    private List<String> weeklyAvailability = new ArrayList<>(); // Format: "MON_09:00-10:30"
+    private List<String> weeklyAvailability = new ArrayList<>(); // Empty list by default
 
     @ManyToMany(mappedBy = "members")
-    private List<StudyGroup> studyGroups = new ArrayList<>();
+    private List<StudyGroup> studyGroups = new ArrayList<>(); // Empty list by default
 
     @Column
     private LocalDateTime createdAt;
@@ -59,10 +59,15 @@ public class Student {
     public Student() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        // Initialize all numeric fields with 0 and collections with empty lists
+        this.gpa = 0.0;
+        this.year = 0;
+        this.weeklyAvailability = new ArrayList<>();
+        this.studyGroups = new ArrayList<>();
     }
 
     public Student(String email, String name, String password) {
-        this();
+        this(); // Call default constructor to ensure proper initialization
         this.email = email;
         this.name = name;
         this.password = password;

@@ -1,321 +1,123 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Groups - Study Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .group-card {
-            transition: all 0.3s ease;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .group-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        .compatibility-score {
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-        }
-        .score-excellent { background: linear-gradient(45deg, #28a745, #20c997); }
-        .score-good { background: linear-gradient(45deg, #17a2b8, #6f42c1); }
-        .score-fair { background: linear-gradient(45deg, #ffc107, #fd7e14); }
-        .member-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #007bff, #6f42c1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-        }
-    </style>
+    <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="/">
+            <a class="navbar-brand" href="index.html">
                 <i class="fas fa-graduation-cap me-2"></i>Study Portal
             </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/">
-                    <i class="fas fa-home me-1"></i>Home
-                </a>
-                <a class="nav-link" href="/schedules">
-                    <i class="fas fa-calendar-alt me-1"></i>Schedule
-                </a>
-                <a class="nav-link active" href="/groups">
-                    <i class="fas fa-users me-1"></i>Groups
-                </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="schedules.html">Schedules</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="groups.html">Groups</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sessions.html">Sessions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container my-5">
-        <!-- Page Header -->
-        <div class="row mb-4">
-            <div class="col-lg-8">
-                <h1 class="display-6 fw-bold">
-                    <i class="fas fa-users text-primary me-3"></i>
-                    Study Groups
-                </h1>
-                <p class="lead text-muted">Find compatible study partners and join collaborative learning groups</p>
-            </div>
-            <div class="col-lg-4 text-lg-end">
-                <a href="/groups/new" class="btn btn-primary btn-lg">
-                    <i class="fas fa-plus me-2"></i>Create New Group
+    <!-- Header -->
+    <div class="hero-section">
+        <div class="container">
+            <h1><i class="fas fa-users me-3"></i>Study Groups</h1>
+            <p class="lead">Join collaborative study groups and learn together</p>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <!-- Login Required Alert -->
+        <div class="alert alert-warning text-center">
+            <h5><i class="fas fa-lock me-2"></i>Login Required</h5>
+            <p class="mb-3">Please login or register to view and join study groups.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="register.html" class="btn btn-primary">
+                    <i class="fas fa-user-plus me-2"></i>Register
+                </a>
+                <a href="login.html" class="btn btn-outline-primary">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
                 </a>
             </div>
         </div>
 
-        <!-- Filters and Search -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <form method="get" action="/groups">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-4">
-                            <label for="subject" class="form-label">Subject</label>
-                            <select class="form-select" id="subject" name="subject">
-                                <option value="">All Subjects</option>
-                                <option th:each="subj : ${subjects}"
-                                        th:value="${subj}"
-                                        th:text="${subj}"
-                                        th:selected="${subj == selectedSubject}"></option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="learningStyle" class="form-label">Learning Style</label>
-                            <select class="form-select" id="learningStyle" name="learningStyle">
-                                <option value="">Any Style</option>
-                                <option value="VISUAL">Visual</option>
-                                <option value="AUDITORY">Auditory</option>
-                                <option value="KINESTHETIC">Kinesthetic</option>
-                                <option value="READING_WRITING">Reading/Writing</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-outline-primary w-100">
-                                <i class="fas fa-search me-2"></i>Search Groups
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Available Groups Section -->
-        <div class="row mb-5">
-            <div class="col-12">
-                <h3 class="h4 mb-3">
-                    <i class="fas fa-door-open text-success me-2"></i>
-                    Available Groups
-                    <span class="badge bg-success" th:text="${#lists.size(availableGroups)}"></span>
-                </h3>
-
-                <div class="row" th:if="${#lists.size(availableGroups) > 0}">
-                    <div class="col-lg-4 col-md-6 mb-4" th:each="group : ${availableGroups}">
-                        <div class="card group-card h-100">
-                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-0" th:text="${group.name}">Group Name</h6>
-                                    <small class="text-muted" th:text="${group.subject}">Subject</small>
-                                </div>
-                                <div class="compatibility-score"
-                                     th:classappend="${group.compatibilityScore >= 80} ? 'score-excellent' :
-                                                    ${group.compatibilityScore >= 60} ? 'score-good' : 'score-fair'">
-                                    <span th:text="${#numbers.formatInteger(group.compatibilityScore, 0)}">85</span>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <p class="card-text small text-muted" th:text="${group.description}">Group description here</p>
-
-                                <!-- Members Info -->
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="d-flex me-3">
-                                        <span class="member-avatar me-1" th:each="member, iterStat : ${group.members}"
-                                              th:if="${iterStat.index < 3}"
-                                              th:text="${#strings.substring(member.name, 0, 1)}">M</span>
-                                        <span class="member-avatar bg-secondary" th:if="${#lists.size(group.members) > 3}">
-                                            +<span th:text="${#lists.size(group.members) - 3}">2</span>
-                                        </span>
-                                    </div>
-                                    <small class="text-muted">
-                                        <span th:text="${group.currentMembers}">3</span>/<span th:text="${group.maxMembers}">6</span> members
-                                    </small>
-                                </div>
-
-                                <!-- Learning Focus -->
-                                <div class="mb-3">
-                                    <span class="badge bg-primary" th:text="${group.learningFocus}">Exam Prep</span>
-                                    <span class="badge bg-info ms-1" th:text="${group.status}">Active</span>
-                                </div>
-
-                                <!-- Common Time Slots -->
-                                <div class="mb-3" th:if="${#lists.size(group.commonAvailableSlots) > 0}">
-                                    <small class="text-muted d-block">Common Times:</small>
-                                    <div class="d-flex flex-wrap">
-                                        <span class="badge bg-light text-dark me-1 mb-1"
-                                              th:each="slot : ${group.commonAvailableSlots}"
-                                              th:text="${slot}">MON 10:00-11:30</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-transparent">
-                                <div class="d-grid gap-2 d-md-flex">
-                                    <a th:href="@{/groups/{id}(id=${group.id})}" class="btn btn-outline-primary btn-sm flex-fill">
-                                        <i class="fas fa-eye me-1"></i>View Details
-                                    </a>
-                                    <button type="button" class="btn btn-success btn-sm flex-fill"
-                                            th:onclick="'joinGroup(' + ${group.id} + ')'">
-                                        <i class="fas fa-user-plus me-1"></i>Join Group
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div th:if="${#lists.size(availableGroups) == 0}" class="text-center py-5">
-                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">No available groups found</h5>
-                    <p class="text-muted">Be the first to create a study group!</p>
-                    <a href="/groups/new" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Create Group
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- All Groups Section -->
+        <!-- Empty State -->
         <div class="row">
             <div class="col-12">
-                <h3 class="h4 mb-3">
-                    <i class="fas fa-list text-secondary me-2"></i>
-                    All Groups
-                    <span class="badge bg-secondary" th:text="${#lists.size(groups)}"></span>
-                </h3>
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-users-slash fa-4x text-muted mb-4"></i>
+                        <h4 class="text-muted">No Study Groups Available</h4>
+                        <p class="text-muted mb-4">Login to create and join study groups with other students.</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="login.html" class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login to Continue
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Group Name</th>
-                                <th>Subject</th>
-                                <th>Members</th>
-                                <th>Status</th>
-                                <th>Compatibility</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="group : ${groups}">
-                                <td>
-                                    <strong th:text="${group.name}">Group Name</strong>
-                                    <br>
-                                    <small class="text-muted" th:text="${group.description}">Description</small>
-                                </td>
-                                <td>
-                                    <span class="badge bg-primary" th:text="${group.subject}">Mathematics</span>
-                                </td>
-                                <td>
-                                    <span th:text="${group.currentMembers}">3</span>/<span th:text="${group.maxMembers}">6</span>
-                                    <div class="progress mt-1" style="height: 5px;">
-                                        <div class="progress-bar"
-                                             th:style="'width: ' + ${(group.currentMembers * 100.0 / group.maxMembers)} + '%'"></div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="badge"
-                                          th:classappend="${group.status.name() == 'ACTIVE'} ? 'bg-success' :
-                                                         ${group.status.name() == 'FULL'} ? 'bg-warning text-dark' : 'bg-secondary'"
-                                          th:text="${group.status}">Active</span>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="compatibility-score me-2" style="width: 40px; height: 40px; font-size: 12px;"
-                                             th:classappend="${group.compatibilityScore >= 80} ? 'score-excellent' :
-                                                            ${group.compatibilityScore >= 60} ? 'score-good' : 'score-fair'">
-                                            <span th:text="${#numbers.formatInteger(group.compatibilityScore, 0)}">85</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a th:href="@{/groups/{id}(id=${group.id})}" class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-success btn-sm"
-                                                th:onclick="'joinGroup(' + ${group.id} + ')'"
-                                                th:disabled="${group.status.name() == 'FULL'}">
-                                            <i class="fas fa-user-plus"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <!-- Features Preview -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h3 class="text-center mb-4">Study Group Features</h3>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
+                    <h5>Create Groups</h5>
+                    <p class="text-muted">Start your own study group and invite classmates</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="fas fa-search fa-3x text-success mb-3"></i>
+                    <h5>Find Groups</h5>
+                    <p class="text-muted">Search and join existing study groups by subject</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="fas fa-calendar-check fa-3x text-info mb-3"></i>
+                    <h5>Schedule Sessions</h5>
+                    <p class="text-muted">Plan and organize group study sessions</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Success/Error Messages -->
-    <div th:if="${successMessage}" class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div class="toast show" role="alert">
-            <div class="toast-header bg-success text-white">
-                <i class="fas fa-check-circle me-2"></i>
-                <strong class="me-auto">Success</strong>
-            </div>
-            <div class="toast-body" th:text="${successMessage}"></div>
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p>&copy; 2025 Study Schedule Portal. All rights reserved.</p>
         </div>
-    </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function joinGroup(groupId) {
-            // In a real implementation, this would get the current user ID
-            const studentId = 1; // Placeholder
-
-            fetch(`/groups/api/${groupId}/join/${studentId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Successfully joined the group!');
-                    location.reload();
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while joining the group');
-            });
-        }
-
-        // Auto-hide toasts after 5 seconds
-        setTimeout(() => {
-            document.querySelectorAll('.toast').forEach(toast => {
-                const bsToast = new bootstrap.Toast(toast);
-                bsToast.hide();
-            });
-        }, 5000);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

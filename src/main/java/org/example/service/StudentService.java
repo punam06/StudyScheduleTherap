@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,10 +17,37 @@ public class StudentService {
     private StudentRepository studentRepository;
 
     public Student registerStudent(Student student) {
+        // Validate required fields
+        if (student.getEmail() == null || student.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+        if (student.getName() == null || student.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Name is required");
+        }
+        if (student.getPassword() == null || student.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Password is required");
+        }
+
+        // Ensure proper initialization with default values
+        if (student.getGpa() == null) {
+            student.setGpa(0.0);
+        }
+        if (student.getYear() == null) {
+            student.setYear(0);
+        }
+        if (student.getWeeklyAvailability() == null) {
+            student.setWeeklyAvailability(new ArrayList<>());
+        }
+        if (student.getStudyGroups() == null) {
+            student.setStudyGroups(new ArrayList<>());
+        }
+
         // Hash password (in production, use BCrypt or similar)
         // For now, storing as plain text for simplicity
         student.setCreatedAt(LocalDateTime.now());
         student.setUpdatedAt(LocalDateTime.now());
+        student.setRole(Student.UserRole.STUDENT); // Ensure default role
+
         return studentRepository.save(student);
     }
 

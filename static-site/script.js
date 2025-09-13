@@ -1,59 +1,20 @@
 // JavaScript for Study Schedule Portal Static Site
 
-// Mock data for demonstration
-const mockSchedules = [
-    {
-        id: 1,
-        subject: "Mathematics",
-        topic: "Calculus Integration",
-        duration: 120,
-        priority: "high",
-        date: "2025-09-10",
-        time: "09:00",
-        status: "pending"
-    },
-    {
-        id: 2,
-        subject: "Physics",
-        topic: "Quantum Mechanics",
-        duration: 90,
-        priority: "medium",
-        date: "2025-09-10",
-        time: "14:00",
-        status: "completed"
-    },
-    {
-        id: 3,
-        subject: "Programming",
-        topic: "Spring Boot Development",
-        duration: 180,
-        priority: "high",
-        date: "2025-09-11",
-        time: "10:00",
-        status: "pending"
-    }
-];
+// Initialize with empty data instead of mock data
+const mockSchedules = [];
 
-const mockGroups = [
-    {
-        id: 1,
-        name: "Java Developers Circle",
-        subject: "Programming",
-        members: 8,
-        maxMembers: 12,
-        description: "Advanced Java programming and Spring Boot development",
-        nextSession: "2025-09-10 15:00"
-    },
-    {
-        id: 2,
-        name: "Physics Masters",
-        subject: "Physics",
-        members: 6,
-        maxMembers: 10,
-        description: "Quantum mechanics and advanced physics concepts",
-        nextSession: "2025-09-11 16:00"
-    }
-];
+const mockGroups = [];
+
+// Default user data with null/0 values
+const defaultUserData = {
+    name: "Guest User",
+    totalGroups: 0,
+    upcomingSessions: 0,
+    recentSessions: 0,
+    gpa: 0.0,
+    studyHours: 0,
+    completedSessions: 0
+};
 
 // Utility Functions
 function formatDate(dateString) {
