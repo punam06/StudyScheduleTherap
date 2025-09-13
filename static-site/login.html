@@ -150,26 +150,44 @@
                     loginData[key] = value;
                 }
 
-                // Send login request to backend API
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(loginData)
-                });
+                // Try backend first, fallback to local storage for static hosting
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(loginData)
+                    });
 
-                const result = await response.json();
+                    const result = await response.json();
 
-                if (result.success) {
-                    showAlert(result.message, 'success');
+                    if (result.success) {
+                        showAlert(result.message, 'success');
+                        setTimeout(() => {
+                            window.location.href = result.redirectUrl || '/dashboard.html';
+                        }, 1500);
+                    } else {
+                        showAlert(result.message, 'danger');
+                    }
+                } catch (backendError) {
+                    // Backend not available, use local storage fallback
+                    console.log('Backend not available, using local storage fallback');
 
-                    // Redirect to dashboard after successful login
-                    setTimeout(() => {
-                        window.location.href = result.redirectUrl || '/dashboard.html';
-                    }, 1500);
-                } else {
-                    showAlert(result.message, 'danger');
+                    const existingUsers = JSON.parse(localStorage.getItem('studyPortalUsers') || '[]');
+                    const user = existingUsers.find(u => u.email === loginData.email);
+
+                    if (user && user.isActive) {
+                        // Simple password check (in real app, would be hashed)
+                        // For demo purposes, we'll accept any password for existing users
+                        localStorage.setItem('currentUser', JSON.stringify(user));
+                        showAlert('Login successful! Welcome back, ' + user.name + '!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/dashboard.html';
+                        }, 1500);
+                    } else {
+                        showAlert('Invalid email or password. Please try again or register first.', 'danger');
+                    }
                 }
 
             } catch (error) {

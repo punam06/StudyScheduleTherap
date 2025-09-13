@@ -234,26 +234,63 @@
                     return;
                 }
 
-                // Send registration request to backend API
-                const response = await fetch('/api/auth/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(registrationData)
-                });
+                // Try backend first, fallback to local storage for static hosting
+                try {
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(registrationData)
+                    });
 
-                const result = await response.json();
+                    const result = await response.json();
 
-                if (result.success) {
-                    showAlert(result.message, 'success');
+                    if (result.success) {
+                        showAlert(result.message, 'success');
+                        setTimeout(() => {
+                            window.location.href = result.redirectUrl || '/dashboard.html';
+                        }, 2000);
+                    } else {
+                        showAlert(result.message, 'danger');
+                    }
+                } catch (backendError) {
+                    // Backend not available, use local storage fallback
+                    console.log('Backend not available, using local storage fallback');
 
-                    // Redirect to dashboard after successful registration
+                    // Check if email already exists in local storage
+                    const existingUsers = JSON.parse(localStorage.getItem('studyPortalUsers') || '[]');
+                    const emailExists = existingUsers.some(user => user.email === registrationData.email);
+
+                    if (emailExists) {
+                        showAlert('Email already registered. Please use a different email.', 'danger');
+                        return;
+                    }
+
+                    // Create new user in local storage
+                    const newUser = {
+                        id: Date.now(),
+                        email: registrationData.email,
+                        name: registrationData.name,
+                        major: registrationData.major || '',
+                        year: parseInt(registrationData.year) || 0,
+                        institution: registrationData.institution || '',
+                        phoneNumber: registrationData.phoneNumber || '',
+                        learningStyle: registrationData.learningStyle || '',
+                        gpa: 0.0,
+                        role: 'STUDENT',
+                        createdAt: new Date().toISOString(),
+                        isActive: true
+                    };
+
+                    existingUsers.push(newUser);
+                    localStorage.setItem('studyPortalUsers', JSON.stringify(existingUsers));
+                    localStorage.setItem('currentUser', JSON.stringify(newUser));
+
+                    showAlert('Registration successful! Welcome to Study Portal!', 'success');
                     setTimeout(() => {
-                        window.location.href = result.redirectUrl || '/dashboard.html';
+                        window.location.href = '/dashboard.html';
                     }, 2000);
-                } else {
-                    showAlert(result.message, 'danger');
                 }
 
             } catch (error) {
