@@ -166,4 +166,21 @@ public class StudyGroup {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    // Missing helper methods needed by services
+    public boolean isActive() {
+        return status == GroupStatus.ACTIVE || status == GroupStatus.FULL;
+    }
+
+    public List<String> getPreferredTimes() {
+        return commonAvailableSlots;
+    }
+
+    public boolean isFull() {
+        return currentMembers >= maxMembers;
+    }
+
+    public boolean hasAvailableSlots() {
+        return currentMembers < maxMembers;
+    }
 }

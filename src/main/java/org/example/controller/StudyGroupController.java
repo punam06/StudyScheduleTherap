@@ -96,7 +96,7 @@ public class StudyGroupController {
                            @RequestParam Long studentId,
                            RedirectAttributes redirectAttributes) {
         try {
-            boolean joined = groupService.joinGroup(id, studentId);
+            boolean joined = groupService.joinGroupBoolean(id, studentId);
             if (joined) {
                 redirectAttributes.addFlashAttribute("successMessage", "Successfully joined the group!");
             } else {
@@ -147,7 +147,8 @@ public class StudyGroupController {
     @GetMapping("/api/{id}/recommendations")
     @ResponseBody
     public Map<String, Object> getGroupRecommendations(@PathVariable Long id) {
-        return groupService.getGroupRecommendations(id);
+        List<String> recommendations = groupService.getGroupRecommendations(id);
+        return Map.of("recommendations", recommendations);
     }
 
     @GetMapping("/api/{id}/optimal-times")
@@ -161,7 +162,7 @@ public class StudyGroupController {
     public ResponseEntity<Map<String, Object>> joinGroupAPI(@PathVariable Long id,
                                                            @PathVariable Long studentId) {
         try {
-            boolean joined = groupService.joinGroup(id, studentId);
+            boolean joined = groupService.joinGroupBoolean(id, studentId);
 
             Map<String, Object> response = Map.of(
                 "success", joined,

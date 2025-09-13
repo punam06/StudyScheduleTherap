@@ -4,7 +4,10 @@
   "description": "অধ্যয়ন সঙ্ঘ - AI-Enhanced Study Scheduling Portal",
   "scripts": {
     "build": "gradle build -x test",
-    "deploy": "surge dist/ --domain adhyayan-sangha.surge.sh"
+    "build:static": "mkdir -p build/static && cp -r static-site/* build/static/",
+    "deploy": "surge build/static/ --domain adhyayan-sangha.surge.sh",
+    "deploy:new": "npm run build:static && surge build/static/",
+    "deploy:auto": "./deploy-surge.sh"
   },
   "keywords": ["study", "scheduling", "ai", "bengali", "education"],
   "author": "Java Fest 2025",
@@ -13,4 +16,3 @@
     "surge": "^0.23.1"
   }
 }
-

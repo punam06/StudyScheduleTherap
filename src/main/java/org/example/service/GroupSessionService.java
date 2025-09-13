@@ -353,4 +353,37 @@ public class GroupSessionService {
     public List<GroupSession> getSessionsWithConflicts() {
         return sessionRepository.findSessionsWithConflicts();
     }
+
+    public List<GroupSession> getUpcomingSessionsForStudent(Long studentId) {
+        // Get sessions for groups the student is a member of
+        return sessionRepository.findAll().stream()
+                .filter(session -> session.getStudyGroup().getMembers().stream()
+                        .anyMatch(member -> member.getId().equals(studentId)))
+                .filter(session -> session.getScheduledTime().isAfter(LocalDateTime.now()))
+                .sorted((s1, s2) -> s1.getScheduledTime().compareTo(s2.getScheduledTime()))
+                .limit(5)
+                .toList();
+    }
+
+    public List<GroupSession> getRecentSessionsForStudent(Long studentId) {
+        // Get recent completed sessions for groups the student is a member of
+        return sessionRepository.findAll().stream()
+                .filter(session -> session.getStudyGroup().getMembers().stream()
+                        .anyMatch(member -> member.getId().equals(studentId)))
+                .filter(session -> session.getScheduledTime().isBefore(LocalDateTime.now()))
+                .sorted((s1, s2) -> s2.getScheduledTime().compareTo(s1.getScheduledTime()))
+                .limit(5)
+                .toList();
+    }
+
+    public GroupSession addSessionNotes(Long sessionId, String notes) {
+        Optional<GroupSession> sessionOpt = getSessionById(sessionId);
+        if (sessionOpt.isPresent()) {
+            GroupSession session = sessionOpt.get();
+            session.setNotes(notes);
+            session.setUpdatedAt(LocalDateTime.now());
+            return sessionRepository.save(session);
+        }
+        return null;
+    }
 }

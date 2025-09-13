@@ -728,6 +728,16 @@ public class AIService {
         };
     }
 
+    private String getPhaseFocus(String phase, String subject) {
+        return switch (phase) {
+            case "Foundation" -> "Building core understanding of " + subject + " fundamentals";
+            case "Development" -> "Applying concepts through practice and exercises";
+            case "Mastery" -> "Advanced problem-solving and real-world applications";
+            case "Review" -> "Consolidating knowledge and identifying gaps";
+            default -> "General study focus for " + subject;
+        };
+    }
+
     private List<String> getPhaseMilestones(String phase) {
         return switch (phase) {
             case "Foundation" -> Arrays.asList("Complete basic readings", "Pass foundation quiz");
@@ -836,9 +846,6 @@ public class AIService {
         );
     }
 
-    private String getPhaseFlocus(String phase, String subject) {
-        return getPhaseFoundation(phase, subject);
-    }
 
     public List<String> getOptimalStudyTimes() {
         return Arrays.asList(
