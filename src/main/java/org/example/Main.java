@@ -50,9 +50,12 @@ public class Main {
             "Spaced Repetition AI",
             "Collaborative Content Generation"
         });
-        status.put("competition", "Java Fest 2025");
-        status.put("category", "Educational Technology - AI Enhanced");
-        status.put("language", "Bengali (অধ্যয়ন সঙ্ঘ) + English");
         return status;
+    }
+
+    // Serve static files from static-site directory
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/index.html";
     }
 }

@@ -45,98 +45,78 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-        .divider {
-            text-align: center;
-            margin: 20px 0;
-            position: relative;
-        }
-        .divider:before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: #ddd;
-        }
-        .divider span {
-            background: white;
-            padding: 0 15px;
-            color: #666;
-        }
         .alert {
-            border-radius: 10px;
             margin-bottom: 20px;
+        }
+        .loading {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-4">
+            <div class="col-lg-5 col-md-7">
                 <div class="login-container">
                     <div class="login-form">
                         <div class="login-header">
-                            <i class="fas fa-graduation-cap"></i>
+                            <i class="fas fa-sign-in-alt"></i>
                             <h2>Welcome Back</h2>
-                            <p class="text-muted">Sign in to your study portal</p>
+                            <p class="text-muted">Sign in to your account</p>
                         </div>
 
-                        <!-- Success/Error Messages -->
-                        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i>
-                            <span th:text="${successMessage}"></span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
+                        <!-- Alert Messages -->
+                        <div id="alertContainer"></div>
 
-                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            <span th:text="${errorMessage}"></span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-
-                        <form th:action="@{/auth/login}" method="post">
+                        <!-- Login Form -->
+                        <form id="loginForm">
                             <div class="form-floating">
-                                <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
-                                <label for="email">
-                                    <i class="fas fa-envelope me-2"></i>Email address
-                                </label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       placeholder="Email Address" required>
+                                <label for="email"><i class="fas fa-envelope me-2"></i>Email Address</label>
                             </div>
 
                             <div class="form-floating">
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                                <label for="password">
-                                    <i class="fas fa-lock me-2"></i>Password
-                                </label>
+                                <input type="password" class="form-control" id="password" name="password"
+                                       placeholder="Password" required>
+                                <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
                             </div>
 
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" value="remember" id="remember">
-                                <label class="form-check-label" for="remember">
-                                    Remember me
-                                </label>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <a href="#" class="text-primary">Forgot Password?</a>
                             </div>
 
-                            <button type="submit" class="btn btn-login btn-primary w-100">
-                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
-                            </button>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-login btn-lg text-white" id="loginBtn">
+                                    <span class="loading">
+                                        <i class="fas fa-spinner fa-spin me-2"></i>Signing In...
+                                    </span>
+                                    <span class="not-loading">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                                    </span>
+                                </button>
+                            </div>
                         </form>
 
-                        <div class="divider">
-                            <span>or</span>
-                        </div>
-
-                        <div class="text-center">
-                            <p class="mb-0">
-                                Don't have an account?
-                                <a th:href="@{/auth/register}" class="text-decoration-none fw-bold">Sign up here</a>
+                        <div class="text-center mt-4">
+                            <p class="mb-0">Don't have an account?
+                                <a href="register.html" class="text-primary fw-bold">Create Account</a>
                             </p>
                         </div>
 
-                        <div class="text-center mt-3">
-                            <a th:href="@{/}" class="text-muted text-decoration-none">
-                                <i class="fas fa-arrow-left me-2"></i>Back to Home
-                            </a>
+                        <hr class="my-4">
+
+                        <div class="text-center">
+                            <p class="small text-muted">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Your data is secure and encrypted
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -145,5 +125,92 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Handle Login Form Submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const loginBtn = document.getElementById('loginBtn');
+            const alertContainer = document.getElementById('alertContainer');
+
+            // Show loading state
+            loginBtn.querySelector('.loading').style.display = 'inline';
+            loginBtn.querySelector('.not-loading').style.display = 'none';
+            loginBtn.disabled = true;
+
+            // Clear previous alerts
+            alertContainer.innerHTML = '';
+
+            try {
+                // Get form data
+                const formData = new FormData(this);
+                const loginData = {};
+
+                for (let [key, value] of formData.entries()) {
+                    loginData[key] = value;
+                }
+
+                // Send login request to backend API
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert(result.message, 'success');
+
+                    // Redirect to dashboard after successful login
+                    setTimeout(() => {
+                        window.location.href = result.redirectUrl || '/dashboard.html';
+                    }, 1500);
+                } else {
+                    showAlert(result.message, 'danger');
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('Login failed. Please check your connection and try again.', 'danger');
+            } finally {
+                // Hide loading state
+                loginBtn.querySelector('.loading').style.display = 'none';
+                loginBtn.querySelector('.not-loading').style.display = 'inline';
+                loginBtn.disabled = false;
+            }
+        });
+
+        // Show alert messages
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertContainer.innerHTML = alertHtml;
+        }
+
+        // Check if user is already logged in
+        window.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('/api/auth/session');
+                const result = await response.json();
+
+                if (result.authenticated) {
+                    // User is already logged in, redirect to dashboard
+                    window.location.href = '/dashboard.html';
+                }
+            } catch (error) {
+                console.log('Session check failed:', error);
+                // Continue with login form
+            }
+        });
+    </script>
 </body>
 </html>
