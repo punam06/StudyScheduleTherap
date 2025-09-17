@@ -203,6 +203,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="auth.js"></script>
     <script>
         // Handle Registration Form Submission
         document.getElementById('registrationForm').addEventListener('submit', async function(e) {
@@ -330,6 +331,18 @@
             `;
             alertContainer.innerHTML = alertHtml;
         }
+
+        // Initialize page
+        window.addEventListener('DOMContentLoaded', function() {
+            // Initialize auth system
+            authManager.init();
+
+            // Check if already logged in
+            if (authManager.isAuthenticated()) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+        });
 
         // Real-time password confirmation validation
         document.getElementById('confirmPassword').addEventListener('input', function() {
