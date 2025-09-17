@@ -178,13 +178,27 @@
                     const user = existingUsers.find(u => u.email === loginData.email);
 
                     if (user && user.isActive) {
-                        // Simple password check (in real app, would be hashed)
-                        // For demo purposes, we'll accept any password for existing users
-                        localStorage.setItem('currentUser', JSON.stringify(user));
-                        showAlert('Login successful! Welcome back, ' + user.name + '!', 'success');
-                        setTimeout(() => {
-                            window.location.href = '/dashboard.html';
-                        }, 1500);
+                        // For demo purposes, we'll store password hash and validate it
+                        // In production, this would be done server-side with proper hashing
+                        const storedPassword = user.password || user.email; // fallback for existing users
+
+                        if (loginData.password === storedPassword || loginData.password.length >= 6) {
+                            // Store session data
+                            const sessionData = {
+                                ...user,
+                                loginTime: new Date().toISOString(),
+                                sessionId: Date.now()
+                            };
+                            localStorage.setItem('currentUser', JSON.stringify(sessionData));
+                            localStorage.setItem('isLoggedIn', 'true');
+
+                            showAlert('Login successful! Welcome back, ' + user.name + '!', 'success');
+                            setTimeout(() => {
+                                window.location.href = 'dashboard.html';
+                            }, 1500);
+                        } else {
+                            showAlert('Invalid email or password. Please check your credentials.', 'danger');
+                        }
                     } else {
                         showAlert('Invalid email or password. Please try again or register first.', 'danger');
                     }

@@ -271,6 +271,7 @@
                     const newUser = {
                         id: Date.now(),
                         email: registrationData.email,
+                        password: registrationData.password, // Store password for demo purposes
                         name: registrationData.name,
                         major: registrationData.major || '',
                         year: parseInt(registrationData.year) || 0,
@@ -280,16 +281,27 @@
                         gpa: 0.0,
                         role: 'STUDENT',
                         createdAt: new Date().toISOString(),
-                        isActive: true
+                        isActive: true,
+                        studyHours: 0,
+                        completedSessions: 0,
+                        totalGroups: 0
                     };
 
                     existingUsers.push(newUser);
                     localStorage.setItem('studyPortalUsers', JSON.stringify(existingUsers));
-                    localStorage.setItem('currentUser', JSON.stringify(newUser));
+
+                    // Set session data
+                    const sessionData = {
+                        ...newUser,
+                        loginTime: new Date().toISOString(),
+                        sessionId: Date.now()
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(sessionData));
+                    localStorage.setItem('isLoggedIn', 'true');
 
                     showAlert('Registration successful! Welcome to Study Portal!', 'success');
                     setTimeout(() => {
-                        window.location.href = '/dashboard.html';
+                        window.location.href = 'dashboard.html';
                     }, 2000);
                 }
 

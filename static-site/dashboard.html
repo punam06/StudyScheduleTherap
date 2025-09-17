@@ -32,7 +32,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="sessions.html">Sessions</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="authNav">
                         <a class="nav-link" href="login.html">Login</a>
                     </li>
                 </ul>
@@ -45,12 +45,12 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1>Welcome to Study Portal!</h1>
-                    <p class="lead mb-0">Please login or register to access your personalized dashboard.</p>
+                    <h1 id="welcomeMessage">Welcome to Study Portal!</h1>
+                    <p class="lead mb-0" id="welcomeSubtext">Please login or register to access your personalized dashboard.</p>
                 </div>
                 <div class="col-md-4 text-end">
                     <div class="progress-ring">
-                        <i class="fas fa-user-circle" style="font-size: 3rem; opacity: 0.7;"></i>
+                        <i class="fas fa-user-circle" style="font-size: 3rem; opacity: 0.7;" id="userIcon"></i>
                     </div>
                 </div>
             </div>
@@ -58,14 +58,14 @@
     </div>
 
     <div class="container mt-4">
-        <!-- Default Statistics Cards (showing 0 values) -->
-        <div class="row">
+        <!-- Statistics Cards -->
+        <div class="row" id="statsContainer">
             <div class="col-md-3">
                 <div class="stat-card">
                     <div class="stat-icon text-primary">
                         <i class="fas fa-users"></i>
                     </div>
-                    <div class="stat-number">0</div>
+                    <div class="stat-number" id="totalGroups">0</div>
                     <div class="text-muted">Study Groups</div>
                 </div>
             </div>
@@ -74,7 +74,7 @@
                     <div class="stat-icon text-success">
                         <i class="fas fa-calendar-check"></i>
                     </div>
-                    <div class="stat-number">0</div>
+                    <div class="stat-number" id="upcomingSessions">0</div>
                     <div class="text-muted">Upcoming Sessions</div>
                 </div>
             </div>
@@ -83,8 +83,8 @@
                     <div class="stat-icon text-info">
                         <i class="fas fa-clock"></i>
                     </div>
-                    <div class="stat-number">0</div>
-                    <div class="text-muted">Recent Sessions</div>
+                    <div class="stat-number" id="studyHours">0</div>
+                    <div class="text-muted">Study Hours</div>
                 </div>
             </div>
             <div class="col-md-3">
@@ -92,14 +92,14 @@
                     <div class="stat-icon text-warning">
                         <i class="fas fa-star"></i>
                     </div>
-                    <div class="stat-number">0.0</div>
+                    <div class="stat-number" id="currentGPA">0.0</div>
                     <div class="text-muted">Current GPA</div>
                 </div>
             </div>
         </div>
 
-        <!-- Login/Register Prompt -->
-        <div class="row mt-4">
+        <!-- Login/Register Prompt (shown when not authenticated) -->
+        <div class="row mt-4" id="loginPrompt">
             <div class="col-12">
                 <div class="alert alert-info text-center">
                     <h4><i class="fas fa-info-circle me-2"></i>Get Started</h4>
@@ -116,8 +116,43 @@
             </div>
         </div>
 
-        <!-- Feature Overview -->
-        <div class="row mt-4">
+        <!-- Authenticated User Content (hidden by default) -->
+        <div class="row mt-4" id="authenticatedContent" style="display: none;">
+            <div class="col-md-12">
+                <h3><i class="fas fa-rocket me-2"></i>Quick Actions</h3>
+            </div>
+            <div class="col-md-3">
+                <div class="quick-action-card" onclick="window.location.href='create-group.html'">
+                    <i class="fas fa-plus-circle d-block mb-2" style="font-size: 2rem;"></i>
+                    <h5>Create Study Group</h5>
+                    <small>Start a new collaborative group</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="quick-action-card" style="background: linear-gradient(45deg, #007bff, #6610f2);" onclick="window.location.href='create-schedule.html'">
+                    <i class="fas fa-calendar-plus d-block mb-2" style="font-size: 2rem;"></i>
+                    <h5>Schedule Session</h5>
+                    <small>Plan your next study session</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="quick-action-card" style="background: linear-gradient(45deg, #fd7e14, #dc3545);" onclick="window.location.href='groups.html'">
+                    <i class="fas fa-search d-block mb-2" style="font-size: 2rem;"></i>
+                    <h5>Find Groups</h5>
+                    <small>Join existing study groups</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="quick-action-card" style="background: linear-gradient(45deg, #6f42c1, #e83e8c);" onclick="window.location.href='ai-dashboard.html'">
+                    <i class="fas fa-robot d-block mb-2" style="font-size: 2rem;"></i>
+                    <h5>AI Recommendations</h5>
+                    <small>Get personalized suggestions</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Overview (shown when not authenticated) -->
+        <div class="row mt-4" id="featureOverview">
             <div class="col-md-12">
                 <h3><i class="fas fa-star me-2"></i>Features Available After Login</h3>
             </div>
@@ -195,5 +230,214 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Authentication and Dashboard Management
+        function checkAuthenticationState() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+            if (currentUser && isLoggedIn) {
+                showAuthenticatedDashboard(currentUser);
+            } else {
+                showUnauthenticatedDashboard();
+            }
+        }
+
+        function showAuthenticatedDashboard(user) {
+            // Update welcome message
+            document.getElementById('welcomeMessage').textContent = `Welcome back, ${user.name}!`;
+            document.getElementById('welcomeSubtext').textContent = `Here's your personalized dashboard`;
+
+            // Update user icon
+            document.getElementById('userIcon').className = 'fas fa-user-check';
+            document.getElementById('userIcon').style.color = '#28a745';
+
+            // Update navigation
+            document.getElementById('authNav').innerHTML = `
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-1"></i>${user.name}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="viewProfile()">
+                            <i class="fas fa-user me-2"></i>Profile
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a></li>
+                    </ul>
+                </div>
+            `;
+
+            // Update statistics with user data
+            document.getElementById('totalGroups').textContent = user.totalGroups || 0;
+            document.getElementById('upcomingSessions').textContent = calculateUpcomingSessions(user);
+            document.getElementById('studyHours').textContent = user.studyHours || 0;
+            document.getElementById('currentGPA').textContent = user.gpa ? user.gpa.toFixed(1) : '0.0';
+
+            // Show authenticated content, hide login prompt
+            document.getElementById('loginPrompt').style.display = 'none';
+            document.getElementById('featureOverview').style.display = 'none';
+            document.getElementById('authenticatedContent').style.display = 'block';
+
+            // Update session and group sections with user data
+            updateUserSessions(user);
+            updateUserGroups(user);
+        }
+
+        function showUnauthenticatedDashboard() {
+            // Reset to default state
+            document.getElementById('welcomeMessage').textContent = 'Welcome to Study Portal!';
+            document.getElementById('welcomeSubtext').textContent = 'Please login or register to access your personalized dashboard.';
+
+            // Reset user icon
+            document.getElementById('userIcon').className = 'fas fa-user-circle';
+            document.getElementById('userIcon').style.color = '';
+            document.getElementById('userIcon').style.opacity = '0.7';
+
+            // Reset navigation
+            document.getElementById('authNav').innerHTML = '<a class="nav-link" href="login.html">Login</a>';
+
+            // Show login prompt and feature overview, hide authenticated content
+            document.getElementById('loginPrompt').style.display = 'block';
+            document.getElementById('featureOverview').style.display = 'block';
+            document.getElementById('authenticatedContent').style.display = 'none';
+        }
+
+        function calculateUpcomingSessions(user) {
+            const userSchedules = JSON.parse(localStorage.getItem(`userSchedules_${user.id}`) || '[]');
+            const now = new Date();
+            const upcoming = userSchedules.filter(schedule => {
+                const scheduleDate = new Date(schedule.date + ' ' + schedule.time);
+                return scheduleDate > now && schedule.status !== 'completed';
+            });
+            return upcoming.length;
+        }
+
+        function updateUserSessions(user) {
+            const userSchedules = JSON.parse(localStorage.getItem(`userSchedules_${user.id}`) || '[]');
+            const sessionsCard = document.querySelector('.col-md-6:first-child .card-body');
+
+            if (userSchedules.length === 0) {
+                sessionsCard.innerHTML = `
+                    <div class="text-muted text-center py-4">
+                        <i class="fas fa-calendar-plus fa-3x mb-3"></i>
+                        <h6>No sessions scheduled</h6>
+                        <p class="small">Create your first study session</p>
+                        <a href="create-schedule.html" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>Schedule Session
+                        </a>
+                    </div>
+                `;
+            } else {
+                const upcomingSessions = userSchedules
+                    .filter(s => new Date(s.date + ' ' + s.time) > new Date())
+                    .slice(0, 3);
+
+                let sessionsHtml = '';
+                upcomingSessions.forEach(session => {
+                    sessionsHtml += `
+                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                            <div>
+                                <strong>${session.subject}</strong><br>
+                                <small class="text-muted">${session.topic}</small>
+                            </div>
+                            <div class="text-end">
+                                <small>${new Date(session.date).toLocaleDateString()}</small><br>
+                                <small class="text-muted">${session.time}</small>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                sessionsCard.innerHTML = sessionsHtml + `
+                    <div class="text-center mt-3">
+                        <a href="schedules.html" class="btn btn-outline-primary btn-sm">View All Sessions</a>
+                    </div>
+                `;
+            }
+        }
+
+        function updateUserGroups(user) {
+            const userGroups = JSON.parse(localStorage.getItem(`userGroups_${user.id}`) || '[]');
+            const groupsCard = document.querySelector('.col-md-6:last-child .card-body');
+
+            if (userGroups.length === 0) {
+                groupsCard.innerHTML = `
+                    <div class="text-muted text-center py-4">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <h6>No groups joined</h6>
+                        <p class="small">Join or create your first study group</p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a href="groups.html" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-search me-1"></i>Find Groups
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let groupsHtml = '';
+                userGroups.slice(0, 3).forEach(group => {
+                    groupsHtml += `
+                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                            <div>
+                                <strong>${group.name}</strong><br>
+                                <small class="text-muted">${group.subject}</small>
+                            </div>
+                            <div class="text-end">
+                                <small>${group.members}/${group.maxMembers} members</small>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                groupsCard.innerHTML = groupsHtml + `
+                    <div class="text-center mt-3">
+                        <a href="groups.html" class="btn btn-outline-primary btn-sm">View All Groups</a>
+                    </div>
+                `;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('isLoggedIn');
+            showUnauthenticatedDashboard();
+
+            // Show logout success message
+            const alertHtml = `
+                <div class="alert alert-success alert-dismissible fade show position-fixed"
+                     style="top: 20px; right: 20px; z-index: 9999;" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Successfully logged out!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', alertHtml);
+
+            // Auto-hide alert after 3 seconds
+            setTimeout(() => {
+                const alert = document.querySelector('.alert');
+                if (alert) alert.remove();
+            }, 3000);
+        }
+
+        function viewProfile() {
+            alert('Profile functionality coming soon!');
+        }
+
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthenticationState();
+        });
+
+        // Listen for storage changes
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'currentUser' || e.key === 'isLoggedIn') {
+                checkAuthenticationState();
+            }
+        });
+    </script>
 </body>
 </html>
