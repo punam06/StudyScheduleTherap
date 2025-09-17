@@ -298,6 +298,8 @@
                     };
                     localStorage.setItem('currentUser', JSON.stringify(sessionData));
                     localStorage.setItem('isLoggedIn', 'true');
+                    // Set session expiry to 24 hours from now
+                    localStorage.setItem('sessionExpiry', (Date.now() + 24 * 60 * 60 * 1000).toString());
 
                     showAlert('Registration successful! Welcome to Study Portal!', 'success');
                     setTimeout(() => {

@@ -277,7 +277,7 @@
                         const storedPassword = user.password || user.email; // fallback for existing users
 
                         if (loginData.password === storedPassword || loginData.password.length >= 6) {
-                            // Store session data
+                            // Store session data with expiry
                             const sessionData = {
                                 ...user,
                                 loginTime: new Date().toISOString(),
@@ -285,6 +285,8 @@
                             };
                             localStorage.setItem('currentUser', JSON.stringify(sessionData));
                             localStorage.setItem('isLoggedIn', 'true');
+                            // Set session expiry to 24 hours from now
+                            localStorage.setItem('sessionExpiry', (Date.now() + 24 * 60 * 60 * 1000).toString());
 
                             showAlert('Login successful! Welcome back, ' + user.name + '!', 'success');
                             setTimeout(() => {

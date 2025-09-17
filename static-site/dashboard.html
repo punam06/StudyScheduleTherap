@@ -232,14 +232,34 @@
     <script src="script.js"></script>
     <script>
         // Authentication and Dashboard Management
-        function checkAuthenticationState() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        let isCheckingAuthentication = false; // Prevent multiple simultaneous auth checks
 
-            if (currentUser && isLoggedIn) {
-                showAuthenticatedDashboard(currentUser);
-            } else {
-                showUnauthenticatedDashboard();
+        function checkAuthenticationState() {
+            // Prevent multiple authentication checks from running simultaneously
+            if (isCheckingAuthentication) return;
+            isCheckingAuthentication = true;
+
+            try {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                const sessionExpiry = localStorage.getItem('sessionExpiry');
+
+                // Check if session has expired (optional - set to 24 hours)
+                if (sessionExpiry && Date.now() > parseInt(sessionExpiry)) {
+                    // Session expired, but don't auto-logout - just refresh it
+                    if (currentUser && isLoggedIn) {
+                        // Extend session by 24 hours
+                        localStorage.setItem('sessionExpiry', (Date.now() + 24 * 60 * 60 * 1000).toString());
+                    }
+                }
+
+                if (currentUser && isLoggedIn) {
+                    showAuthenticatedDashboard(currentUser);
+                } else {
+                    showUnauthenticatedDashboard();
+                }
+            } finally {
+                isCheckingAuthentication = false;
             }
         }
 
