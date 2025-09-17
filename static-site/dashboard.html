@@ -432,12 +432,34 @@
             checkAuthenticationState();
         });
 
-        // Listen for storage changes
+        // Listen for storage changes (only for actual logout from other tabs)
         window.addEventListener('storage', function(e) {
-            if (e.key === 'currentUser' || e.key === 'isLoggedIn') {
+            // Only react to storage changes from other tabs, not our own changes
+            if ((e.key === 'currentUser' || e.key === 'isLoggedIn') && e.newValue === null) {
+                // User was logged out from another tab
+                checkAuthenticationState();
+            } else if (e.key === 'currentUser' && e.newValue && !localStorage.getItem('currentUser')) {
+                // User logged in from another tab
                 checkAuthenticationState();
             }
         });
+
+        // Prevent tab switching from causing logout
+        document.addEventListener('visibilitychange', function() {
+            // Don't trigger authentication check on tab visibility changes
+            // This prevents automatic logout when switching tabs
+        });
+
+        // Add session persistence check every 30 seconds (optional)
+        setInterval(function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+            // Only update if there's a mismatch in current state
+            if (currentUser && isLoggedIn && document.getElementById('welcomeMessage').textContent.includes('Welcome to Study Portal!')) {
+                showAuthenticatedDashboard(currentUser);
+            }
+        }, 30000);
     </script>
 </body>
 </html>

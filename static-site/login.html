@@ -89,7 +89,7 @@
                                         Remember me
                                     </label>
                                 </div>
-                                <a href="#" class="text-primary">Forgot Password?</a>
+                                <a href="#" class="text-primary" onclick="showForgotPassword()">Forgot Password?</a>
                             </div>
 
                             <div class="d-grid">
@@ -117,6 +117,100 @@
                                 <i class="fas fa-shield-alt me-1"></i>
                                 Your data is secure and encrypted
                             </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Recovery Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">
+                        <i class="fas fa-key me-2"></i>Reset Password
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="step1-email" class="recovery-step">
+                        <p class="text-muted mb-3">Enter your email address and we'll send you instructions to reset your password.</p>
+                        <form id="forgotPasswordForm">
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="recoveryEmail" name="recoveryEmail"
+                                       placeholder="Email Address" required>
+                                <label for="recoveryEmail"><i class="fas fa-envelope me-2"></i>Email Address</label>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary" id="sendRecoveryBtn">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Recovery Email
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="step2-code" class="recovery-step" style="display: none;">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                            <h6>Recovery Email Sent!</h6>
+                            <p class="text-muted small">We've sent a 6-digit code to your email address.<br>
+                               <strong>For demo purposes, your code is: <span id="recoveryCode" class="text-primary">123456</span></strong>
+                            </p>
+                        </div>
+                        <form id="verifyCodeForm">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="verificationCode" name="verificationCode"
+                                       placeholder="Enter 6-digit code" maxlength="6" required>
+                                <label for="verificationCode"><i class="fas fa-shield-alt me-2"></i>Verification Code</label>
+                            </div>
+                            <div class="d-grid mb-2">
+                                <button type="submit" class="btn btn-primary" id="verifyCodeBtn">
+                                    <i class="fas fa-check me-2"></i>Verify Code
+                                </button>
+                            </div>
+                            <div class="text-center">
+                                <a href="#" class="small text-muted" onclick="resendCode()">
+                                    <i class="fas fa-redo me-1"></i>Resend Code
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="step3-reset" class="recovery-step" style="display: none;">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-lock text-primary fa-3x mb-3"></i>
+                            <h6>Set New Password</h6>
+                            <p class="text-muted small">Enter your new password below</p>
+                        </div>
+                        <form id="resetPasswordForm">
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="newPassword" name="newPassword"
+                                       placeholder="New Password" minlength="6" required>
+                                <label for="newPassword"><i class="fas fa-lock me-2"></i>New Password</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword"
+                                       placeholder="Confirm New Password" minlength="6" required>
+                                <label for="confirmNewPassword"><i class="fas fa-lock me-2"></i>Confirm New Password</label>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success" id="resetPasswordBtn">
+                                    <i class="fas fa-check-circle me-2"></i>Reset Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="step4-success" class="recovery-step" style="display: none;">
+                        <div class="text-center">
+                            <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
+                            <h5 class="text-success">Password Reset Successful!</h5>
+                            <p class="text-muted">Your password has been successfully reset. You can now login with your new password.</p>
+                            <button type="button" class="btn btn-primary" onclick="closeModalAndFocusLogin()">
+                                <i class="fas fa-sign-in-alt me-2"></i>Continue to Login
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -243,6 +337,121 @@
                 // Continue with login form
             }
         });
+
+        // Show forgot password modal
+        function showForgotPassword() {
+            // Reset modal steps
+            document.querySelectorAll('.recovery-step').forEach(step => {
+                step.style.display = 'none';
+            });
+            document.getElementById('step1-email').style.display = 'block';
+
+            // Show modal
+            const forgotPasswordModal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+            forgotPasswordModal.show();
+        }
+
+        // Close modal and focus on login
+        function closeModalAndFocusLogin() {
+            const forgotPasswordModal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+            if (forgotPasswordModal) {
+                forgotPasswordModal.hide();
+            }
+            document.getElementById('email').focus();
+        }
+
+        // Handle password recovery forms
+        document.getElementById('forgotPasswordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('recoveryEmail').value.trim();
+
+            // Check if user exists in localStorage
+            const existingUsers = JSON.parse(localStorage.getItem('studyPortalUsers') || '[]');
+            const user = existingUsers.find(u => u.email === email);
+
+            if (!user) {
+                showAlert('Email address not found. Please check your email or register for a new account.', 'danger');
+                return;
+            }
+
+            // Generate and store recovery code
+            const recoveryCode = Math.floor(100000 + Math.random() * 900000).toString();
+            localStorage.setItem('tempRecoveryCode', recoveryCode);
+            localStorage.setItem('tempRecoveryEmail', email);
+            document.getElementById('recoveryCode').textContent = recoveryCode;
+
+            // Simulate sending recovery email
+            document.getElementById('sendRecoveryBtn').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+            document.getElementById('sendRecoveryBtn').disabled = true;
+
+            setTimeout(() => {
+                document.getElementById('step1-email').style.display = 'none';
+                document.getElementById('step2-code').style.display = 'block';
+            }, 1000);
+        });
+
+        document.getElementById('verifyCodeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const code = document.getElementById('verificationCode').value.trim();
+            const storedCode = localStorage.getItem('tempRecoveryCode');
+
+            if (code === storedCode) {
+                document.getElementById('step2-code').style.display = 'none';
+                document.getElementById('step3-reset').style.display = 'block';
+            } else {
+                showAlert('Invalid verification code. Please check the code and try again.', 'danger');
+            }
+        });
+
+        document.getElementById('resetPasswordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const newPassword = document.getElementById('newPassword').value.trim();
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value.trim();
+            const recoveryEmail = localStorage.getItem('tempRecoveryEmail');
+
+            if (newPassword !== confirmNewPassword) {
+                showAlert('Passwords do not match. Please try again.', 'danger');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showAlert('Password must be at least 6 characters long.', 'danger');
+                return;
+            }
+
+            // Update password in localStorage
+            const existingUsers = JSON.parse(localStorage.getItem('studyPortalUsers') || '[]');
+            const userIndex = existingUsers.findIndex(u => u.email === recoveryEmail);
+
+            if (userIndex !== -1) {
+                existingUsers[userIndex].password = newPassword;
+                localStorage.setItem('studyPortalUsers', JSON.stringify(existingUsers));
+
+                // Clean up temporary recovery data
+                localStorage.removeItem('tempRecoveryCode');
+                localStorage.removeItem('tempRecoveryEmail');
+
+                // Show success step
+                document.getElementById('resetPasswordBtn').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
+                document.getElementById('resetPasswordBtn').disabled = true;
+
+                setTimeout(() => {
+                    document.getElementById('step3-reset').style.display = 'none';
+                    document.getElementById('step4-success').style.display = 'block';
+                }, 1000);
+            } else {
+                showAlert('An error occurred. Please try again.', 'danger');
+            }
+        });
+
+        // Resend verification code
+        function resendCode() {
+            const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+            localStorage.setItem('tempRecoveryCode', newCode);
+            document.getElementById('recoveryCode').textContent = newCode;
+
+            showAlert('New verification code generated: ' + newCode, 'info');
+        }
     </script>
 </body>
 </html>
