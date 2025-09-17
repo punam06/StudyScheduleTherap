@@ -32,7 +32,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="sessions.html">Sessions</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="authNav">
                         <a class="nav-link" href="login.html">Login</a>
                     </li>
                 </ul>
@@ -158,6 +158,154 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="auth.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Page-specific authentication and functionality
+        let currentUserSchedules = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize authentication
+            authManager.init();
+
+            // Check if user is logged in, if not redirect to login
+            if (!authManager.isAuthenticated()) {
+                // Show login required content
+                showLoginRequiredState();
+                return;
+            }
+
+            // User is authenticated, load their data
+            loadUserSchedules();
+            showAuthenticatedState();
+        });
+
+        function showLoginRequiredState() {
+            // This is already shown in the HTML by default
+            console.log('User not authenticated - showing login required state');
+        }
+
+        function showAuthenticatedState() {
+            // Hide login required alert and show authenticated content
+            const loginAlert = document.querySelector('.alert-warning');
+            if (loginAlert) {
+                loginAlert.style.display = 'none';
+            }
+
+            // Update page content for authenticated user
+            updateSchedulesContent();
+        }
+
+        function loadUserSchedules() {
+            // Load schedules for the current user
+            currentUserSchedules = authManager.loadUserData('userSchedules', []);
+            updateScheduleStats();
+            displaySchedules();
+        }
+
+        function updateScheduleStats() {
+            const total = currentUserSchedules.length;
+            const completed = currentUserSchedules.filter(s => s.status === 'completed').length;
+            const pending = total - completed;
+            const weeklyHours = currentUserSchedules.reduce((sum, s) => sum + (s.duration || 0), 0) / 60;
+
+            // Update stat cards
+            document.querySelector('.stat-card:nth-child(1) .stat-number').textContent = total;
+            document.querySelector('.stat-card:nth-child(2) .stat-number').textContent = completed;
+            document.querySelector('.stat-card:nth-child(3) .stat-number').textContent = pending;
+            document.querySelector('.stat-card:nth-child(4) .stat-number').textContent = Math.round(weeklyHours) + 'h';
+        }
+
+        function displaySchedules() {
+            const container = document.querySelector('.row:last-child');
+
+            if (currentUserSchedules.length === 0) {
+                // Show empty state for authenticated users
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body text-center py-5">
+                                <i class="fas fa-calendar-plus fa-4x text-primary mb-4"></i>
+                                <h4>Ready to Create Your First Schedule?</h4>
+                                <p class="text-muted mb-4">Start organizing your study time with personalized schedules.</p>
+                                <a href="create-schedule.html" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-plus me-2"></i>Create Schedule
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Display user's schedules
+                let schedulesHtml = '<div class="col-12"><h4 class="mb-4">My Study Schedules</h4></div>';
+                schedulesHtml += '<div class="col-12 mb-3"><a href="create-schedule.html" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add New Schedule</a></div>';
+
+                currentUserSchedules.forEach(schedule => {
+                    const statusBadge = schedule.status === 'completed' ?
+                        '<span class="badge bg-success">Completed</span>' :
+                        '<span class="badge bg-warning">Pending</span>';
+
+                    schedulesHtml += `
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card schedule-card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title">${schedule.subject}</h5>
+                                        ${statusBadge}
+                                    </div>
+                                    <h6 class="card-subtitle mb-2 text-muted">${schedule.topic || 'General Study'}</h6>
+                                    <p class="card-text">
+                                        <i class="fas fa-calendar me-2"></i>${formatDate(schedule.date)}<br>
+                                        <i class="fas fa-clock me-2"></i>${schedule.time} (${schedule.duration}min)<br>
+                                        <i class="fas fa-flag me-2"></i>Priority: ${schedule.priority}
+                                    </p>
+                                    <div class="d-flex justify-content-between">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="viewSchedule(${schedule.id})">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteSchedule(${schedule.id})">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = schedulesHtml;
+            }
+        }
+
+        function updateSchedulesContent() {
+            // Replace the empty state with authenticated user content
+            displaySchedules();
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function viewSchedule(scheduleId) {
+            const schedule = currentUserSchedules.find(s => s.id === scheduleId);
+            if (schedule) {
+                alert(`Schedule Details:\nSubject: ${schedule.subject}\nTopic: ${schedule.topic}\nDate: ${schedule.date}\nTime: ${schedule.time}\nDuration: ${schedule.duration} minutes\nPriority: ${schedule.priority}`);
+            }
+        }
+
+        function deleteSchedule(scheduleId) {
+            if (confirm('Are you sure you want to delete this schedule?')) {
+                currentUserSchedules = currentUserSchedules.filter(s => s.id !== scheduleId);
+                authManager.saveUserData('userSchedules', currentUserSchedules);
+                loadUserSchedules(); // Reload and refresh display
+                authManager.showAlert('Schedule deleted successfully!', 'success');
+            }
+        }
+    </script>
 </body>
 </html>

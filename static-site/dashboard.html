@@ -229,82 +229,36 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="auth.js"></script>
     <script src="script.js"></script>
     <script>
-        // Authentication and Dashboard Management
-        let isCheckingAuthentication = false; // Prevent multiple simultaneous auth checks
-        let lastAuthCheck = 0; // Prevent too frequent auth checks
-        const AUTH_CHECK_COOLDOWN = 1000; // 1 second cooldown
+        // Dashboard-specific functionality using shared auth system
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize authentication
+            authManager.init();
 
-        function checkAuthenticationState(forceCheck = false) {
-            // Prevent multiple authentication checks from running simultaneously
-            if (isCheckingAuthentication && !forceCheck) return;
-
-            // Prevent too frequent checks unless forced
-            const now = Date.now();
-            if (!forceCheck && (now - lastAuthCheck) < AUTH_CHECK_COOLDOWN) return;
-
-            isCheckingAuthentication = true;
-            lastAuthCheck = now;
-
-            try {
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-                const sessionExpiry = localStorage.getItem('sessionExpiry');
-
-                // Always prioritize existing login state - don't logout unless explicitly told to
-                if (currentUser && isLoggedIn) {
-                    // Check if session has expired (optional - set to 24 hours)
-                    if (sessionExpiry && Date.now() > parseInt(sessionExpiry)) {
-                        // Session expired, but extend it instead of logging out
-                        localStorage.setItem('sessionExpiry', (Date.now() + 24 * 60 * 60 * 1000).toString());
-                        console.log('Session extended automatically');
-                    }
-                    showAuthenticatedDashboard(currentUser);
-                } else if (!currentUser || !isLoggedIn) {
-                    // Only show unauthenticated state if definitely not logged in
-                    showUnauthenticatedDashboard();
-                }
-            } catch (error) {
-                console.error('Auth check error:', error);
-                // On error, don't change authentication state
-            } finally {
-                isCheckingAuthentication = false;
+            // Check authentication and load dashboard content
+            if (authManager.isAuthenticated()) {
+                showAuthenticatedDashboard();
+            } else {
+                showUnauthenticatedDashboard();
             }
-        }
+        });
 
-        function showAuthenticatedDashboard(user) {
+        function showAuthenticatedDashboard() {
+            const currentUser = authManager.getCurrentUser();
+
             // Update welcome message
-            document.getElementById('welcomeMessage').textContent = `Welcome back, ${user.name}!`;
+            document.getElementById('welcomeMessage').textContent = `Welcome back, ${currentUser.name}!`;
             document.getElementById('welcomeSubtext').textContent = `Here's your personalized dashboard`;
 
             // Update user icon
             document.getElementById('userIcon').className = 'fas fa-user-check';
             document.getElementById('userIcon').style.color = '#28a745';
+            document.getElementById('userIcon').style.opacity = '1';
 
-            // Update navigation
-            document.getElementById('authNav').innerHTML = `
-                <div class="dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user me-1"></i>${user.name}
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="viewProfile()">
-                            <i class="fas fa-user me-2"></i>Profile
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" onclick="logout()">
-                            <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </a></li>
-                    </ul>
-                </div>
-            `;
-
-            // Update statistics with user data
-            document.getElementById('totalGroups').textContent = user.totalGroups || 0;
-            document.getElementById('upcomingSessions').textContent = calculateUpcomingSessions(user);
-            document.getElementById('studyHours').textContent = user.studyHours || 0;
-            document.getElementById('currentGPA').textContent = user.gpa ? user.gpa.toFixed(1) : '0.0';
+            // Load user data and update statistics
+            updateUserStatistics(currentUser);
 
             // Show authenticated content, hide login prompt
             document.getElementById('loginPrompt').style.display = 'none';
@@ -312,33 +266,35 @@
             document.getElementById('authenticatedContent').style.display = 'block';
 
             // Update session and group sections with user data
-            updateUserSessions(user);
-            updateUserGroups(user);
+            updateUserSessions(currentUser);
+            updateUserGroups(currentUser);
         }
 
         function showUnauthenticatedDashboard() {
-            // Reset to default state
-            document.getElementById('welcomeMessage').textContent = 'Welcome to Study Portal!';
-            document.getElementById('welcomeSubtext').textContent = 'Please login or register to access your personalized dashboard.';
-
-            // Reset user icon
-            document.getElementById('userIcon').className = 'fas fa-user-circle';
-            document.getElementById('userIcon').style.color = '';
-            document.getElementById('userIcon').style.opacity = '0.7';
-
-            // Reset navigation
-            document.getElementById('authNav').innerHTML = '<a class="nav-link" href="login.html">Login</a>';
-
-            // Show login prompt and feature overview, hide authenticated content
-            document.getElementById('loginPrompt').style.display = 'block';
-            document.getElementById('featureOverview').style.display = 'block';
-            document.getElementById('authenticatedContent').style.display = 'none';
+            // Reset to default state (already shown in HTML)
+            console.log('User not authenticated - showing default dashboard state');
         }
 
-        function calculateUpcomingSessions(user) {
-            const userSchedules = JSON.parse(localStorage.getItem(`userSchedules_${user.id}`) || '[]');
+        function updateUserStatistics(user) {
+            const userSchedules = authManager.loadUserData('userSchedules', []);
+            const userGroups = authManager.loadUserData('userGroups', []);
+
+            // Calculate statistics
+            const totalGroups = userGroups.length;
+            const upcomingSessions = calculateUpcomingSessions(userSchedules);
+            const studyHours = userSchedules.reduce((sum, s) => sum + (s.duration || 0), 0) / 60;
+            const currentGPA = user.gpa || 0.0;
+
+            // Update stat cards
+            document.getElementById('totalGroups').textContent = totalGroups;
+            document.getElementById('upcomingSessions').textContent = upcomingSessions;
+            document.getElementById('studyHours').textContent = Math.round(studyHours);
+            document.getElementById('currentGPA').textContent = currentGPA.toFixed(1);
+        }
+
+        function calculateUpcomingSessions(schedules) {
             const now = new Date();
-            const upcoming = userSchedules.filter(schedule => {
+            const upcoming = schedules.filter(schedule => {
                 const scheduleDate = new Date(schedule.date + ' ' + schedule.time);
                 return scheduleDate > now && schedule.status !== 'completed';
             });
@@ -346,7 +302,7 @@
         }
 
         function updateUserSessions(user) {
-            const userSchedules = JSON.parse(localStorage.getItem(`userSchedules_${user.id}`) || '[]');
+            const userSchedules = authManager.loadUserData('userSchedules', []);
             const sessionsCard = document.querySelector('.col-md-6:first-child .card-body');
 
             if (userSchedules.length === 0) {
@@ -390,7 +346,7 @@
         }
 
         function updateUserGroups(user) {
-            const userGroups = JSON.parse(localStorage.getItem(`userGroups_${user.id}`) || '[]');
+            const userGroups = authManager.loadUserData('userGroups', []);
             const groupsCard = document.querySelector('.col-md-6:last-child .card-body');
 
             if (userGroups.length === 0) {
@@ -430,54 +386,14 @@
             }
         }
 
+        // Keep existing functions for compatibility
         function logout() {
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('isLoggedIn');
-            showUnauthenticatedDashboard();
-
-            // Show logout success message
-            const alertHtml = `
-                <div class="alert alert-success alert-dismissible fade show position-fixed"
-                     style="top: 20px; right: 20px; z-index: 9999;" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    Successfully logged out!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', alertHtml);
-
-            // Auto-hide alert after 3 seconds
-            setTimeout(() => {
-                const alert = document.querySelector('.alert');
-                if (alert) alert.remove();
-            }, 3000);
+            authManager.logout();
         }
 
         function viewProfile() {
-            alert('Profile functionality coming soon!');
+            authManager.viewProfile();
         }
-
-        // Initialize dashboard on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            checkAuthenticationState(true); // Force initial check
-        });
-
-        // Completely disable storage event listener to prevent tab switching issues
-        // Only manual logout will trigger authentication state changes
-
-        // Prevent any visibility or focus events from triggering auth checks
-        document.addEventListener('visibilitychange', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        });
-
-        window.addEventListener('focus', function(e) {
-            // Don't check authentication on focus - maintain current state
-        });
-
-        window.addEventListener('blur', function(e) {
-            // Don't check authentication on blur - maintain current state
-        });
     </script>
 </body>
 </html>

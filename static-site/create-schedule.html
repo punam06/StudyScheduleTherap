@@ -23,18 +23,18 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html">
-                            <i class="fas fa-home me-1"></i>Home
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-home me-1"></i>Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="schedules.html">
-                            <i class="fas fa-calendar-alt me-1"></i>My Schedule
+                        <a class="nav-link active" href="schedules.html">
+                            <i class="fas fa-calendar-alt me-1"></i>Schedules
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="groups.html">
-                            <i class="fas fa-users me-1"></i>Study Groups
+                            <i class="fas fa-users me-1"></i>Groups
                         </a>
                     </li>
                     <li class="nav-item">
@@ -42,10 +42,10 @@
                             <i class="fas fa-clock me-1"></i>Sessions
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="ai-dashboard.html">
-                            <i class="fas fa-robot me-1"></i>AI Assistant
-                        </a>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item" id="authNav">
+                        <a class="nav-link" href="login.html">Login</a>
                     </li>
                 </ul>
             </div>
@@ -189,10 +189,19 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="auth.js"></script>
     <script src="script.js"></script>
     <script>
         // Set default date to today
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize authentication
+            authManager.init();
+
+            // Protect this page - redirect to login if not authenticated
+            if (!authManager.protectPage()) {
+                return; // User will be redirected to login
+            }
+
             const today = new Date();
             const dateInput = document.getElementById('date');
             dateInput.value = today.toISOString().split('T')[0];
@@ -205,6 +214,65 @@
             timeInput.value = `${hours}:${minutes}`;
         });
 
+        // Handle schedule form submission
+        function handleScheduleForm(event) {
+            event.preventDefault();
+
+            // Check if user is authenticated
+            if (!authManager.isAuthenticated()) {
+                authManager.showAlert('Please login to create schedules.', 'danger');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Get form data
+            const formData = new FormData(event.target);
+            const scheduleData = {
+                id: Date.now(), // Generate unique ID
+                subject: formData.get('subject'),
+                topic: formData.get('topic'),
+                date: formData.get('date'),
+                time: formData.get('time'),
+                duration: parseInt(formData.get('duration')),
+                priority: formData.get('priority'),
+                notes: formData.get('notes') || '',
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+
+            // Validate required fields
+            if (!scheduleData.subject || !scheduleData.topic || !scheduleData.date ||
+                !scheduleData.time || !scheduleData.duration || !scheduleData.priority) {
+                authManager.showAlert('Please fill in all required fields.', 'danger');
+                return;
+            }
+
+            // Load existing schedules and add new one
+            const existingSchedules = authManager.loadUserData('userSchedules', []);
+            existingSchedules.push(scheduleData);
+
+            // Save to user's data
+            const saved = authManager.saveUserData('userSchedules', existingSchedules);
+
+            if (saved) {
+                authManager.showAlert('Schedule created successfully!', 'success');
+                // Redirect to schedules page after a short delay
+                setTimeout(() => {
+                    window.location.href = 'schedules.html';
+                }, 1500);
+            } else {
+                authManager.showAlert('Failed to create schedule. Please try again.', 'danger');
+            }
+        }
+
+        // Update the form onsubmit to use the new function
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('schedule-form');
+            if (form) {
+                form.onsubmit = handleScheduleForm;
+            }
+        });
+
         function updateAIRecommendations() {
             const subject = document.getElementById('subject').value;
             const time = document.getElementById('time').value;
@@ -212,7 +280,7 @@
 
             if (subject && time) {
                 const hour = parseInt(time.split(':')[0]);
-                const recommendations = StudyPortal.generateAIRecommendations(subject, hour);
+                const recommendations = generateAIRecommendations(subject, hour);
 
                 recommendationsDiv.innerHTML = `
                     <div class="text-start">
@@ -227,6 +295,43 @@
             } else {
                 recommendationsDiv.style.display = 'none';
             }
+        }
+
+        // AI Recommendations Generator (moved from script.js for this page)
+        function generateAIRecommendations(subject, currentTime = new Date().getHours()) {
+            const recommendations = {
+                Mathematics: {
+                    morning: "Morning is ideal for mathematical concepts. Start with problem-solving exercises.",
+                    afternoon: "Review theory and practice computational problems.",
+                    evening: "Focus on reviewing the day's work and light practice.",
+                    duration: "90-120 minutes with 15-minute breaks",
+                    technique: "Use the Pomodoro technique with active problem solving"
+                },
+                Physics: {
+                    morning: "Perfect time for conceptual understanding and theory.",
+                    afternoon: "Ideal for practical problems and laboratory work.",
+                    evening: "Review formulas and concepts, avoid complex calculations.",
+                    duration: "75-90 minutes with regular breaks",
+                    technique: "Combine visual learning with mathematical problem solving"
+                },
+                Programming: {
+                    morning: "Best time for learning new concepts and complex algorithms.",
+                    afternoon: "Great for coding practice and project work.",
+                    evening: "Code review, debugging, and light practice.",
+                    duration: "120-180 minutes with frequent breaks",
+                    technique: "Learn by doing - practice coding while learning theory"
+                }
+            };
+
+            const timeOfDay = currentTime < 12 ? 'morning' : currentTime < 17 ? 'afternoon' : 'evening';
+            const subjectRec = recommendations[subject] || recommendations['Programming'];
+
+            return {
+                timeAdvice: subjectRec[timeOfDay],
+                duration: subjectRec.duration,
+                technique: subjectRec.technique,
+                efficiency: Math.floor(Math.random() * 20) + 80 // Mock efficiency score
+            };
         }
     </script>
 </body>
