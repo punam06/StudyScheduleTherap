@@ -233,31 +233,41 @@
     <script>
         // Authentication and Dashboard Management
         let isCheckingAuthentication = false; // Prevent multiple simultaneous auth checks
+        let lastAuthCheck = 0; // Prevent too frequent auth checks
+        const AUTH_CHECK_COOLDOWN = 1000; // 1 second cooldown
 
-        function checkAuthenticationState() {
+        function checkAuthenticationState(forceCheck = false) {
             // Prevent multiple authentication checks from running simultaneously
-            if (isCheckingAuthentication) return;
+            if (isCheckingAuthentication && !forceCheck) return;
+
+            // Prevent too frequent checks unless forced
+            const now = Date.now();
+            if (!forceCheck && (now - lastAuthCheck) < AUTH_CHECK_COOLDOWN) return;
+
             isCheckingAuthentication = true;
+            lastAuthCheck = now;
 
             try {
                 const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
                 const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
                 const sessionExpiry = localStorage.getItem('sessionExpiry');
 
-                // Check if session has expired (optional - set to 24 hours)
-                if (sessionExpiry && Date.now() > parseInt(sessionExpiry)) {
-                    // Session expired, but don't auto-logout - just refresh it
-                    if (currentUser && isLoggedIn) {
-                        // Extend session by 24 hours
-                        localStorage.setItem('sessionExpiry', (Date.now() + 24 * 60 * 60 * 1000).toString());
-                    }
-                }
-
+                // Always prioritize existing login state - don't logout unless explicitly told to
                 if (currentUser && isLoggedIn) {
+                    // Check if session has expired (optional - set to 24 hours)
+                    if (sessionExpiry && Date.now() > parseInt(sessionExpiry)) {
+                        // Session expired, but extend it instead of logging out
+                        localStorage.setItem('sessionExpiry', (Date.now() + 24 * 60 * 60 * 1000).toString());
+                        console.log('Session extended automatically');
+                    }
                     showAuthenticatedDashboard(currentUser);
-                } else {
+                } else if (!currentUser || !isLoggedIn) {
+                    // Only show unauthenticated state if definitely not logged in
                     showUnauthenticatedDashboard();
                 }
+            } catch (error) {
+                console.error('Auth check error:', error);
+                // On error, don't change authentication state
             } finally {
                 isCheckingAuthentication = false;
             }
@@ -449,37 +459,25 @@
 
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', function() {
-            checkAuthenticationState();
+            checkAuthenticationState(true); // Force initial check
         });
 
-        // Listen for storage changes (only for actual logout from other tabs)
-        window.addEventListener('storage', function(e) {
-            // Only react to storage changes from other tabs, not our own changes
-            if ((e.key === 'currentUser' || e.key === 'isLoggedIn') && e.newValue === null) {
-                // User was logged out from another tab
-                checkAuthenticationState();
-            } else if (e.key === 'currentUser' && e.newValue && !localStorage.getItem('currentUser')) {
-                // User logged in from another tab
-                checkAuthenticationState();
-            }
+        // Completely disable storage event listener to prevent tab switching issues
+        // Only manual logout will trigger authentication state changes
+
+        // Prevent any visibility or focus events from triggering auth checks
+        document.addEventListener('visibilitychange', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
         });
 
-        // Prevent tab switching from causing logout
-        document.addEventListener('visibilitychange', function() {
-            // Don't trigger authentication check on tab visibility changes
-            // This prevents automatic logout when switching tabs
+        window.addEventListener('focus', function(e) {
+            // Don't check authentication on focus - maintain current state
         });
 
-        // Add session persistence check every 30 seconds (optional)
-        setInterval(function() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
-            // Only update if there's a mismatch in current state
-            if (currentUser && isLoggedIn && document.getElementById('welcomeMessage').textContent.includes('Welcome to Study Portal!')) {
-                showAuthenticatedDashboard(currentUser);
-            }
-        }, 30000);
+        window.addEventListener('blur', function(e) {
+            // Don't check authentication on blur - maintain current state
+        });
     </script>
 </body>
 </html>
