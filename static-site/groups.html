@@ -49,93 +49,112 @@
     </div>
 
     <div class="container mt-4">
-        <!-- Login Required Alert -->
-        <div class="alert alert-warning text-center">
-            <h5><i class="fas fa-lock me-2"></i>Login Required</h5>
-            <p class="mb-3">Please login or register to view and join study groups.</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a href="register.html" class="btn btn-primary">
-                    <i class="fas fa-user-plus me-2"></i>Register
-                </a>
-                <a href="login.html" class="btn btn-outline-primary">
-                    <i class="fas fa-sign-in-alt me-2"></i>Login
-                </a>
-            </div>
-        </div>
+        <!-- Alert Messages -->
+        <div id="alertContainer"></div>
 
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div class="stat-icon text-primary">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-number">0</div>
-                    <div class="text-muted">Total Groups</div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div class="stat-icon text-success">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-number">0</div>
-                    <div class="text-muted">Active Groups</div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div class="stat-icon text-info">
-                        <i class="fas fa-user-friends"></i>
-                    </div>
-                    <div class="stat-number">0</div>
-                    <div class="text-muted">Total Members</div>
+        <!-- Login Required Alert - Only show when not logged in -->
+        <div class="login-required-section" id="loginRequiredSection">
+            <div class="alert alert-warning text-center">
+                <h5><i class="fas fa-lock me-2"></i>Login Required</h5>
+                <p class="mb-3">Please login or register to view and join study groups.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="register.html" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-2"></i>Register
+                    </a>
+                    <a href="login.html" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Empty State -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body text-center py-5">
-                        <i class="fas fa-users-slash fa-4x text-muted mb-4"></i>
-                        <h4 class="text-muted">No Study Groups Available</h4>
-                        <p class="text-muted mb-4">Login to create and join study groups with other students.</p>
-                        <div class="d-flex justify-content-center gap-3">
-                            <a href="login.html" class="btn btn-primary">
-                                <i class="fas fa-sign-in-alt me-2"></i>Login to Continue
-                            </a>
+        <!-- Groups Content - Only shown when logged in -->
+        <div id="groupsContent" style="display: none;">
+            <!-- Action Button -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">My Study Groups</h2>
+                <a href="create-group.html" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Create New Group
+                </a>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon text-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number" id="totalGroups">0</div>
+                        <div class="text-muted">Total Groups</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon text-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-number" id="activeGroups">0</div>
+                        <div class="text-muted">Active Groups</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-icon text-info">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <div class="stat-number" id="totalMembers">0</div>
+                        <div class="text-muted">Total Members</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Groups List -->
+            <div class="row mb-4" id="groupsList">
+                <!-- Empty state shown when no groups exist -->
+                <div class="col-12 empty-state-container" id="emptyStateContainer">
+                    <div class="card">
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                            <h3>No Study Groups Yet</h3>
+                            <p class="text-muted mb-4">Create your first study group or join an existing one.</p>
+                            <div class="d-flex justify-content-center gap-3">
+                                <a href="create-group.html" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Create Group
+                                </a>
+                                <button class="btn btn-outline-primary" id="browseGroupsBtn">
+                                    <i class="fas fa-search me-2"></i>Browse Groups
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Features Preview -->
-        <div class="row mt-5">
-            <div class="col-md-12">
-                <h3 class="text-center mb-4">Study Group Features</h3>
+                <!-- Group cards will be added here by JavaScript -->
             </div>
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
-                    <h5>Create Groups</h5>
-                    <p class="text-muted">Start your own study group and invite classmates</p>
+
+            <!-- Public Groups Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-globe me-2"></i>Public Study Groups
+                        </h5>
+                        <div class="input-group" style="max-width: 300px;">
+                            <input type="text" class="form-control" placeholder="Search groups..." id="groupSearch">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-search fa-3x text-success mb-3"></i>
-                    <h5>Find Groups</h5>
-                    <p class="text-muted">Search and join existing study groups by subject</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-calendar-check fa-3x text-info mb-3"></i>
-                    <h5>Schedule Sessions</h5>
-                    <p class="text-muted">Plan and organize group study sessions</p>
+                <div class="card-body">
+                    <div class="row" id="publicGroupsList">
+                        <!-- Public groups will be loaded here -->
+                        <div class="col-12 text-center py-4 text-muted" id="noPublicGroupsMessage">
+                            <i class="fas fa-info-circle me-2"></i>No public groups available at the moment.
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -152,10 +171,326 @@
     <script src="global-auth.js"></script>
     <script src="script.js"></script>
     <script>
-        // Page-specific functionality for groups - authentication handled by global-auth.js
+        // Page-specific functionality for groups
         document.addEventListener('DOMContentLoaded', function() {
-            // StudyAuth.init() is automatically called by global-auth.js
-            console.log('Groups page loaded - authentication handled by global-auth.js');
+            // Check if user is logged in
+            const isLoggedIn = StudyAuth.isLoggedIn();
+            console.log('Authentication status:', isLoggedIn ? 'Logged in' : 'Not logged in');
+
+            // Toggle sections based on login status
+            const loginRequiredSection = document.getElementById('loginRequiredSection');
+            const groupsContent = document.getElementById('groupsContent');
+
+            if (isLoggedIn) {
+                // User is logged in - show groups
+                loginRequiredSection.style.display = 'none';
+                groupsContent.style.display = 'block';
+
+                // Load user's groups
+                loadUserGroups();
+            } else {
+                // User is not logged in - show login required
+                loginRequiredSection.style.display = 'block';
+                groupsContent.style.display = 'none';
+            }
+
+            // Function to load user's groups from localStorage
+            function loadUserGroups() {
+                // Get user groups from localStorage
+                const groups = StudyAuth.loadUserData('userGroups', []);
+
+                // Update statistics
+                updateGroupStats(groups);
+
+                // Populate groups list
+                populateGroupsList(groups);
+
+                // Load public groups
+                loadPublicGroups();
+            }
+
+            // Update group statistics
+            function updateGroupStats(groups) {
+                const totalElement = document.getElementById('totalGroups');
+                const activeElement = document.getElementById('activeGroups');
+                const membersElement = document.getElementById('totalMembers');
+
+                // Count groups and members
+                const totalCount = groups.length;
+                let activeCount = 0;
+                let totalMembers = 0;
+
+                groups.forEach(group => {
+                    if (group.status === 'active') {
+                        activeCount++;
+                    }
+
+                    // Count members (including the creator)
+                    const memberCount = (group.members ? group.members.length : 0) + 1;
+                    totalMembers += memberCount;
+                });
+
+                // Update UI elements
+                totalElement.textContent = totalCount;
+                activeElement.textContent = activeCount;
+                membersElement.textContent = totalMembers;
+            }
+
+            // Populate groups list
+            function populateGroupsList(groups) {
+                const groupsList = document.getElementById('groupsList');
+                const emptyStateContainer = document.getElementById('emptyStateContainer');
+
+                // Handle empty state
+                if (groups.length === 0) {
+                    emptyStateContainer.style.display = 'block';
+                    return;
+                }
+
+                // Hide empty state and clear previous groups
+                emptyStateContainer.style.display = 'none';
+
+                // Remove any existing group cards (except the empty state container)
+                Array.from(groupsList.children).forEach(child => {
+                    if (!child.classList.contains('empty-state-container')) {
+                        child.remove();
+                    }
+                });
+
+                // Sort groups by creation date (newest first)
+                groups.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                // Add cards for each group
+                groups.forEach(group => {
+                    const groupCard = createGroupCard(group);
+                    groupsList.appendChild(groupCard);
+                });
+            }
+
+            // Create a card for a group
+            function createGroupCard(group) {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-4 mb-4';
+
+                // Status badge
+                const statusBadge = group.status === 'active'
+                    ? '<span class="badge bg-success">Active</span>'
+                    : '<span class="badge bg-secondary">Inactive</span>';
+
+                // Member count
+                const memberCount = (group.members ? group.members.length : 0) + 1;
+
+                // Format creation date
+                const createdAt = group.createdAt ? new Date(group.createdAt).toLocaleDateString() : 'Unknown';
+
+                col.innerHTML = `
+                    <div class="card h-100 group-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">${group.name}</h5>
+                            ${statusBadge}
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small">
+                                <i class="fas fa-graduation-cap me-1"></i>${group.subject || 'General Study'}
+                            </p>
+                            <p>${group.description || 'No description provided.'}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <span class="badge bg-light text-dark">
+                                        <i class="fas fa-users me-1"></i>${memberCount} member${memberCount !== 1 ? 's' : ''}
+                                    </span>
+                                </div>
+                                <small class="text-muted">Created: ${createdAt}</small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <div class="d-grid">
+                                <button class="btn btn-primary view-group" data-id="${group.id}">
+                                    <i class="fas fa-eye me-2"></i>View Group
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Add event listener for view button
+                col.querySelector('.view-group').addEventListener('click', function() {
+                    viewGroup(group.id);
+                });
+
+                return col;
+            }
+
+            // Load public groups
+            function loadPublicGroups() {
+                const publicGroupsList = document.getElementById('publicGroupsList');
+                const noPublicGroupsMessage = document.getElementById('noPublicGroupsMessage');
+
+                // For demo purposes, create some sample public groups
+                const sampleGroups = [
+                    {
+                        id: 'public1',
+                        name: 'Mathematics Study Group',
+                        subject: 'Mathematics',
+                        description: 'Open group for discussing calculus, algebra, and statistics.',
+                        members: ['user1', 'user2', 'user3', 'user4'],
+                        status: 'active',
+                        createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+                        isPublic: true
+                    },
+                    {
+                        id: 'public2',
+                        name: 'Computer Science Club',
+                        subject: 'Computer Science',
+                        description: 'Programming, algorithms and software development discussions.',
+                        members: ['user1', 'user5', 'user6'],
+                        status: 'active',
+                        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                        isPublic: true
+                    },
+                    {
+                        id: 'public3',
+                        name: 'Physics Study Circle',
+                        subject: 'Physics',
+                        description: 'Mechanics, electromagnetism, and quantum physics study group.',
+                        members: ['user7', 'user8'],
+                        status: 'active',
+                        createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+                        isPublic: true
+                    }
+                ];
+
+                // Check if we have public groups
+                if (sampleGroups.length === 0) {
+                    noPublicGroupsMessage.style.display = 'block';
+                    return;
+                }
+
+                // Hide no groups message
+                noPublicGroupsMessage.style.display = 'none';
+
+                // Clear previous public groups
+                publicGroupsList.innerHTML = '';
+
+                // Add cards for each public group
+                sampleGroups.forEach(group => {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-6 col-lg-4 mb-4';
+
+                    // Member count
+                    const memberCount = (group.members ? group.members.length : 0) + 1;
+
+                    col.innerHTML = `
+                        <div class="card h-100 group-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">${group.name}</h5>
+                                <span class="badge bg-info">Public</span>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small">
+                                    <i class="fas fa-graduation-cap me-1"></i>${group.subject || 'General Study'}
+                                </p>
+                                <p>${group.description || 'No description provided.'}</p>
+                                <div class="mt-3">
+                                    <span class="badge bg-light text-dark">
+                                        <i class="fas fa-users me-1"></i>${memberCount} members
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="d-grid">
+                                    <button class="btn btn-outline-primary join-group" data-id="${group.id}">
+                                        <i class="fas fa-plus me-2"></i>Join Group
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add event listener for join button
+                    col.querySelector('.join-group').addEventListener('click', function() {
+                        joinGroup(group.id);
+                    });
+
+                    publicGroupsList.appendChild(col);
+                });
+            }
+
+            // View group details
+            function viewGroup(groupId) {
+                // In a full implementation, this would navigate to a group detail page
+                // For now, just show a message
+                StudyAuth.showMessage(`Viewing group with ID: ${groupId}`, 'info');
+            }
+
+            // Join a public group
+            function joinGroup(groupId) {
+                // Get existing user groups
+                const userGroups = StudyAuth.loadUserData('userGroups', []);
+
+                // Check if already a member
+                if (userGroups.some(g => g.id === groupId)) {
+                    StudyAuth.showMessage('You are already a member of this group.', 'warning');
+                    return;
+                }
+
+                // For demo purposes, create a new group object based on the public group
+                const newGroup = {
+                    id: groupId,
+                    name: `Joined Group ${groupId.replace('public', '')}`,
+                    subject: ['Mathematics', 'Computer Science', 'Physics'][parseInt(groupId.replace('public', '')) - 1],
+                    description: 'You have joined this public study group.',
+                    members: [],
+                    status: 'active',
+                    createdAt: new Date().toISOString(),
+                    joinedAt: new Date().toISOString()
+                };
+
+                // Add to user's groups
+                userGroups.push(newGroup);
+
+                // Save updated groups
+                if (StudyAuth.saveUserData('userGroups', userGroups)) {
+                    StudyAuth.showMessage('Successfully joined the group!', 'success');
+
+                    // Reload user groups to update the UI
+                    loadUserGroups();
+                } else {
+                    StudyAuth.showMessage('Failed to join group.', 'danger');
+                }
+            }
+
+            // Browse groups button event listener
+            const browseGroupsBtn = document.getElementById('browseGroupsBtn');
+            if (browseGroupsBtn) {
+                browseGroupsBtn.addEventListener('click', function() {
+                    // Scroll to public groups section
+                    document.querySelector('.card-header .fa-globe').closest('.card').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            }
+
+            // Search functionality
+            const searchInput = document.getElementById('groupSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const publicGroupCards = document.querySelectorAll('#publicGroupsList .group-card');
+
+                    publicGroupCards.forEach(card => {
+                        const groupName = card.querySelector('.card-header h5').textContent.toLowerCase();
+                        const groupSubject = card.querySelector('.text-muted.small').textContent.toLowerCase();
+                        const groupDescription = card.querySelector('.card-body p:nth-child(2)').textContent.toLowerCase();
+
+                        const matchesSearch = groupName.includes(searchTerm) ||
+                                            groupSubject.includes(searchTerm) ||
+                                            groupDescription.includes(searchTerm);
+
+                        card.closest('.col-md-6').style.display = matchesSearch ? 'block' : 'none';
+                    });
+                });
+            }
         });
     </script>
 </body>

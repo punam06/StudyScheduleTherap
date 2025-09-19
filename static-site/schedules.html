@@ -49,102 +49,121 @@
     </div>
 
     <div class="container mt-4">
-        <!-- Login Required Alert -->
-        <div class="alert alert-warning text-center">
-            <h5><i class="fas fa-lock me-2"></i>Login Required</h5>
-            <p class="mb-3">Please login or register to create and manage your study schedules.</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a href="register.html" class="btn btn-primary">
-                    <i class="fas fa-user-plus me-2"></i>Register
-                </a>
-                <a href="login.html" class="btn btn-outline-primary">
-                    <i class="fas fa-sign-in-alt me-2"></i>Login
-                </a>
-            </div>
-        </div>
+        <!-- Alert Messages -->
+        <div id="alertContainer"></div>
 
-        <!-- Statistics Cards with 0 values -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-primary">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <div class="stat-number">0</div>
-                    <div class="text-muted">Total Schedules</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-success">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-number">0</div>
-                    <div class="text-muted">Completed</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-warning">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-number">0</div>
-                    <div class="text-muted">Pending</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-info">
-                        <i class="fas fa-hourglass-half"></i>
-                    </div>
-                    <div class="stat-number">0h</div>
-                    <div class="text-muted">Weekly Hours</div>
+        <!-- Login Required Alert - Only show when not logged in -->
+        <div class="login-required-section" id="loginRequiredSection">
+            <div class="alert alert-warning text-center">
+                <h5><i class="fas fa-lock me-2"></i>Login Required</h5>
+                <p class="mb-3">Please login or register to create and manage your study schedules.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="register.html" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-2"></i>Register
+                    </a>
+                    <a href="login.html" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Empty State -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body text-center py-5">
-                        <i class="fas fa-calendar-times fa-4x text-muted mb-4"></i>
-                        <h4 class="text-muted">No Study Schedules Created</h4>
-                        <p class="text-muted mb-4">Login to create personalized study schedules and track your progress.</p>
-                        <div class="d-flex justify-content-center gap-3">
-                            <a href="login.html" class="btn btn-primary">
-                                <i class="fas fa-sign-in-alt me-2"></i>Login to Continue
-                            </a>
+        <!-- Schedule Content - Only shown when logged in -->
+        <div id="scheduleContent" style="display: none;">
+            <!-- Action Button -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">My Study Schedules</h2>
+                <a href="create-schedule.html" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Create New Schedule
+                </a>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon text-primary">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="stat-number" id="totalSchedules">0</div>
+                        <div class="text-muted">Total Schedules</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon text-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-number" id="completedSchedules">0</div>
+                        <div class="text-muted">Completed</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon text-warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-number" id="pendingSchedules">0</div>
+                        <div class="text-muted">Pending</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon text-info">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="stat-number" id="weeklyHours">0h</div>
+                        <div class="text-muted">Weekly Hours</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule List -->
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>All Schedules
+                        </h5>
+                        <div class="input-group" style="max-width: 300px;">
+                            <input type="text" class="form-control" placeholder="Search schedules..." id="scheduleSearch">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Features Preview -->
-        <div class="row mt-5">
-            <div class="col-md-12">
-                <h3 class="text-center mb-4">Schedule Management Features</h3>
-            </div>
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-plus-square fa-3x text-primary mb-3"></i>
-                    <h5>Create Schedules</h5>
-                    <p class="text-muted">Build personalized study plans for your subjects</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-robot fa-3x text-success mb-3"></i>
-                    <h5>AI Optimization</h5>
-                    <p class="text-muted">Get AI-powered schedule recommendations</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-chart-bar fa-3x text-info mb-3"></i>
-                    <h5>Progress Tracking</h5>
-                    <p class="text-muted">Monitor your study goals and achievements</p>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Subject</th>
+                                    <th>Start Date</th>
+                                    <th>Duration</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scheduleTableBody">
+                                <!-- Schedules will be loaded here by JS -->
+                                <tr class="no-schedules-row">
+                                    <td colspan="7" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-calendar-plus fa-3x mb-3 text-muted"></i>
+                                            <h5>No schedules found</h5>
+                                            <p class="text-muted">Create your first study schedule to get started</p>
+                                            <a href="create-schedule.html" class="btn btn-primary">
+                                                <i class="fas fa-plus me-2"></i>Create Schedule
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -161,17 +180,250 @@
     <script src="global-auth.js"></script>
     <script src="script.js"></script>
     <script>
-        // Page-specific functionality for schedules - authentication handled by global-auth.js
+        // Page-specific functionality for schedules
         document.addEventListener('DOMContentLoaded', function() {
-            // StudyAuth.init() is automatically called by global-auth.js
-            console.log('Schedules page loaded - authentication handled by global-auth.js');
+            // Check if user is logged in
+            const isLoggedIn = StudyAuth.isLoggedIn();
+            console.log('Authentication status:', isLoggedIn ? 'Logged in' : 'Not logged in');
 
-            // Add any schedule-specific functionality here if needed
-            // The global-auth.js will automatically:
-            // 1. Check if user is logged in
-            // 2. Hide login alerts if authenticated
-            // 3. Show user schedules if available
-            // 4. Update navigation with user info
+            // Toggle sections based on login status
+            const loginRequiredSection = document.getElementById('loginRequiredSection');
+            const scheduleContent = document.getElementById('scheduleContent');
+
+            if (isLoggedIn) {
+                // User is logged in - show schedules
+                loginRequiredSection.style.display = 'none';
+                scheduleContent.style.display = 'block';
+
+                // Load user's schedules
+                loadUserSchedules();
+            } else {
+                // User is not logged in - show login required
+                loginRequiredSection.style.display = 'block';
+                scheduleContent.style.display = 'none';
+            }
+
+            // Function to load user's schedules from localStorage
+            function loadUserSchedules() {
+                // Get user schedules from localStorage
+                const schedules = StudyAuth.loadUserData('userSchedules', []);
+
+                // Update statistics
+                updateScheduleStats(schedules);
+
+                // Populate schedules table
+                populateSchedulesTable(schedules);
+            }
+
+            // Update schedule statistics
+            function updateScheduleStats(schedules) {
+                const totalElement = document.getElementById('totalSchedules');
+                const completedElement = document.getElementById('completedSchedules');
+                const pendingElement = document.getElementById('pendingSchedules');
+                const weeklyHoursElement = document.getElementById('weeklyHours');
+
+                // Count schedules by status
+                const totalCount = schedules.length;
+                let completedCount = 0;
+                let pendingCount = 0;
+                let weeklyMinutes = 0;
+
+                schedules.forEach(schedule => {
+                    if (schedule.status === 'completed') {
+                        completedCount++;
+                    } else {
+                        pendingCount++;
+
+                        // Calculate weekly hours
+                        const daysPerWeek = schedule.studyDays ? schedule.studyDays.length : 0;
+                        const dailyDuration = schedule.duration || 0;
+                        weeklyMinutes += daysPerWeek * dailyDuration;
+                    }
+                });
+
+                // Update UI elements
+                totalElement.textContent = totalCount;
+                completedElement.textContent = completedCount;
+                pendingElement.textContent = pendingCount;
+                weeklyHoursElement.textContent = Math.round(weeklyMinutes / 60) + 'h';
+            }
+
+            // Populate schedules table
+            function populateSchedulesTable(schedules) {
+                const tableBody = document.getElementById('scheduleTableBody');
+
+                // Clear existing rows
+                tableBody.innerHTML = '';
+
+                if (schedules.length === 0) {
+                    // Show empty state
+                    tableBody.innerHTML = `
+                        <tr class="no-schedules-row">
+                            <td colspan="7" class="text-center py-5">
+                                <div class="empty-state">
+                                    <i class="fas fa-calendar-plus fa-3x mb-3 text-muted"></i>
+                                    <h5>No schedules found</h5>
+                                    <p class="text-muted">Create your first study schedule to get started</p>
+                                    <a href="create-schedule.html" class="btn btn-primary">
+                                        <i class="fas fa-plus me-2"></i>Create Schedule
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                // Sort schedules by creation date (newest first)
+                schedules.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                // Add rows for each schedule
+                schedules.forEach(schedule => {
+                    const row = document.createElement('tr');
+
+                    // Status badge class
+                    const statusClass = schedule.status === 'completed' ? 'bg-success' : 'bg-warning';
+                    const statusText = schedule.status === 'completed' ? 'Completed' : 'Pending';
+
+                    // Priority badge class
+                    const priorityClass = {
+                        'low': 'bg-info',
+                        'medium': 'bg-primary',
+                        'high': 'bg-warning',
+                        'urgent': 'bg-danger'
+                    }[schedule.priority] || 'bg-secondary';
+
+                    const priorityText = schedule.priority ? schedule.priority.charAt(0).toUpperCase() + schedule.priority.slice(1) : 'Medium';
+
+                    // Format the date
+                    const startDate = schedule.startDate ? new Date(schedule.startDate).toLocaleDateString() : 'N/A';
+
+                    // Format the duration
+                    const duration = schedule.duration ? `${schedule.duration} min` : 'N/A';
+
+                    row.innerHTML = `
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <div class="fw-bold">${schedule.title}</div>
+                                    <div class="small text-muted">${schedule.subject || 'No subject'}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${schedule.subject || 'N/A'}</td>
+                        <td>${startDate}</td>
+                        <td>${duration}</td>
+                        <td>
+                            <span class="badge ${priorityClass}">${priorityText}</span>
+                        </td>
+                        <td>
+                            <span class="badge ${statusClass}">${statusText}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-primary view-schedule" data-id="${schedule.id}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-success edit-schedule" data-id="${schedule.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger delete-schedule" data-id="${schedule.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+
+                // Add event listeners to action buttons
+                setupActionButtons();
+            }
+
+            // Setup action buttons
+            function setupActionButtons() {
+                // View schedule
+                document.querySelectorAll('.view-schedule').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const scheduleId = this.getAttribute('data-id');
+                        viewSchedule(scheduleId);
+                    });
+                });
+
+                // Edit schedule
+                document.querySelectorAll('.edit-schedule').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const scheduleId = this.getAttribute('data-id');
+                        editSchedule(scheduleId);
+                    });
+                });
+
+                // Delete schedule
+                document.querySelectorAll('.delete-schedule').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const scheduleId = this.getAttribute('data-id');
+                        deleteSchedule(scheduleId);
+                    });
+                });
+            }
+
+            // View schedule details
+            function viewSchedule(scheduleId) {
+                const schedules = StudyAuth.loadUserData('userSchedules', []);
+                const schedule = schedules.find(s => s.id === scheduleId);
+
+                if (schedule) {
+                    // For now, just show details in an alert
+                    StudyAuth.showMessage(`
+                        <strong>${schedule.title}</strong><br>
+                        Subject: ${schedule.subject}<br>
+                        Start Date: ${new Date(schedule.startDate).toLocaleDateString()}<br>
+                        Duration: ${schedule.duration} minutes<br>
+                        ${schedule.description ? 'Description: ' + schedule.description : ''}
+                    `, 'info');
+                }
+            }
+
+            // Edit schedule
+            function editSchedule(scheduleId) {
+                // Redirect to edit page with ID
+                window.location.href = `create-schedule.html?edit=${scheduleId}`;
+            }
+
+            // Delete schedule
+            function deleteSchedule(scheduleId) {
+                if (confirm('Are you sure you want to delete this schedule?')) {
+                    const schedules = StudyAuth.loadUserData('userSchedules', []);
+                    const updatedSchedules = schedules.filter(s => s.id !== scheduleId);
+
+                    if (StudyAuth.saveUserData('userSchedules', updatedSchedules)) {
+                        StudyAuth.showMessage('Schedule deleted successfully.', 'success');
+                        loadUserSchedules(); // Reload the list
+                    } else {
+                        StudyAuth.showMessage('Failed to delete schedule.', 'danger');
+                    }
+                }
+            }
+
+            // Search functionality
+            const searchInput = document.getElementById('scheduleSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const schedules = StudyAuth.loadUserData('userSchedules', []);
+
+                    // Filter schedules by search term
+                    const filteredSchedules = schedules.filter(schedule =>
+                        schedule.title.toLowerCase().includes(searchTerm) ||
+                        (schedule.subject && schedule.subject.toLowerCase().includes(searchTerm)) ||
+                        (schedule.description && schedule.description.toLowerCase().includes(searchTerm))
+                    );
+
+                    // Update table with filtered results
+                    populateSchedulesTable(filteredSchedules);
+                });
+            }
         });
     </script>
 </body>

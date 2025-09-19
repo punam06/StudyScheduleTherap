@@ -10,12 +10,26 @@
         isLoggedIn: function() {
             const currentUser = localStorage.getItem('currentUser');
             const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+            // Also check if session has expired
+            const sessionExpiry = localStorage.getItem('sessionExpiry');
+            const isExpired = sessionExpiry && parseInt(sessionExpiry) < Date.now();
+
+            if (isExpired) {
+                console.log('Session expired, logging out');
+                // Don't actually logout to avoid redirect loops - just return false
+                return false;
+            }
+
             return currentUser && isLoggedIn === 'true';
         },
 
         // Get current user data
         getCurrentUser: function() {
             try {
+                // First check if logged in to avoid parsing invalid data
+                if (!this.isLoggedIn()) return null;
+
                 const userData = localStorage.getItem('currentUser');
                 return userData ? JSON.parse(userData) : null;
             } catch (error) {
@@ -31,6 +45,12 @@
 
             if (this.isLoggedIn()) {
                 const user = this.getCurrentUser();
+                if (!user) {
+                    console.error('User data missing but isLoggedIn is true');
+                    this.logout(false); // Silent logout without redirect
+                    return;
+                }
+
                 authNav.innerHTML = `
                     <div class="dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -67,30 +87,51 @@
         },
 
         // Logout function
-        logout: function() {
+        logout: function(redirect = true) {
             localStorage.removeItem('currentUser');
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('sessionExpiry');
             localStorage.removeItem('redirectAfterLogin');
 
-            // Show logout success message
-            this.showMessage('Successfully logged out!', 'success');
+            if (redirect) {
+                // Show logout success message
+                this.showMessage('Successfully logged out!', 'success');
 
-            // Redirect to home page after a short delay
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1500);
+                // Redirect to home page after a short delay
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } else {
+                // Just update the navigation
+                this.updateNavigation();
+            }
         },
 
         // Protect a page (redirect to login if not authenticated)
         protectPage: function(redirectTo = 'login.html') {
             if (!this.isLoggedIn()) {
+                console.log('User not logged in, redirecting to login page');
+
                 // Store the current page to redirect back after login
-                localStorage.setItem('redirectAfterLogin', window.location.pathname);
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                localStorage.setItem('redirectAfterLogin', currentPage);
+
                 window.location.href = redirectTo;
                 return false;
             }
+
+            // Refresh the session expiry time
+            this.refreshSession();
             return true;
+        },
+
+        // Refresh session expiry
+        refreshSession: function() {
+            if (this.isLoggedIn()) {
+                // Set session expiry to 24 hours from now
+                const expiryTime = Date.now() + (24 * 60 * 60 * 1000);
+                localStorage.setItem('sessionExpiry', expiryTime.toString());
+            }
         },
 
         // Load user-specific data from localStorage
@@ -162,17 +203,36 @@
 
         // Initialize auth on page load
         init: function() {
+            console.log('Initializing authentication system...');
+
             // Update navigation
             this.updateNavigation();
 
+            // Refresh session if logged in
+            this.refreshSession();
+
             // Check for redirect after login
             const redirectUrl = localStorage.getItem('redirectAfterLogin');
-            if (this.isLoggedIn() && redirectUrl && redirectUrl !== window.location.pathname) {
+            console.log('Redirect URL:', redirectUrl);
+
+            if (this.isLoggedIn() && redirectUrl) {
+                console.log('User is logged in and has a redirect URL');
                 localStorage.removeItem('redirectAfterLogin');
-                if (redirectUrl.startsWith('/')) {
-                    window.location.href = redirectUrl.substring(1);
-                } else {
-                    window.location.href = redirectUrl;
+
+                // Don't redirect if already on the target page
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                if (redirectUrl !== currentPage) {
+                    console.log(`Redirecting to ${redirectUrl}`);
+
+                    // Small delay to ensure this happens after other init code
+                    setTimeout(() => {
+                        // Handle paths with or without leading slash
+                        if (redirectUrl.startsWith('/')) {
+                            window.location.href = redirectUrl.substring(1);
+                        } else {
+                            window.location.href = redirectUrl;
+                        }
+                    }, 100);
                 }
             }
         }
