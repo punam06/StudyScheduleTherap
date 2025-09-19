@@ -219,7 +219,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="auth.js"></script>
+    <script src="global-auth.js"></script>
     <script>
         // Client-side login functionality for static site
         document.addEventListener('DOMContentLoaded', function() {
@@ -246,7 +246,7 @@
 
                 // Validate inputs
                 if (!email || !password) {
-                    showAlert('Please fill in all required fields.', 'danger');
+                    StudyAuth.showMessage('Please fill in all required fields.', 'danger');
                     return;
                 }
 
@@ -274,7 +274,7 @@
                         const expiryTime = Date.now() + (24 * 60 * 60 * 1000);
                         localStorage.setItem('sessionExpiry', expiryTime.toString());
 
-                        showAlert('Login successful! Redirecting...', 'success');
+                        StudyAuth.showMessage('Login successful! Redirecting...', 'success');
 
                         // Redirect to dashboard or intended page
                         setTimeout(() => {
@@ -284,7 +284,7 @@
                         }, 1500);
 
                     } else {
-                        showAlert('Invalid email or password. Please try again.', 'danger');
+                        StudyAuth.showMessage('Invalid email or password. Please try again.', 'danger');
                         showLoading(false);
                     }
                 }, 1000);
@@ -305,133 +305,106 @@
                 }
             }
 
-            function showAlert(message, type) {
-                alertContainer.innerHTML = `
-                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
-                        ${message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                `;
-            }
-
             function isValidEmail(email) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 return emailRegex.test(email);
             }
 
-            function generateUserId(email) {
-                // Simple hash function to generate consistent user ID from email
-                let hash = 0;
-                for (let i = 0; i < email.length; i++) {
-                    const char = email.charCodeAt(i);
-                    hash = ((hash << 5) - hash) + char;
-                    hash = hash & hash; // Convert to 32-bit integer
-                }
-                return Math.abs(hash).toString();
-            }
-
             function extractNameFromEmail(email) {
-                // Extract name from email (part before @)
+                // Extract name from email (e.g., john.doe@example.com -> John Doe)
                 const namePart = email.split('@')[0];
-                // Convert to title case
-                return namePart.charAt(0).toUpperCase() + namePart.slice(1).replace(/[._]/g, ' ');
+                return namePart
+                    .split(/[._-]/)
+                    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+                    .join(' ');
             }
 
-            // Password recovery functionality
-            window.showForgotPassword = function() {
-                const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
-                modal.show();
-            };
-
-            // Handle password recovery form
-            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-            if (forgotPasswordForm) {
-                forgotPasswordForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const email = document.getElementById('recoveryEmail').value;
-
-                    if (isValidEmail(email)) {
-                        document.getElementById('step1-email').style.display = 'none';
-                        document.getElementById('step2-code').style.display = 'block';
-
-                        // Generate random recovery code
-                        const code = Math.floor(100000 + Math.random() * 900000).toString();
-                        document.getElementById('recoveryCode').textContent = code;
-                        localStorage.setItem('tempRecoveryCode', code);
-                        localStorage.setItem('tempRecoveryEmail', email);
-                    } else {
-                        alert('Please enter a valid email address.');
-                    }
-                });
+            function generateUserId(email) {
+                // Generate a simple user ID based on email and timestamp
+                return `user_${btoa(email).replace(/[=+/]/g, '').substring(0, 10)}_${Date.now().toString(36)}`;
             }
+        });
 
-            // Handle verification code
-            const verifyCodeForm = document.getElementById('verifyCodeForm');
-            if (verifyCodeForm) {
-                verifyCodeForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const enteredCode = document.getElementById('verificationCode').value;
-                    const correctCode = localStorage.getItem('tempRecoveryCode');
+        // Password recovery functionality
+        let recoveryCode = '123456'; // For demo purposes
 
-                    if (enteredCode === correctCode) {
-                        document.getElementById('step2-code').style.display = 'none';
-                        document.getElementById('step3-reset').style.display = 'block';
-                    } else {
-                        alert('Invalid verification code. Please try again.');
-                    }
-                });
-            }
+        function showForgotPassword() {
+            // Reset all steps
+            document.getElementById('step1-email').style.display = 'block';
+            document.getElementById('step2-code').style.display = 'none';
+            document.getElementById('step3-reset').style.display = 'none';
+            document.getElementById('step4-success').style.display = 'none';
 
-            // Handle password reset
-            const resetPasswordForm = document.getElementById('resetPasswordForm');
-            if (resetPasswordForm) {
-                resetPasswordForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const newPassword = document.getElementById('newPassword').value;
-                    const confirmPassword = document.getElementById('confirmNewPassword').value;
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+            modal.show();
+        }
 
-                    if (newPassword !== confirmPassword) {
-                        alert('Passwords do not match.');
-                        return;
-                    }
+        function showRecoveryCodeStep() {
+            document.getElementById('step1-email').style.display = 'none';
+            document.getElementById('step2-code').style.display = 'block';
 
-                    if (newPassword.length < 6) {
-                        alert('Password must be at least 6 characters long.');
-                        return;
-                    }
+            // Generate a new random code for demo
+            recoveryCode = Math.floor(100000 + Math.random() * 900000).toString();
+            document.getElementById('recoveryCode').textContent = recoveryCode;
+        }
 
-                    // In a real app, you would update the password here
-                    alert('Password reset successful! You can now login with your new password.');
-
-                    // Close modal and reset form
-                    bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal')).hide();
-                    resetRecoveryForm();
-                });
-            }
-
-            function resetRecoveryForm() {
-                document.getElementById('step1-email').style.display = 'block';
+        function verifyCode() {
+            const enteredCode = document.getElementById('verificationCode').value;
+            if (enteredCode === recoveryCode) {
                 document.getElementById('step2-code').style.display = 'none';
-                document.getElementById('step3-reset').style.display = 'none';
-                localStorage.removeItem('tempRecoveryCode');
-                localStorage.removeItem('tempRecoveryEmail');
+                document.getElementById('step3-reset').style.display = 'block';
+            } else {
+                StudyAuth.showMessage('Invalid verification code. Please try again.', 'danger');
+            }
+        }
+
+        function resetPassword() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                StudyAuth.showMessage('Passwords do not match.', 'danger');
+                return;
             }
 
-            window.resendCode = function() {
-                const code = Math.floor(100000 + Math.random() * 900000).toString();
-                document.getElementById('recoveryCode').textContent = code;
-                localStorage.setItem('tempRecoveryCode', code);
-                alert('New verification code sent!');
-            };
+            document.getElementById('step3-reset').style.display = 'none';
+            document.getElementById('step4-success').style.display = 'block';
+        }
 
-            // Check if already logged in
-            if (localStorage.getItem('isLoggedIn') === 'true') {
-                showAlert('You are already logged in. Redirecting to dashboard...', 'info');
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 2000);
-            }
+        function closeModalAndFocusLogin() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+            modal.hide();
+            document.getElementById('email').focus();
+        }
+
+        function resendCode() {
+            // Generate a new code
+            recoveryCode = Math.floor(100000 + Math.random() * 900000).toString();
+            document.getElementById('recoveryCode').textContent = recoveryCode;
+            StudyAuth.showMessage('A new verification code has been sent.', 'info');
+        }
+
+        // Add event listeners for password recovery forms
+        document.addEventListener('DOMContentLoaded', function() {
+            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+            const verifyCodeForm = document.getElementById('verifyCodeForm');
+            const resetPasswordForm = document.getElementById('resetPasswordForm');
+
+            forgotPasswordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                showRecoveryCodeStep();
+            });
+
+            verifyCodeForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                verifyCode();
+            });
+
+            resetPasswordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                resetPassword();
+            });
         });
     </script>
 </body>

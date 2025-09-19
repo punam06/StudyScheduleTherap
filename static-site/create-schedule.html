@@ -296,13 +296,13 @@
 
                 // Validate required fields
                 if (!scheduleData.title || !scheduleData.subject || !scheduleData.startDate || !scheduleData.duration) {
-                    showAlert('Please fill in all required fields.', 'danger');
+                    StudyAuth.showMessage('Please fill in all required fields.', 'danger');
                     return;
                 }
 
                 // Validate study days
                 if (studyDays.length === 0) {
-                    showAlert('Please select at least one study day.', 'danger');
+                    StudyAuth.showMessage('Please select at least one study day.', 'danger');
                     return;
                 }
 
@@ -316,12 +316,12 @@
                     existingSchedules.push(scheduleData);
 
                     if (StudyAuth.saveUserData('userSchedules', existingSchedules)) {
-                        showAlert('Study schedule created successfully!', 'success');
+                        StudyAuth.showMessage('Study schedule created successfully!', 'success');
                         setTimeout(() => {
                             window.location.href = 'schedules.html';
                         }, 1500);
                     } else {
-                        showAlert('Failed to create schedule. Please try again.', 'danger');
+                        StudyAuth.showMessage('Failed to create schedule. Please try again.', 'danger');
                         showLoading(false);
                     }
                 }, 1000);
@@ -341,16 +341,6 @@
                     notLoadingSpan.style.display = 'inline';
                     submitBtn.disabled = false;
                 }
-            }
-
-            function showAlert(message, type) {
-                alertContainer.innerHTML = `
-                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
-                        ${message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                `;
             }
         });
     </script>
