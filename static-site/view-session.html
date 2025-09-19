@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Session - Study Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        .session-header {
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .participant-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .participant-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .session-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .session-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #6f42c1, #e83e8c);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #6f42c1;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #6f42c1;
+        }
+
+        .status-badge {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        .join-button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .join-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .chat-message.own {
+            background: #e3f2fd;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .chat-message.other {
+            background: #f5f5f5;
+            margin-right: auto;
+        }
+
+        .resource-item {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .resource-item:hover {
+            border-color: #007bff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-graduation-cap me-2"></i>Study Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="schedules.html">Schedules</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="groups.html">Groups</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="sessions.html">Sessions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ai-dashboard.html">
+                            <i class="fas fa-robot me-1"></i>AI Assistant
+                        </a>
+                    </li>
+                </ul>
+                <!-- Auth Navigation -->
+                <ul class="navbar-nav" id="authNav">
+                    <!-- Will be populated by auth system -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Alert Container -->
+    <div class="container mt-3">
+        <div id="alertContainer"></div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="container mt-4">
+        <a href="sessions.html" class="btn btn-outline-secondary mb-3">
+            <i class="fas fa-arrow-left me-2"></i>Back to Sessions
+        </a>
+    </div>
+
+    <!-- Session Header -->
+    <div class="container">
+        <div class="session-header" id="sessionHeader">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center mb-3">
+                        <h1 class="mb-0 me-3" id="sessionTitle">Loading...</h1>
+                        <span class="status-badge bg-success text-white" id="sessionStatus">Live</span>
+                    </div>
+                    <p class="lead mb-3" id="sessionDescription">Loading session details...</p>
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h4 id="participantCount">0</h4>
+                            <small>Participants</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 id="sessionDuration">0min</h4>
+                            <small>Duration</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 id="sessionDate">-</h4>
+                            <small>Date</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 id="sessionTime">-</h4>
+                            <small>Time</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-video fa-4x opacity-75"></i>
+                    </div>
+                    <button class="btn btn-light join-button" id="joinSessionButton" onclick="joinSession()">
+                        <i class="fas fa-play me-2"></i>Join Session
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Session Details -->
+            <div class="col-lg-8">
+                <!-- Session Information -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Session Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-book me-2"></i>Subject</h6>
+                                <p id="sessionSubject" class="text-muted">Loading...</p>
+
+                                <h6><i class="fas fa-user-tie me-2"></i>Host</h6>
+                                <p id="sessionHost" class="text-muted">Loading...</p>
+
+                                <h6><i class="fas fa-users me-2"></i>Study Group</h6>
+                                <p id="sessionGroup" class="text-muted">Loading...</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-chart-line me-2"></i>Difficulty Level</h6>
+                                <p id="difficultyLevel" class="text-muted">Loading...</p>
+
+                                <h6><i class="fas fa-link me-2"></i>Meeting Link</h6>
+                                <p id="meetingLink" class="text-muted">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="copyMeetingLink()">
+                                        <i class="fas fa-copy me-1"></i>Copy Link
+                                    </button>
+                                </p>
+
+                                <h6><i class="fas fa-key me-2"></i>Session Code</h6>
+                                <p id="sessionCode" class="text-muted">Loading...</p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h6><i class="fas fa-bullseye me-2"></i>Session Goals</h6>
+                        <div id="sessionGoals" class="text-muted">
+                            Loading session goals...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Session Timeline/Activity -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Session Timeline</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="session-timeline" id="sessionTimeline">
+                            <!-- Timeline items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resources & Materials -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-folder-open me-2"></i>Resources & Materials</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="sessionResources">
+                            <!-- Resources will be populated here -->
+                        </div>
+                        <button class="btn btn-outline-primary" onclick="addResource()">
+                            <i class="fas fa-plus me-2"></i>Add Resource
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Session Chat -->
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-comments me-2"></i>Session Chat</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="sessionChat" style="height: 300px; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 5px; padding: 1rem; background: #f8f9fa;">
+                            <!-- Chat messages will be populated here -->
+                        </div>
+                        <div class="mt-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                                <button class="btn btn-info" onclick="sendMessage()">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Participants -->
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Participants (<span id="participantCountSidebar">0</span>)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="participantsList">
+                            <!-- Participants will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Session Controls -->
+                <div class="card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Session Controls</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-success" id="micButton" onclick="toggleMic()">
+                                <i class="fas fa-microphone me-2"></i>Microphone: ON
+                            </button>
+                            <button class="btn btn-primary" id="cameraButton" onclick="toggleCamera()">
+                                <i class="fas fa-video me-2"></i>Camera: ON
+                            </button>
+                            <button class="btn btn-info" onclick="shareScreen()">
+                                <i class="fas fa-desktop me-2"></i>Share Screen
+                            </button>
+                            <button class="btn btn-warning" onclick="takeNotes()">
+                                <i class="fas fa-sticky-note me-2"></i>Take Notes
+                            </button>
+                            <button class="btn btn-danger" onclick="leaveSession()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Leave Session
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Session Stats -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Session Stats</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <h4 id="elapsedTime" class="text-primary">0:00</h4>
+                                <small class="text-muted">Elapsed Time</small>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <h4 id="remainingTime" class="text-success">90:00</h4>
+                                <small class="text-muted">Remaining</small>
+                            </div>
+                            <div class="col-6">
+                                <h4 id="messagesCount" class="text-warning">0</h4>
+                                <small class="text-muted">Messages</small>
+                            </div>
+                            <div class="col-6">
+                                <h4 id="resourcesCount" class="text-info">0</h4>
+                                <small class="text-muted">Resources</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary" onclick="recordSession()">
+                                <i class="fas fa-record-vinyl me-2"></i>Record Session
+                            </button>
+                            <button class="btn btn-outline-success" onclick="takeScreenshot()">
+                                <i class="fas fa-camera me-2"></i>Screenshot
+                            </button>
+                            <button class="btn btn-outline-info" onclick="inviteParticipants()">
+                                <i class="fas fa-user-plus me-2"></i>Invite Others
+                            </button>
+                            <button class="btn btn-outline-warning" onclick="sessionFeedback()">
+                                <i class="fas fa-star me-2"></i>Rate Session
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Study Portal. Interactive Learning Platform.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let currentSession = null;
+        let currentUser = null;
+        let sessionId = null;
+        let micEnabled = true;
+        let cameraEnabled = true;
+        let sessionStartTime = null;
+        let timerInterval = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (!authManager || !authManager.isAuthenticated()) {
+                showAlert('Please login to view session details.', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return;
+            }
+
+            currentUser = authManager.getCurrentUser();
+
+            // Get session ID from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            sessionId = urlParams.get('id');
+
+            if (!sessionId) {
+                showAlert('Invalid session ID.', 'danger');
+                setTimeout(() => {
+                    window.location.href = 'sessions.html';
+                }, 2000);
+                return;
+            }
+
+            loadSessionDetails();
+            startSessionTimer();
+        });
+
+        function loadSessionDetails() {
+            // Generate sample session data for demonstration
+            currentSession = generateSampleSession(sessionId);
+
+            displaySessionDetails();
+            loadParticipants();
+            loadSessionTimeline();
+            loadSessionResources();
+            loadSessionChat();
+            updateSessionStats();
+        }
+
+        function generateSampleSession(id) {
+            return {
+                id: id,
+                title: 'Advanced Calculus Problem Solving Workshop',
+                subject: 'Mathematics',
+                description: 'Interactive session focusing on advanced calculus techniques, derivative applications, and integral problem solving.',
+                host: 'Dr. Sarah Johnson',
+                group: 'Mathematics Study Circle',
+                date: new Date().toISOString().split('T')[0],
+                time: '19:00',
+                duration: 90,
+                difficulty: 'Advanced',
+                status: 'live',
+                meetingLink: 'https://meet.studyportal.com/session-' + id,
+                sessionCode: 'CALC-' + id.substring(0, 4).toUpperCase(),
+                goals: 'Master derivative rules, solve complex integration problems, and apply calculus concepts to real-world scenarios.',
+                maxParticipants: 15,
+                participants: ['user1', 'user2', 'user3', currentUser.id],
+                createdAt: new Date().toISOString()
+            };
+        }
+
+        function displaySessionDetails() {
+            document.getElementById('sessionTitle').textContent = currentSession.title;
+            document.getElementById('sessionDescription').textContent = currentSession.description;
+            document.getElementById('sessionSubject').textContent = currentSession.subject;
+            document.getElementById('sessionHost').textContent = currentSession.host;
+            document.getElementById('sessionGroup').innerHTML = `<a href="view-group.html?id=1" class="text-decoration-none">${currentSession.group}</a>`;
+            document.getElementById('difficultyLevel').innerHTML = `<span class="badge bg-${getDifficultyColor(currentSession.difficulty)}">${currentSession.difficulty}</span>`;
+            document.getElementById('sessionCode').innerHTML = `<code>${currentSession.sessionCode}</code>`;
+            document.getElementById('sessionGoals').textContent = currentSession.goals;
+
+            // Update header stats
+            document.getElementById('participantCount').textContent = currentSession.participants.length;
+            document.getElementById('participantCountSidebar').textContent = currentSession.participants.length;
+            document.getElementById('sessionDuration').textContent = currentSession.duration + 'min';
+            document.getElementById('sessionDate').textContent = new Date(currentSession.date).toLocaleDateString();
+            document.getElementById('sessionTime').textContent = currentSession.time;
+
+            // Update status badge
+            const statusBadge = document.getElementById('sessionStatus');
+            statusBadge.textContent = currentSession.status.toUpperCase();
+            statusBadge.className = `status-badge bg-${getStatusColor(currentSession.status)} text-white`;
+        }
+
+        function getDifficultyColor(difficulty) {
+            switch(difficulty.toLowerCase()) {
+                case 'beginner': return 'success';
+                case 'intermediate': return 'warning';
+                case 'advanced': return 'danger';
+                default: return 'secondary';
+            }
+        }
+
+        function getStatusColor(status) {
+            switch(status.toLowerCase()) {
+                case 'live': return 'success';
+                case 'scheduled': return 'primary';
+                case 'completed': return 'secondary';
+                case 'cancelled': return 'danger';
+                default: return 'secondary';
+            }
+        }
+
+        function loadParticipants() {
+            const participantsList = document.getElementById('participantsList');
+
+            // Generate sample participants
+            const participants = [
+                { id: 'user1', name: 'Alice Johnson', role: 'Host', avatar: '👩‍🏫', status: 'speaking' },
+                { id: 'user2', name: 'Bob Smith', role: 'Participant', avatar: '👨‍🎓', status: 'listening' },
+                { id: 'user3', name: 'Carol Brown', role: 'Participant', avatar: '👩‍🎓', status: 'muted' },
+                { id: currentUser.id, name: currentUser.name, role: 'Participant', avatar: '👤', status: 'listening' }
+            ];
+
+            participantsList.innerHTML = '';
+            participants.forEach(participant => {
+                const participantCard = document.createElement('div');
+                participantCard.className = 'participant-card p-2 mb-2';
+
+                const statusIcon = getParticipantStatusIcon(participant.status);
+                const statusColor = getParticipantStatusColor(participant.status);
+
+                participantCard.innerHTML = `
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <span style="font-size: 1.5rem;" class="me-2">${participant.avatar}</span>
+                            <div>
+                                <h6 class="mb-0">${participant.name}</h6>
+                                <small class="text-muted">${participant.role}</small>
+                            </div>
+                        </div>
+                        <div class="text-${statusColor}">
+                            ${statusIcon}
+                        </div>
+                    </div>
+                `;
+                participantsList.appendChild(participantCard);
+            });
+        }
+
+        function getParticipantStatusIcon(status) {
+            switch(status) {
+                case 'speaking': return '<i class="fas fa-microphone"></i>';
+                case 'muted': return '<i class="fas fa-microphone-slash"></i>';
+                case 'listening': return '<i class="fas fa-headphones"></i>';
+                default: return '<i class="fas fa-user"></i>';
+            }
+        }
+
+        function getParticipantStatusColor(status) {
+            switch(status) {
+                case 'speaking': return 'success';
+                case 'muted': return 'danger';
+                case 'listening': return 'primary';
+                default: return 'muted';
+            }
+        }
+
+        function loadSessionTimeline() {
+            const timeline = document.getElementById('sessionTimeline');
+
+            const timelineEvents = [
+                {
+                    time: '19:00',
+                    title: 'Session Started',
+                    description: 'Welcome and introduction to calculus problem solving',
+                    type: 'start'
+                },
+                {
+                    time: '19:10',
+                    title: 'Topic Introduction',
+                    description: 'Overview of derivative applications and related rates',
+                    type: 'content'
+                },
+                {
+                    time: '19:25',
+                    title: 'Interactive Exercise',
+                    description: 'Group problem solving - optimization problems',
+                    type: 'activity'
+                },
+                {
+                    time: '19:40',
+                    title: 'Discussion Break',
+                    description: 'Q&A session and clarification of concepts',
+                    type: 'break'
+                },
+                {
+                    time: '20:15',
+                    title: 'Integration Techniques',
+                    description: 'Advanced integration methods and applications',
+                    type: 'content'
+                },
+                {
+                    time: '20:30',
+                    title: 'Session Wrap-up',
+                    description: 'Summary and assignment of practice problems',
+                    type: 'end'
+                }
+            ];
+
+            timeline.innerHTML = '';
+            timelineEvents.forEach(event => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+
+                const iconClass = getTimelineIcon(event.type);
+
+                timelineItem.innerHTML = `
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="${iconClass} fa-lg text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="mb-0">${event.title}</h6>
+                                <small class="text-muted">${event.time}</small>
+                            </div>
+                            <p class="mb-0">${event.description}</p>
+                        </div>
+                    </div>
+                `;
+                timeline.appendChild(timelineItem);
+            });
+        }
+
+        function getTimelineIcon(type) {
+            switch(type) {
+                case 'start': return 'fas fa-play-circle';
+                case 'content': return 'fas fa-book-open';
+                case 'activity': return 'fas fa-users';
+                case 'break': return 'fas fa-coffee';
+                case 'end': return 'fas fa-stop-circle';
+                default: return 'fas fa-circle';
+            }
+        }
+
+        function loadSessionResources() {
+            const resourcesContainer = document.getElementById('sessionResources');
+
+            const resources = [
+                {
+                    id: '1',
+                    title: 'Calculus Problem Set 1',
+                    type: 'PDF',
+                    size: '2.3 MB',
+                    uploadedBy: 'Dr. Sarah Johnson',
+                    icon: 'fas fa-file-pdf text-danger'
+                },
+                {
+                    id: '2',
+                    title: 'Integration Techniques Slides',
+                    type: 'PPTX',
+                    size: '4.7 MB',
+                    uploadedBy: 'Dr. Sarah Johnson',
+                    icon: 'fas fa-file-powerpoint text-warning'
+                },
+                {
+                    id: '3',
+                    title: 'Practice Problems Solution',
+                    type: 'DOCX',
+                    size: '1.8 MB',
+                    uploadedBy: 'Alice Johnson',
+                    icon: 'fas fa-file-word text-primary'
+                }
+            ];
+
+            resourcesContainer.innerHTML = '';
+            resources.forEach(resource => {
+                const resourceItem = document.createElement('div');
+                resourceItem.className = 'resource-item';
+                resourceItem.innerHTML = `
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <i class="${resource.icon} fa-2x me-3"></i>
+                            <div>
+                                <h6 class="mb-1">${resource.title}</h6>
+                                <small class="text-muted">
+                                    ${resource.type} • ${resource.size} • Uploaded by ${resource.uploadedBy}
+                                </small>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn btn-outline-primary btn-sm me-1" onclick="viewResource('${resource.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-outline-success btn-sm" onclick="downloadResource('${resource.id}')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                resourcesContainer.appendChild(resourceItem);
+            });
+
+            document.getElementById('resourcesCount').textContent = resources.length;
+        }
+
+        function loadSessionChat() {
+            const chatContainer = document.getElementById('sessionChat');
+
+            const chatMessages = [
+                { sender: 'Dr. Sarah Johnson', message: 'Welcome everyone! Let\'s start with reviewing the homework problems.', time: '19:02', own: false },
+                { sender: 'Alice Johnson', message: 'I had trouble with problem #5. Could we go through it step by step?', time: '19:05', own: false },
+                { sender: 'You', message: 'I agree, that one was challenging!', time: '19:06', own: true },
+                { sender: 'Bob Smith', message: 'The chain rule application was confusing there.', time: '19:07', own: false },
+                { sender: 'Dr. Sarah Johnson', message: 'Great questions! Let me share my screen and walk through it.', time: '19:08', own: false }
+            ];
+
+            chatContainer.innerHTML = '';
+            chatMessages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `chat-message ${msg.own ? 'own' : 'other'}`;
+                messageDiv.innerHTML = `
+                    <div>
+                        <strong>${msg.sender}</strong>
+                        <small class="text-muted ms-2">${msg.time}</small>
+                    </div>
+                    <div>${msg.message}</div>
+                `;
+                chatContainer.appendChild(messageDiv);
+            });
+
+            document.getElementById('messagesCount').textContent = chatMessages.length;
+        }
+
+        function updateSessionStats() {
+            sessionStartTime = new Date();
+            sessionStartTime.setHours(19, 0, 0, 0); // Set to session start time
+
+            updateTimer();
+        }
+
+        function startSessionTimer() {
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const elapsed = Math.max(0, Math.floor((now - sessionStartTime) / 1000));
+            const elapsedMinutes = Math.floor(elapsed / 60);
+            const elapsedSeconds = elapsed % 60;
+
+            const totalSeconds = currentSession.duration * 60;
+            const remaining = Math.max(0, totalSeconds - elapsed);
+            const remainingMinutes = Math.floor(remaining / 60);
+            const remainingSecondsLeft = remaining % 60;
+
+            document.getElementById('elapsedTime').textContent =
+                `${elapsedMinutes}:${elapsedSeconds.toString().padStart(2, '0')}`;
+            document.getElementById('remainingTime').textContent =
+                `${remainingMinutes}:${remainingSecondsLeft.toString().padStart(2, '0')}`;
+        }
+
+        function joinSession() {
+            const button = document.getElementById('joinSessionButton');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Joining...';
+            button.disabled = true;
+
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-video me-2"></i>In Session';
+                button.className = 'btn btn-light bg-success text-white';
+                showAlert('Successfully joined the session!', 'success');
+            }, 2000);
+        }
+
+        function toggleMic() {
+            micEnabled = !micEnabled;
+            const button = document.getElementById('micButton');
+            if (micEnabled) {
+                button.innerHTML = '<i class="fas fa-microphone me-2"></i>Microphone: ON';
+                button.className = 'btn btn-success';
+            } else {
+                button.innerHTML = '<i class="fas fa-microphone-slash me-2"></i>Microphone: OFF';
+                button.className = 'btn btn-danger';
+            }
+        }
+
+        function toggleCamera() {
+            cameraEnabled = !cameraEnabled;
+            const button = document.getElementById('cameraButton');
+            if (cameraEnabled) {
+                button.innerHTML = '<i class="fas fa-video me-2"></i>Camera: ON';
+                button.className = 'btn btn-primary';
+            } else {
+                button.innerHTML = '<i class="fas fa-video-slash me-2"></i>Camera: OFF';
+                button.className = 'btn btn-danger';
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatContainer = document.getElementById('sessionChat');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message own';
+            messageDiv.innerHTML = `
+                <div>
+                    <strong>You</strong>
+                    <small class="text-muted ms-2">${new Date().toLocaleTimeString()}</small>
+                </div>
+                <div>${message}</div>
+            `;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            input.value = '';
+
+            // Update message count
+            const currentCount = parseInt(document.getElementById('messagesCount').textContent);
+            document.getElementById('messagesCount').textContent = currentCount + 1;
+        }
+
+        function copyMeetingLink() {
+            navigator.clipboard.writeText(currentSession.meetingLink).then(() => {
+                showAlert('Meeting link copied to clipboard!', 'success');
+            });
+        }
+
+        function shareScreen() {
+            showAlert('Screen sharing initiated!', 'info');
+        }
+
+        function takeNotes() {
+            showAlert('Notes feature coming soon!', 'info');
+        }
+
+        function leaveSession() {
+            if (confirm('Are you sure you want to leave the session?')) {
+                clearInterval(timerInterval);
+                showAlert('Left the session successfully!', 'info');
+                setTimeout(() => {
+                    window.location.href = 'sessions.html';
+                }, 1500);
+            }
+        }
+
+        function recordSession() {
+            showAlert('Recording started!', 'success');
+        }
+
+        function takeScreenshot() {
+            showAlert('Screenshot saved!', 'success');
+        }
+
+        function inviteParticipants() {
+            showAlert('Invite feature coming soon!', 'info');
+        }
+
+        function sessionFeedback() {
+            showAlert('Feedback form coming soon!', 'info');
+        }
+
+        function addResource() {
+            showAlert('Resource upload feature coming soon!', 'info');
+        }
+
+        function viewResource(resourceId) {
+            showAlert(`Viewing resource ${resourceId}`, 'info');
+        }
+
+        function downloadResource(resourceId) {
+            showAlert(`Downloading resource ${resourceId}`, 'success');
+        }
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const alert = alertContainer.querySelector('.alert');
+                if (alert) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
+

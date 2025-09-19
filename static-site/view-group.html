@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Group - Study Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        .group-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .member-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .member-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .activity-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #007bff, #28a745);
+        }
+
+        .activity-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #007bff;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #007bff;
+        }
+
+        .join-button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .join-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+        }
+
+        .leave-button {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .leave-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220,53,69,0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-graduation-cap me-2"></i>Study Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="schedules.html">Schedules</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="groups.html">Groups</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sessions.html">Sessions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ai-dashboard.html">
+                            <i class="fas fa-robot me-1"></i>AI Assistant
+                        </a>
+                    </li>
+                </ul>
+                <!-- Auth Navigation -->
+                <ul class="navbar-nav" id="authNav">
+                    <!-- Will be populated by auth system -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Alert Container -->
+    <div class="container mt-3">
+        <div id="alertContainer"></div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="container mt-4">
+        <a href="groups.html" class="btn btn-outline-secondary mb-3">
+            <i class="fas fa-arrow-left me-2"></i>Back to Groups
+        </a>
+    </div>
+
+    <!-- Group Header -->
+    <div class="container">
+        <div class="group-header" id="groupHeader">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-2" id="groupName">Loading...</h1>
+                    <p class="lead mb-3" id="groupDescription">Loading group details...</p>
+                    <div class="d-flex flex-wrap gap-2 mb-3" id="groupTags">
+                        <!-- Tags will be populated here -->
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h4 id="memberCount">0</h4>
+                            <small>Members</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 id="sessionCount">0</h4>
+                            <small>Sessions</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 id="groupSubject">-</h4>
+                            <small>Subject</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 id="difficultyLevel">-</h4>
+                            <small>Level</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-users fa-4x opacity-75"></i>
+                    </div>
+                    <button class="btn btn-light join-button" id="joinLeaveButton" onclick="toggleMembership()">
+                        <i class="fas fa-plus me-2"></i>Join Group
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Group Information -->
+            <div class="col-lg-8">
+                <!-- Group Details -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Group Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-calendar me-2"></i>Meeting Schedule</h6>
+                                <p id="meetingFrequency" class="text-muted">Loading...</p>
+
+                                <h6><i class="fas fa-clock me-2"></i>Preferred Time</h6>
+                                <p id="preferredTime" class="text-muted">Loading...</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-user-crown me-2"></i>Created By</h6>
+                                <p id="createdBy" class="text-muted">Loading...</p>
+
+                                <h6><i class="fas fa-calendar-plus me-2"></i>Created Date</h6>
+                                <p id="createdDate" class="text-muted">Loading...</p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <h6><i class="fas fa-bullseye me-2"></i>Study Goals</h6>
+                        <div id="studyGoals" class="text-muted">
+                            Loading study goals...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-activity me-2"></i>Recent Activity</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-timeline" id="activityTimeline">
+                            <!-- Activity items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Sessions -->
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Upcoming Sessions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="upcomingSessions">
+                            <!-- Sessions will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Group Members -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Members (<span id="memberCountSidebar">0</span>)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="membersList">
+                            <!-- Members will be populated here -->
+                        </div>
+                        <div class="text-center mt-3">
+                            <button class="btn btn-outline-info btn-sm" onclick="inviteMembers()">
+                                <i class="fas fa-user-plus me-1"></i>Invite Members
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Statistics -->
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Group Stats</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <h4 id="totalStudyHours" class="text-primary">0</h4>
+                                <small class="text-muted">Study Hours</small>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <h4 id="completedSessions" class="text-success">0</h4>
+                                <small class="text-muted">Completed</small>
+                            </div>
+                            <div class="col-6">
+                                <h4 id="avgRating" class="text-warning">0.0</h4>
+                                <small class="text-muted">Avg Rating</small>
+                            </div>
+                            <div class="col-6">
+                                <h4 id="activeMembers" class="text-info">0</h4>
+                                <small class="text-muted">Active</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" onclick="scheduleSession()">
+                                <i class="fas fa-calendar-plus me-2"></i>Schedule Session
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="viewAllSessions()">
+                                <i class="fas fa-history me-2"></i>View All Sessions
+                            </button>
+                            <button class="btn btn-outline-info" onclick="groupChat()">
+                                <i class="fas fa-comments me-2"></i>Group Chat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Study Portal. Collaborative Learning Platform.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let currentGroup = null;
+        let currentUser = null;
+        let groupId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (!authManager || !authManager.isAuthenticated()) {
+                showAlert('Please login to view group details.', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return;
+            }
+
+            currentUser = authManager.getCurrentUser();
+
+            // Get group ID from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            groupId = urlParams.get('id');
+
+            if (!groupId) {
+                showAlert('Invalid group ID.', 'danger');
+                setTimeout(() => {
+                    window.location.href = 'groups.html';
+                }, 2000);
+                return;
+            }
+
+            loadGroupDetails();
+        });
+
+        function loadGroupDetails() {
+            // Load group data from localStorage or generate sample data
+            const userGroups = authManager.loadUserData('userGroups', []);
+            currentGroup = userGroups.find(group => group.id === groupId);
+
+            if (!currentGroup) {
+                // Generate sample group data for demonstration
+                currentGroup = generateSampleGroup(groupId);
+            }
+
+            displayGroupDetails();
+            loadGroupMembers();
+            loadGroupActivity();
+            loadUpcomingSessions();
+            updateGroupStats();
+        }
+
+        function generateSampleGroup(id) {
+            const sampleGroups = {
+                '1': {
+                    id: '1',
+                    name: 'Advanced Mathematics Study Circle',
+                    subject: 'Mathematics',
+                    description: 'A collaborative group focused on advanced calculus, linear algebra, and statistical analysis. Perfect for students preparing for competitive exams.',
+                    difficulty: 'Advanced',
+                    maxMembers: 15,
+                    members: ['user1', 'user2', 'user3', currentUser.id],
+                    meetingFrequency: 'Twice a week',
+                    preferredTime: 'Evening (6PM-8PM)',
+                    tags: ['calculus', 'algebra', 'statistics', 'competitive-exam'],
+                    createdBy: 'Dr. Sarah Johnson',
+                    createdAt: '2025-01-15',
+                    goals: 'Master advanced mathematical concepts, solve complex problems, and prepare for graduate-level examinations.',
+                    status: 'active'
+                },
+                '2': {
+                    id: '2',
+                    name: 'Physics Problem Solvers',
+                    subject: 'Physics',
+                    description: 'Interactive physics study group focusing on problem-solving techniques and conceptual understanding.',
+                    difficulty: 'Intermediate',
+                    maxMembers: 12,
+                    members: ['user4', 'user5'],
+                    meetingFrequency: 'Weekly',
+                    preferredTime: 'Afternoon (2PM-4PM)',
+                    tags: ['mechanics', 'thermodynamics', 'electromagnetism'],
+                    createdBy: 'Prof. Michael Chen',
+                    createdAt: '2025-01-20',
+                    goals: 'Enhance problem-solving skills and deepen understanding of core physics principles.',
+                    status: 'active'
+                }
+            };
+
+            return sampleGroups[id] || sampleGroups['1'];
+        }
+
+        function displayGroupDetails() {
+            document.getElementById('groupName').textContent = currentGroup.name;
+            document.getElementById('groupDescription').textContent = currentGroup.description;
+            document.getElementById('memberCount').textContent = currentGroup.members.length;
+            document.getElementById('memberCountSidebar').textContent = currentGroup.members.length;
+            document.getElementById('groupSubject').textContent = currentGroup.subject;
+            document.getElementById('difficultyLevel').textContent = currentGroup.difficulty;
+            document.getElementById('meetingFrequency').textContent = currentGroup.meetingFrequency;
+            document.getElementById('preferredTime').textContent = currentGroup.preferredTime;
+            document.getElementById('createdBy').textContent = currentGroup.createdBy;
+            document.getElementById('createdDate').textContent = new Date(currentGroup.createdAt).toLocaleDateString();
+            document.getElementById('studyGoals').textContent = currentGroup.goals;
+
+            // Display tags
+            const tagsContainer = document.getElementById('groupTags');
+            tagsContainer.innerHTML = '';
+            currentGroup.tags.forEach(tag => {
+                const tagBadge = document.createElement('span');
+                tagBadge.className = 'badge bg-light text-dark';
+                tagBadge.textContent = tag;
+                tagsContainer.appendChild(tagBadge);
+            });
+
+            // Update join/leave button
+            updateJoinLeaveButton();
+        }
+
+        function updateJoinLeaveButton() {
+            const button = document.getElementById('joinLeaveButton');
+            const isMember = currentGroup.members.includes(currentUser.id);
+
+            if (isMember) {
+                button.innerHTML = '<i class="fas fa-minus me-2"></i>Leave Group';
+                button.className = 'btn btn-light leave-button';
+            } else {
+                button.innerHTML = '<i class="fas fa-plus me-2"></i>Join Group';
+                button.className = 'btn btn-light join-button';
+            }
+        }
+
+        function loadGroupMembers() {
+            const membersList = document.getElementById('membersList');
+            membersList.innerHTML = '';
+
+            // Generate sample members
+            const sampleMembers = [
+                { id: 'user1', name: 'Alice Johnson', role: 'Leader', avatar: '👩‍🎓', status: 'online' },
+                { id: 'user2', name: 'Bob Smith', role: 'Member', avatar: '👨‍🎓', status: 'offline' },
+                { id: 'user3', name: 'Carol Brown', role: 'Member', avatar: '👩‍🎓', status: 'online' },
+                { id: currentUser.id, name: currentUser.name, role: 'Member', avatar: '👤', status: 'online' }
+            ];
+
+            sampleMembers.forEach(member => {
+                const memberCard = document.createElement('div');
+                memberCard.className = 'member-card p-2 mb-2 border rounded';
+                memberCard.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <span style="font-size: 2rem;">${member.avatar}</span>
+                            <span class="badge bg-${member.status === 'online' ? 'success' : 'secondary'} position-relative"
+                                  style="top: -10px; left: -10px; font-size: 0.6rem;">${member.status}</span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${member.name}</h6>
+                            <small class="text-muted">${member.role}</small>
+                        </div>
+                    </div>
+                `;
+                membersList.appendChild(memberCard);
+            });
+        }
+
+        function loadGroupActivity() {
+            const timeline = document.getElementById('activityTimeline');
+
+            const activities = [
+                {
+                    type: 'session_completed',
+                    title: 'Study session completed',
+                    description: 'Advanced Calculus Problem Solving session',
+                    time: '2 hours ago',
+                    icon: 'fas fa-check-circle text-success'
+                },
+                {
+                    type: 'member_joined',
+                    title: 'New member joined',
+                    description: 'Carol Brown joined the group',
+                    time: '1 day ago',
+                    icon: 'fas fa-user-plus text-info'
+                },
+                {
+                    type: 'session_scheduled',
+                    title: 'Session scheduled',
+                    description: 'Linear Algebra study session for tomorrow',
+                    time: '2 days ago',
+                    icon: 'fas fa-calendar-plus text-primary'
+                },
+                {
+                    type: 'discussion',
+                    title: 'New discussion',
+                    description: 'Discussion started about exam preparation',
+                    time: '3 days ago',
+                    icon: 'fas fa-comments text-warning'
+                }
+            ];
+
+            timeline.innerHTML = '';
+            activities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                activityItem.innerHTML = `
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="${activity.icon} fa-lg"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${activity.title}</h6>
+                            <p class="mb-1">${activity.description}</p>
+                            <small class="text-muted">${activity.time}</small>
+                        </div>
+                    </div>
+                `;
+                timeline.appendChild(activityItem);
+            });
+        }
+
+        function loadUpcomingSessions() {
+            const sessionsContainer = document.getElementById('upcomingSessions');
+
+            const sessions = [
+                {
+                    id: '1',
+                    title: 'Linear Algebra Workshop',
+                    date: '2025-01-25',
+                    time: '18:00',
+                    duration: '2 hours',
+                    attendees: 8
+                },
+                {
+                    id: '2',
+                    title: 'Calculus Problem Solving',
+                    date: '2025-01-27',
+                    time: '19:00',
+                    duration: '1.5 hours',
+                    attendees: 6
+                }
+            ];
+
+            sessionsContainer.innerHTML = '';
+            if (sessions.length === 0) {
+                sessionsContainer.innerHTML = '<p class="text-muted text-center">No upcoming sessions scheduled.</p>';
+                return;
+            }
+
+            sessions.forEach(session => {
+                const sessionCard = document.createElement('div');
+                sessionCard.className = 'border rounded p-3 mb-3';
+                sessionCard.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-1">${session.title}</h6>
+                            <p class="mb-1">
+                                <i class="fas fa-calendar me-1"></i>${new Date(session.date).toLocaleDateString()}
+                                <i class="fas fa-clock me-1 ms-2"></i>${session.time}
+                            </p>
+                            <small class="text-muted">
+                                <i class="fas fa-users me-1"></i>${session.attendees} attending • ${session.duration}
+                            </small>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm" onclick="joinSession('${session.id}')">
+                            <i class="fas fa-play me-1"></i>Join
+                        </button>
+                    </div>
+                `;
+                sessionsContainer.appendChild(sessionCard);
+            });
+        }
+
+        function updateGroupStats() {
+            // Generate sample statistics
+            document.getElementById('totalStudyHours').textContent = '127';
+            document.getElementById('completedSessions').textContent = '23';
+            document.getElementById('avgRating').textContent = '4.8';
+            document.getElementById('activeMembers').textContent = currentGroup.members.length;
+            document.getElementById('sessionCount').textContent = '25';
+        }
+
+        function toggleMembership() {
+            const isMember = currentGroup.members.includes(currentUser.id);
+
+            if (isMember) {
+                // Leave group
+                currentGroup.members = currentGroup.members.filter(id => id !== currentUser.id);
+                showAlert('You have left the group successfully!', 'info');
+            } else {
+                // Join group
+                if (currentGroup.members.length >= currentGroup.maxMembers) {
+                    showAlert('This group is full. Cannot join at this time.', 'warning');
+                    return;
+                }
+                currentGroup.members.push(currentUser.id);
+                showAlert('You have joined the group successfully!', 'success');
+            }
+
+            // Update UI
+            updateJoinLeaveButton();
+            document.getElementById('memberCount').textContent = currentGroup.members.length;
+            document.getElementById('memberCountSidebar').textContent = currentGroup.members.length;
+
+            // Save to localStorage
+            const userGroups = authManager.loadUserData('userGroups', []);
+            const groupIndex = userGroups.findIndex(g => g.id === currentGroup.id);
+            if (groupIndex !== -1) {
+                userGroups[groupIndex] = currentGroup;
+                authManager.saveUserData('userGroups', userGroups);
+            }
+        }
+
+        function scheduleSession() {
+            window.location.href = `create-session.html?groupId=${groupId}`;
+        }
+
+        function viewAllSessions() {
+            window.location.href = `sessions.html?groupId=${groupId}`;
+        }
+
+        function groupChat() {
+            showAlert('Group chat feature coming soon!', 'info');
+        }
+
+        function inviteMembers() {
+            showAlert('Invite feature coming soon!', 'info');
+        }
+
+        function joinSession(sessionId) {
+            showAlert(`Joining session ${sessionId}...`, 'success');
+        }
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const alert = alertContainer.querySelector('.alert');
+                if (alert) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
+

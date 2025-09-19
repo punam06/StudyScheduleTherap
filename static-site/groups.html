@@ -33,6 +33,13 @@
                         <a class="nav-link" href="sessions.html">Sessions</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="notifications.html">
+                            <i class="fas fa-bell me-1"></i>
+                            <span id="navNotificationBadge" style="display: none;" class="badge bg-danger rounded-pill ms-1">0</span>
+                            Notifications
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="ai-dashboard.html">
                             <i class="fas fa-robot me-1"></i>AI Assistant
                         </a>
@@ -299,30 +306,37 @@
                             <p class="text-muted small">
                                 <i class="fas fa-graduation-cap me-1"></i>${group.subject || 'General Study'}
                             </p>
-                            <p>${group.description || 'No description provided.'}</p>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <div>
-                                    <span class="badge bg-light text-dark">
-                                        <i class="fas fa-users me-1"></i>${memberCount} member${memberCount !== 1 ? 's' : ''}
-                                    </span>
+                            <p class="card-text">${group.description || 'No description available.'}</p>
+                            <div class="row text-center mb-3">
+                                <div class="col-4">
+                                    <small class="text-muted">Members</small><br>
+                                    <strong>${memberCount}</strong>
                                 </div>
-                                <small class="text-muted">Created: ${createdAt}</small>
+                                <div class="col-4">
+                                    <small class="text-muted">Sessions</small><br>
+                                    <strong>${group.sessionCount || 0}</strong>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">Level</small><br>
+                                    <strong>${group.difficulty || 'Mixed'}</strong>
+                                </div>
                             </div>
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>Created: ${createdAt}
+                            </small>
                         </div>
-                        <div class="card-footer bg-white">
-                            <div class="d-grid">
-                                <button class="btn btn-primary view-group" data-id="${group.id}">
-                                    <i class="fas fa-eye me-2"></i>View Group
+                        <div class="card-footer bg-white border-top-0">
+                            <div class="d-flex gap-2">
+                                <a href="view-group.html?id=${group.id}" class="btn btn-primary btn-sm flex-fill">
+                                    <i class="fas fa-eye me-1"></i>View Details
+                                </a>
+                                <button class="btn btn-outline-success btn-sm" onclick="joinGroup('${group.id}')">
+                                    <i class="fas fa-users me-1"></i>Join
                                 </button>
                             </div>
                         </div>
                     </div>
                 `;
-
-                // Add event listener for view button
-                col.querySelector('.view-group').addEventListener('click', function() {
-                    viewGroup(group.id);
-                });
 
                 return col;
             }

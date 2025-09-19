@@ -1,7 +1,6 @@
 package org.example.repository;
 
 import org.example.entity.Notification;
-import org.example.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,18 +12,18 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    List<Notification> findByUserAndIsReadFalseOrderByCreatedAtDesc(User user);
+    List<Notification> findByStudentIdOrderByCreatedAtDesc(Long studentId);
 
-    List<Notification> findByUserOrderByCreatedAtDesc(User user);
+    List<Notification> findByStudentIdAndIsReadOrderByCreatedAtDesc(Long studentId, Boolean isRead);
 
-    @Query("SELECT n FROM Notification n WHERE n.user = :user AND n.isRead = false")
-    List<Notification> findUnreadByUser(@Param("user") User user);
+    @Query("SELECT COUNT(n) FROM Notification n WHERE n.studentId = :studentId AND n.isRead = false")
+    Long countUnreadByStudentId(@Param("studentId") Long studentId);
 
-    @Query("SELECT COUNT(n) FROM Notification n WHERE n.user = :user AND n.isRead = false")
-    Long countUnreadByUser(@Param("user") User user);
+    @Query("SELECT n FROM Notification n WHERE n.studentId = :studentId AND n.createdAt >= :since ORDER BY n.createdAt DESC")
+    List<Notification> findRecentByStudentId(@Param("studentId") Long studentId, @Param("since") LocalDateTime since);
 
-    @Query("SELECT n FROM Notification n WHERE n.scheduledFor <= :now AND n.isRead = false")
-    List<Notification> findScheduledNotifications(@Param("now") LocalDateTime now);
+    List<Notification> findByStudentIdAndTypeOrderByCreatedAtDesc(Long studentId, Notification.NotificationType type);
 
-    void deleteByCreatedAtBefore(LocalDateTime date);
+    @Query("SELECT n FROM Notification n WHERE n.studentId = :studentId ORDER BY n.createdAt DESC LIMIT :limit")
+    List<Notification> findLatestByStudentId(@Param("studentId") Long studentId, @Param("limit") int limit);
 }
