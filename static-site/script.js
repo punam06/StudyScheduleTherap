@@ -286,18 +286,35 @@ function initializeDarkMode() {
 }
 
 function createDarkModeToggle() {
-    const navbar = document.querySelector('.navbar .container');
+    const navbar = document.querySelector('.navbar');
     if (navbar) {
+        // Create a more robust toggle button
         const toggleButton = document.createElement('button');
-        toggleButton.className = 'btn btn-link text-decoration-none ms-3';
+        toggleButton.className = 'btn btn-link text-decoration-none p-2 ms-2';
         toggleButton.innerHTML = '<i class="fas fa-moon"></i>';
         toggleButton.setAttribute('aria-label', 'Toggle dark mode');
+        toggleButton.setAttribute('title', 'Toggle dark mode');
+        toggleButton.style.color = 'inherit';
         toggleButton.onclick = toggleDarkMode;
         
-        // Insert before the navbar-nav
-        const navbarNav = navbar.querySelector('.navbar-nav');
-        if (navbarNav) {
-            navbar.insertBefore(toggleButton, navbarNav);
+        // Try to find the best place to insert the button
+        const navbarNav = navbar.querySelector('.navbar-nav:last-child');
+        const navbarBrand = navbar.querySelector('.navbar-brand');
+        const container = navbar.querySelector('.container');
+        
+        if (navbarNav && navbarNav.parentNode) {
+            navbarNav.parentNode.appendChild(toggleButton);
+        } else if (container) {
+            container.appendChild(toggleButton);
+        } else {
+            navbar.appendChild(toggleButton);
+        }
+        
+        // Update icon based on current theme
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const icon = toggleButton.querySelector('i');
+        if (icon) {
+            icon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         }
     }
 }
