@@ -256,10 +256,172 @@ function showSuccessMessage(message, containerId = 'alertContainer') {
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize dashboard if we're on that page
     initializeDashboard();
+    
+    // Initialize dark mode
+    initializeDarkMode();
+    
+    // Initialize animations
+    initializeAnimations();
+    
+    // Initialize counters for stats
+    initializeCounters();
 
     // Initialize any page-specific functionality
     console.log('Study Portal JavaScript initialized');
 });
+
+// Dark Mode Functionality
+function initializeDarkMode() {
+    // Check for saved theme preference or default to light mode
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    
+    // Update body class for easier styling
+    if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+
+    // Create dark mode toggle button
+    createDarkModeToggle();
+}
+
+function createDarkModeToggle() {
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+        // Create a more robust toggle button
+        const toggleButton = document.createElement('button');
+        toggleButton.className = 'btn btn-link text-decoration-none p-2 ms-2';
+        toggleButton.innerHTML = '<i class="fas fa-moon"></i>';
+        toggleButton.setAttribute('aria-label', 'Toggle dark mode');
+        toggleButton.setAttribute('title', 'Toggle dark mode');
+        toggleButton.style.color = 'inherit';
+        toggleButton.onclick = toggleDarkMode;
+        
+        // Try to find the best place to insert the button
+        const navbarNav = navbar.querySelector('.navbar-nav:last-child');
+        const navbarBrand = navbar.querySelector('.navbar-brand');
+        const container = navbar.querySelector('.container');
+        
+        if (navbarNav && navbarNav.parentNode) {
+            navbarNav.parentNode.appendChild(toggleButton);
+        } else if (container) {
+            container.appendChild(toggleButton);
+        } else {
+            navbar.appendChild(toggleButton);
+        }
+        
+        // Update icon based on current theme
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const icon = toggleButton.querySelector('i');
+        if (icon) {
+            icon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+    }
+}
+
+function toggleDarkMode() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    document.body.classList.toggle('dark-mode', newTheme === 'dark');
+    localStorage.setItem('theme', newTheme);
+    
+    // Update toggle icon
+    const toggleButton = document.querySelector('.navbar .btn i');
+    if (toggleButton) {
+        toggleButton.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+}
+
+// Animation Initialization
+function initializeAnimations() {
+    // Add intersection observer for fade-in animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+                entry.target.style.opacity = '1';
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all elements with fade-in class
+    document.querySelectorAll('.fade-in, .slide-in, .scale-in').forEach(el => {
+        el.style.animationPlayState = 'paused';
+        el.style.opacity = '0';
+        observer.observe(el);
+    });
+}
+
+// Counter Animation for Statistics
+function initializeCounters() {
+    const counters = document.querySelectorAll('[data-target]');
+    const observerOptions = {
+        threshold: 0.5
+    };
+    
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    counters.forEach(counter => {
+        counterObserver.observe(counter);
+    });
+}
+
+function animateCounter(element) {
+    const target = parseInt(element.getAttribute('data-target'));
+    const duration = 2000; // 2 seconds
+    const step = target / (duration / 16); // 60fps
+    let current = 0;
+    
+    const timer = setInterval(() => {
+        current += step;
+        if (current >= target) {
+            element.textContent = target;
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(current);
+        }
+    }, 16);
+}
+
+// Enhanced UI Interactions
+function addHoverEffects() {
+    // Add ripple effect to buttons
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            this.appendChild(ripple);
+            
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = size + 'px';
+            ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+}
 
 // Export functions for use in other scripts
 window.StudyPortal = {
