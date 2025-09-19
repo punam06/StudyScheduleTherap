@@ -2,6 +2,7 @@ package org.example.controller;
 
 import org.example.entity.StudySchedule;
 import org.example.service.StudyScheduleService;
+import org.example.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,9 @@ public class StudyScheduleController {
 
     @Autowired
     private StudyScheduleService scheduleService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping
     public String listSchedules(Model model) {
@@ -52,7 +56,15 @@ public class StudyScheduleController {
             schedule.setScheduledTime(scheduledDateTime);
 
             scheduleService.saveSchedule(schedule);
-            redirectAttributes.addFlashAttribute("successMessage", "Schedule created successfully!");
+
+            // Create notifications for the new schedule
+            if (schedule.getStudent() != null) {
+                notificationService.createScheduleCreatedNotification(schedule, schedule.getStudent());
+                notificationService.createScheduleReminder(schedule, schedule.getStudent());
+            }
+
+            redirectAttributes.addFlashAttribute("successMessage",
+                "Study schedule created successfully! You'll receive reminders 15 minutes before the session.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating schedule: " + e.getMessage());
         }

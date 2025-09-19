@@ -1,8 +1,8 @@
-# Student Study Scheduling Portal
+# Student Study Scheduling Portal - অধ্যয়ন সঙ্ঘ (Study Association)
 
-## 🏆 Java Fest 2025 Project - AI-Powered Study Planning
+## 🏆 Java Fest 2025 Project - AI-Powered Study Planning with Real-time Notifications
 
-A comprehensive web-based application for intelligent study scheduling with AI integration, designed to help students optimize their learning experience and achieve academic excellence.
+A comprehensive web-based application for intelligent study scheduling with AI integration and real-time notification system, designed to help students optimize their learning experience and achieve academic excellence.
 
 ### 🌐 Live Application
 - **🚀 Production URL**: `https://studyscheduletherap.surge.sh`
@@ -21,53 +21,95 @@ A comprehensive web-based application for intelligent study scheduling with AI i
 - **👥 Study Groups**: Create and join collaborative study sessions
 - **🌍 Multi-language Support**: Available in English and Bengali
 - **📅 Session Management**: Schedule and track group study sessions
+- **🔔 Real-time Notification System**: Smart reminders and alerts for schedules and sessions
+- **⏰ Automated Reminders**: 15-minute warnings for study sessions, 30-minute warnings for group sessions
+- **📬 Deadline Warnings**: Proactive notifications for approaching deadlines
+- **🎯 Achievement Notifications**: Celebrate study goals and milestones
 
 ### 🏗️ Project Structure
 ```
 StudyScheduleTherap/
 ├── src/main/java/org/example/
-│   ├── Main.java                    # Application entry point
+│   ├── Main.java                        # Application entry point with scheduling enabled
 │   ├── config/
-│   │   └── LocaleConfig.java        # Internationalization config
-│   ├── controller/                  # REST controllers
+│   │   ├── LocaleConfig.java            # Internationalization config
+│   │   ├── SecurityConfig.java          # Security configuration
+│   │   └── WebConfig.java               # Web configuration
+│   ├── controller/                      # REST controllers with notification integration
 │   │   ├── AIController.java
-│   │   ├── GroupSessionController.java
+│   │   ├── AuthController.java
+│   │   ├── AuthenticationController.java
+│   │   ├── DashboardController.java
+│   │   ├── GroupSessionController.java  # Enhanced with notifications
 │   │   ├── HomeController.java
+│   │   ├── NotificationController.java  # NEW: Notification management API
 │   │   ├── StudyGroupController.java
-│   │   └── StudyScheduleController.java
-│   ├── entity/                      # JPA entities
+│   │   └── StudyScheduleController.java # Enhanced with notifications
+│   ├── entity/                          # JPA entities
 │   │   ├── GroupSession.java
+│   │   ├── Notification.java            # NEW: Notification entity
 │   │   ├── Student.java
 │   │   ├── StudyGroup.java
-│   │   └── StudySchedule.java
-│   ├── repository/                  # Data access layer
+│   │   ├── StudySchedule.java
+│   │   └── User.java
+│   ├── repository/                      # Data access layer
 │   │   ├── GroupSessionRepository.java
+│   │   ├── NotificationRepository.java  # NEW: Notification repository
 │   │   ├── StudentRepository.java
 │   │   ├── StudyGroupRepository.java
-│   │   └── StudyScheduleRepository.java
-│   └── service/                     # Business logic
+│   │   ├── StudyScheduleRepository.java
+│   │   └── UserRepository.java
+│   └── service/                         # Business logic
 │       ├── AIService.java
 │       ├── GroupSessionService.java
+│       ├── NotificationSchedulerService.java # NEW: Automated notification scheduler
+│       ├── NotificationService.java     # NEW: Notification business logic
 │       ├── StudyGroupService.java
 │       └── StudyScheduleService.java
 ├── src/main/resources/
-│   ├── templates/                   # Thymeleaf templates
+│   ├── templates/                       # Thymeleaf templates
 │   │   ├── ai/
+│   │   ├── auth/
+│   │   ├── dashboard/
 │   │   ├── groups/
 │   │   └── sessions/
-│   ├── messages_*.properties        # i18n messages
-│   └── application*.properties      # Configuration files
+│   ├── messages_*.properties            # i18n messages (Bengali & English)
+│   └── application*.properties          # Configuration files
+├── static-site/                         # Production-ready static files
+├── build/static/                        # Built static assets
 └── Docker configuration files
 ```
 
 ### 🛠️ Technology Stack
-- **Backend**: Java 17, Spring Boot 3.1.5, Spring MVC, Spring Data JPA, Spring WebFlux
+- **Backend**: Java 17, Spring Boot 3.1.5, Spring MVC, Spring Data JPA, Spring WebFlux, Spring Scheduling
 - **Frontend**: Thymeleaf, HTML5, Bootstrap 5, JavaScript, Font Awesome
 - **Database**: H2 (development), PostgreSQL (production ready)
 - **Build System**: Gradle 8.13
 - **Containerization**: Docker, Docker Compose
-- **Cloud Deployment**: Heroku-ready, AWS/GCP compatible
+- **Cloud Deployment**: Surge.sh (current), Heroku-ready, AWS/GCP compatible
 - **Monitoring**: Spring Boot Actuator, Health Checks
+- **Notifications**: Real-time scheduling system with automated reminders
+
+### 🔔 Notification System Features
+
+#### Notification Types
+- **📚 Schedule Reminders**: 15-minute warnings before study sessions
+- **👥 Session Reminders**: 30-minute warnings for group sessions  
+- **✅ Creation Confirmations**: Success notifications for new schedules/sessions
+- **⚠️ Deadline Warnings**: Daily checks for approaching deadlines
+- **🎉 Achievement Alerts**: Study goal completions and milestones
+
+#### API Endpoints
+- `GET /api/notifications/unread` - Get unread notifications
+- `GET /api/notifications/all` - Get all notifications
+- `GET /api/notifications/count` - Get unread notification count
+- `PUT /api/notifications/{id}/read` - Mark notification as read
+- `PUT /api/notifications/read-all` - Mark all notifications as read
+
+#### Automated Scheduling
+- **Every 5 minutes**: Check for upcoming schedules and sessions
+- **Daily at 9 AM**: Check for approaching deadlines
+- **Weekly cleanup**: Remove notifications older than 30 days
 
 ### 📋 Prerequisites
 - **Java 17** or higher
@@ -89,7 +131,7 @@ cd StudyScheduleTherap
 # Build the project
 ./gradlew build
 
-# Run the application
+# Run the application with notification system enabled
 ./gradlew bootRun
 
 # Access the application
@@ -106,27 +148,23 @@ docker build -t study-portal .
 docker run -p 8080:8080 study-portal
 ```
 
-### 🐳 Advanced Docker Configuration
+### 🔧 Configuration
 
-#### Multi-stage Docker Build
-The project uses an optimized multi-stage Dockerfile for production deployments:
-```dockerfile
-# Build stage with full JDK
-FROM openjdk:17-jdk-slim as builder
-# Runtime stage with minimal JRE
-FROM openjdk:17-jre-slim as runtime
-```
-
-#### Docker Compose Profiles
+#### Environment Variables
 ```bash
-# Development environment
-docker-compose up --build
+# Database Configuration
+DATABASE_URL=jdbc:h2:mem:testdb
+DB_USERNAME=sa
+DB_PASSWORD=
+DB_DRIVER=org.h2.Driver
 
-# Production with PostgreSQL
-docker-compose --profile postgres up --build
+# Notification Settings
+NOTIFICATION_SCHEDULE_REMINDER_MINUTES=15
+NOTIFICATION_SESSION_REMINDER_MINUTES=30
+NOTIFICATION_CLEANUP_DAYS=30
 
-# With monitoring stack
-docker-compose --profile monitoring up --build
+# Production Settings
+SPRING_PROFILES_ACTIVE=prod
 ```
 
 ### 🐳 Docker Deployment
@@ -155,345 +193,78 @@ export DB_PLATFORM="org.hibernate.dialect.PostgreSQLDialect"
 
 ### ☁️ Cloud Deployment
 
-#### Surge Deployment (Current Production)
+#### Current Production (Surge.sh)
 ```bash
-# 1. Install Surge CLI globally
-npm install -g surge
+# 1. Build static assets
+npm run build:static
 
-# 2. Build your application for production
-./gradlew build
+# 2. Deploy to Surge
+npm run deploy
 
-# 3. Create a dist folder with your static files
-mkdir dist
-cp -r build/libs/* dist/
-
-# 4. Deploy to Surge
-surge dist studyscheduletherap.surge.sh
-
-# Alternative: Deploy with custom domain
-surge dist your-custom-domain.surge.sh
+# 3. Access live application
+open https://studyscheduletherap.surge.sh
 ```
 
-**Live Application**: https://studyscheduletherap.surge.sh
+#### Alternative Deployments
+- **Render**: Auto-deploy from GitHub with PostgreSQL
+- **Heroku**: One-click deployment with add-ons
+- **AWS/GCP**: Container-based deployment with RDS/CloudSQL
 
-#### Render Deployment
-```bash
-# 1. Connect your GitHub repository to Render
-# 2. Create a new Web Service on Render
-# 3. Set the following configuration:
-#    - Build Command: ./gradlew build
-#    - Start Command: java -jar build/libs/*.jar
-#    - Environment: Docker (if using Dockerfile) or Native
+### 🎯 Notification System Usage
 
-# Environment variables for Render:
-SPRING_PROFILES_ACTIVE=prod
-JAVA_OPTS=-Xmx512m -Xss512k
-PORT=10000
+#### For Developers
+```java
+// Create schedule notification
+notificationService.createScheduleReminder(schedule, user);
+
+// Create session notification  
+notificationService.createSessionReminder(session, user);
+
+// Get user notifications
+List<Notification> unread = notificationService.getUnreadNotifications(user);
+Long count = notificationService.getUnreadCount(user);
 ```
 
-### 🔧 Advanced Configuration
+#### For Frontend Integration
+```javascript
+// Get unread count
+fetch('/api/notifications/count')
+  .then(response => response.json())
+  .then(data => updateNotificationBadge(data.unreadCount));
 
-#### Database Configuration
-```yaml
-# Development (H2)
-development:
-  spring:
-    datasource:
-      url: jdbc:h2:mem:studydb
-      driver-class-name: org.h2.Driver
-    h2:
-      console:
-        enabled: true
-
-# Production (PostgreSQL)
-production:
-  spring:
-    datasource:
-      url: ${DATABASE_URL}
-      driver-class-name: org.postgresql.Driver
-    jpa:
-      hibernate:
-        ddl-auto: validate
+// Mark as read
+fetch(`/api/notifications/${id}/read`, { method: 'PUT' })
+  .then(() => refreshNotifications());
 ```
 
-#### AI Service Integration
-```properties
-# AI service configuration
-ai.service.url=${AI_SERVICE_URL:http://localhost:8085}
-ai.service.enabled=${AI_SERVICE_ENABLED:true}
-ai.service.timeout=30s
-ai.service.retry.attempts=3
-```
+### 📊 Analytics & Monitoring
+- **Health Checks**: `/actuator/health`
+- **Application Metrics**: `/actuator/metrics`
+- **Database Console**: `/h2-console` (dev only)
+- **API Documentation**: Available through Spring Boot Actuator
 
-#### Environment Variables
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | Server port | `8080` |
-| `SPRING_PROFILES_ACTIVE` | Active profile | `default` |
-| `DATABASE_URL` | Database connection URL | H2 in-memory |
-| `DB_USERNAME` | Database username | `sa` |
-| `DB_PASSWORD` | Database password | (empty) |
-| `AI_SERVICE_URL` | AI service endpoint | `http://localhost:8085` |
-| `AI_SERVICE_ENABLED` | Enable AI features | `true` |
-
-#### Application Profiles
-- **default**: Development with H2 database, console enabled
-- **prod**: Production with optimized settings, security enabled
-
-### 📊 Enhanced API Documentation
-
-#### Study Schedule Management
-- `GET /schedules` - List all schedules with pagination
-- `GET /schedules/{id}` - Get specific schedule details
-- `POST /schedules/save` - Create/update schedule
-- `DELETE /schedules/{id}` - Delete schedule
-- `GET /schedules/search` - Search schedules by criteria
-
-#### Study Groups & Sessions
-- `GET /groups` - List study groups
-- `POST /groups/create` - Create new study group
-- `GET /groups/{id}/sessions` - Get group sessions
-- `POST /sessions/join` - Join a group session
-
-#### AI Recommendations
-- `GET /ai/recommendations` - Get personalized study recommendations
-- `POST /ai/analyze` - Analyze study patterns
-- `GET /ai/dashboard` - AI analytics dashboard
-
-#### Health & Monitoring
-- `GET /actuator/health` - Application Health
-- `GET /actuator/info` - Application Information
-- `GET /h2-console` - Database Console (development only)
-
-### 🧪 Comprehensive Testing
-
-#### Test Categories
-```bash
-# Unit tests
-./gradlew test
-
-# Integration tests
-./gradlew integrationTest
-
-# End-to-end tests
-./gradlew e2eTest
-
-# Performance tests
-./gradlew performanceTest
-
-# Generate test reports
-./gradlew test jacocoTestReport
-open build/reports/jacoco/test/html/index.html
-```
-
-#### Testing Checklist
-- [x] Controller layer tests
-- [x] Service layer tests  
-- [x] Repository layer tests
-- [x] Integration tests with TestContainers
-- [x] API endpoint tests
-- [x] Database migration tests
-
-### 🔍 Monitoring & Maintenance
-
-#### Health Checks
-```bash
-# Application health
-curl http://localhost:8080/actuator/health
-
-# Detailed metrics  
-curl http://localhost:8080/actuator/metrics
-
-# Application info
-curl http://localhost:8080/actuator/info
-```
-
-#### Logs
-```bash
-# View application logs
-docker-compose logs -f study-portal
-
-# Real-time logs in production
-heroku logs --tail
-```
-
-### 📈 Performance Metrics
-
-#### Benchmark Results
-- **Startup Time**: < 30 seconds
-- **Memory Usage**: ~256MB baseline
-- **Response Time**: < 200ms (95th percentile)
-- **Throughput**: 1000+ requests/second
-- **Database Connections**: Pool size 10-20
-
-#### Optimization Features
-- **JVM Tuning**: `-Xmx300m -Xss512k` for container environments
-- **Connection Pooling**: HikariCP with optimized settings
-- **Template Caching**: Thymeleaf caching enabled in production
-- **Static Resource Compression**: Gzip compression enabled
-- **Database Indexing**: Optimized queries with proper indexing
-
-### 🛡️ Security & Best Practices
-
-#### Security Features
-- ✅ Non-root Docker user
-- ✅ Environment-based secrets management
-- ✅ HTTPS ready configuration
-- ✅ SQL injection prevention with JPA
-- ✅ XSS protection with Thymeleaf escaping
-- ✅ CSRF protection (configurable)
-
-#### Code Quality
-- ✅ SonarQube integration ready
-- ✅ CheckStyle configuration
-- ✅ SpotBugs static analysis
-- ✅ PMD code analysis
-- ✅ Dependency vulnerability scanning
-
-### 🌍 Internationalization (i18n)
-
-Supported Languages:
-- **English** (`messages_en.properties`)
-- **Bengali** (`messages_bn.properties`)
-
-Add new languages by creating `messages_{locale}.properties` files.
-
-### 🚀 Deployment Strategies
-
-#### Container Orchestration
-```yaml
-# Kubernetes deployment example
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: study-portal
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: study-portal
-  template:
-    metadata:
-      labels:
-        app: study-portal
-    spec:
-      containers:
-      - name: study-portal
-        image: study-portal:latest
-        ports:
-        - containerPort: 8080
-```
-
-#### AWS ECS/Fargate Ready
-- Task definition templates included
-- Auto-scaling configuration
-- Load balancer integration
-- CloudWatch logging
+### 🌟 Recent Updates (v2.0.0)
+- ✅ **Real-time Notification System** with smart reminders
+- ✅ **Automated Scheduling** for proactive alerts
+- ✅ **Enhanced User Experience** with notification badges and alerts
+- ✅ **Multi-language Notification Support** (English & Bengali)
+- ✅ **Deadline Management** with warning system
+- ✅ **Achievement Tracking** with celebration notifications
 
 ### 🤝 Contributing
-
 1. Fork the repository
-2. Create feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-### 📊 Monitoring & Observability
+### 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-#### Application Metrics
-- **Health Checks**: `/actuator/health`
-- **Metrics**: `/actuator/metrics`
-- **Environment**: `/actuator/env`
-- **Thread Dump**: `/actuator/threaddump`
-- **Memory Info**: `/actuator/heapdump`
-
-#### Logging Strategy
-```yaml
-logging:
-  level:
-    org.example: INFO
-    org.springframework: WARN
-  pattern:
-    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-```
-
-### 🔄 CI/CD Pipeline Ready
-
-#### GitHub Actions Integration
-```yaml
-# .github/workflows/ci.yml
-name: CI/CD Pipeline
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
-      - run: ./gradlew test
-      - run: docker build -t study-portal .
-```
-
-### 📝 Changelog
-
-#### Version 2.0.0 (Current)
-- ✨ Added AI-powered recommendations
-- ✨ Implemented study groups functionality
-- ✨ Multi-language support (EN/BN)
-- 🐛 Fixed database connection pooling
-- 📈 Improved performance by 40%
-- 🔒 Enhanced security features
-
-#### Version 1.0.0
-- 🎉 Initial release
-- 📅 Basic study scheduling
-- 📊 Simple analytics dashboard
-
-### 🆘 Advanced Troubleshooting
-
-#### Performance Issues
-```bash
-# Check memory usage
-docker stats study-portal
-
-# Analyze GC logs
-java -XX:+PrintGC -XX:+PrintGCDetails -jar app.jar
-
-# Profile with JProfiler/VisualVM
-java -Dcom.sun.management.jmxremote -jar app.jar
-```
-
-#### Database Issues
-```bash
-# Check H2 database
-# URL: jdbc:h2:mem:studydb
-# Username: sa, Password: (empty)
-
-# PostgreSQL connection test
-pg_isready -h localhost -p 5432
-```
-
-#### Container Issues
-```bash
-# Debug container
-docker exec -it study-portal /bin/bash
-
-# Check logs
-docker logs study-portal --tail 100 -f
-
-# Resource usage
-docker exec study-portal top
-```
-
-### 📞 Support & Community
-
-- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/punam06/StudyScheduleTherap/issues)
-- 💡 **Feature Requests**: [GitHub Discussions](https://github.com/punam06/StudyScheduleTherap/discussions)
-- 📧 **Contact**: [your-email@example.com]
-- 💬 **Discord**: [Community Server](https://discord.gg/your-server)
+### 🏆 Java Fest 2025
+**Team**: Study Association Development Team  
+**Competition**: Java Fest 2025 - AI-Powered Education Solutions  
+**Category**: Student Productivity & Learning Enhancement
 
 ---
-
-**🏆 Built with ❤️ for Java Fest 2025 | 🚀 Empowering Student Success Through AI**
-
-*Last Updated: September 2025*
+**Built with ❤️ for students, by students** | **অধ্যয়ন সঙ্ঘ - শিক্ষার্থীদের জন্য, শিক্ষার্থীদের দ্বারা**

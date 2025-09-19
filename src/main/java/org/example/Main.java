@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @SpringBootApplication
 @RestController
+@EnableScheduling
 public class Main {
 
     public static void main(String[] args) {
@@ -32,6 +34,8 @@ public class Main {
         System.out.println("   • Smart Group Matching & Collaboration");
         System.out.println("   • Predictive Analytics & Natural Language Scheduling");
         System.out.println("   • Group Dynamics Insights & Spaced Repetition AI");
+        System.out.println("   • 🔔 Real-time Notification System");
+        System.out.println("   • ⏰ Automated Schedule & Session Reminders");
     }
 
     @GetMapping("/api/status")
@@ -48,7 +52,9 @@ public class Main {
             "Natural Language Scheduling",
             "Group Dynamics Insights",
             "Spaced Repetition AI",
-            "Collaborative Content Generation"
+            "Collaborative Content Generation",
+            "Real-time Notification System",
+            "Automated Schedule & Session Reminders"
         });
         return status;
     }

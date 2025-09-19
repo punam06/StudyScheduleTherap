@@ -4,6 +4,7 @@ import org.example.entity.GroupSession;
 import org.example.entity.StudyGroup;
 import org.example.service.GroupSessionService;
 import org.example.service.StudyGroupService;
+import org.example.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,9 @@ public class GroupSessionController {
 
     @Autowired
     private StudyGroupService groupService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     // Web UI endpoints
     @GetMapping
@@ -73,6 +77,14 @@ public class GroupSessionController {
                 session.setStudyGroup(group.get());
 
                 GroupSession savedSession = sessionService.createSession(session);
+
+                // Create notifications for all group members
+                if (savedSession.getStudyGroup() != null && savedSession.getStudyGroup().getMembers() != null) {
+                    savedSession.getStudyGroup().getMembers().forEach(member -> {
+                        notificationService.createSessionCreatedNotification(savedSession, member);
+                        notificationService.createSessionReminder(savedSession, member);
+                    });
+                }
 
                 if (savedSession.hasConflicts()) {
                     redirectAttributes.addFlashAttribute("warningMessage",
