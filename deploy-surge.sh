@@ -31,22 +31,9 @@ find build/static -name "*.html" -type f -exec sed -i '' 's|th:src="@{/|src="|g'
 find build/static -name "*.html" -type f -exec sed -i '' 's|href="/|href="./|g' {} \;
 find build/static -name "*.html" -type f -exec sed -i '' 's|src="/|src="./|g' {} \;
 
-# Create a simple navigation for static site
-cat > build/static/nav.html << 'EOF'
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="index.html">
-            <i class="fas fa-graduation-cap me-2"></i>Study Portal
-        </a>
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link" href="dashboard.html">Dashboard</a>
-            <a class="nav-link" href="groups.html">Study Groups</a>
-            <a class="nav-link" href="sessions.html">Sessions</a>
-            <a class="nav-link" href="login.html">Login</a>
-        </div>
-    </div>
-</nav>
-EOF
+# DON'T create conflicting navigation - let each page handle its own navigation
+# Remove the nav.html creation that was causing navigation conflicts
+echo "🚫 Skipping nav.html creation to prevent navigation conflicts..."
 
 # Deploy to Surge
 echo "🚀 Deploying to Surge..."

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Study Session - Study Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-graduation-cap me-2"></i>Study Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="schedules.html">Schedules</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="groups.html">Groups</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="sessions.html">Sessions</a>
+                    </li>
+                    <li class="nav-item" id="authNav">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="hero-section">
+        <div class="container">
+            <h1><i class="fas fa-calendar-plus me-3"></i>Schedule Study Session</h1>
+            <p class="lead">Plan your next study session and track your progress</p>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Alert Messages -->
+                <div id="alertContainer"></div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-calendar-check me-2"></i>Session Details
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="createSessionForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="sessionTitle" class="form-label">
+                                        <i class="fas fa-heading me-1"></i>Session Title *
+                                    </label>
+                                    <input type="text" class="form-control" id="sessionTitle" name="sessionTitle"
+                                           placeholder="e.g., Calculus Problem Solving" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="subject" class="form-label">
+                                        <i class="fas fa-book me-1"></i>Subject *
+                                    </label>
+                                    <select class="form-select" id="subject" name="subject" required>
+                                        <option value="">Choose Subject</option>
+                                        <option value="Mathematics">Mathematics</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="Biology">Biology</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="English">English</option>
+                                        <option value="History">History</option>
+                                        <option value="Economics">Economics</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">
+                                    <i class="fas fa-align-left me-1"></i>Description
+                                </label>
+                                <textarea class="form-control" id="description" name="description" rows="3"
+                                          placeholder="What topics will you cover in this session?"></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="sessionDate" class="form-label">
+                                        <i class="fas fa-calendar me-1"></i>Session Date *
+                                    </label>
+                                    <input type="date" class="form-control" id="sessionDate" name="sessionDate" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="sessionTime" class="form-label">
+                                        <i class="fas fa-clock me-1"></i>Start Time *
+                                    </label>
+                                    <input type="time" class="form-control" id="sessionTime" name="sessionTime" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="duration" class="form-label">
+                                        <i class="fas fa-hourglass-half me-1"></i>Duration (minutes) *
+                                    </label>
+                                    <select class="form-select" id="duration" name="duration" required>
+                                        <option value="">Select Duration</option>
+                                        <option value="30">30 minutes</option>
+                                        <option value="60">1 hour</option>
+                                        <option value="90">1.5 hours</option>
+                                        <option value="120">2 hours</option>
+                                        <option value="150">2.5 hours</option>
+                                        <option value="180">3 hours</option>
+                                        <option value="240">4 hours</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="sessionType" class="form-label">
+                                        <i class="fas fa-tag me-1"></i>Session Type
+                                    </label>
+                                    <select class="form-select" id="sessionType" name="sessionType">
+                                        <option value="individual">Individual Study</option>
+                                        <option value="group">Group Study</option>
+                                        <option value="review">Review Session</option>
+                                        <option value="practice">Practice Session</option>
+                                        <option value="exam-prep">Exam Preparation</option>
+                                        <option value="homework">Homework</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="location" class="form-label">
+                                        <i class="fas fa-map-marker-alt me-1"></i>Location
+                                    </label>
+                                    <input type="text" class="form-control" id="location" name="location"
+                                           placeholder="e.g., Library, Room 201, Online">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="priority" class="form-label">
+                                        <i class="fas fa-exclamation-circle me-1"></i>Priority
+                                    </label>
+                                    <select class="form-select" id="priority" name="priority">
+                                        <option value="low">Low</option>
+                                        <option value="medium" selected>Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="urgent">Urgent</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="goals" class="form-label">
+                                    <i class="fas fa-bullseye me-1"></i>Session Goals
+                                </label>
+                                <textarea class="form-control" id="goals" name="goals" rows="3"
+                                          placeholder="What do you want to achieve in this session?"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="resources" class="form-label">
+                                    <i class="fas fa-book-open me-1"></i>Resources Needed
+                                </label>
+                                <input type="text" class="form-control" id="resources" name="resources"
+                                       placeholder="Textbooks, notes, calculator, etc. (comma-separated)">
+                            </div>
+
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="remindMe" name="remindMe" checked>
+                                <label class="form-check-label" for="remindMe">
+                                    <i class="fas fa-bell me-1"></i>Send me a reminder before the session
+                                </label>
+                            </div>
+
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <span class="loading" style="display: none;">
+                                        <i class="fas fa-spinner fa-spin me-2"></i>Creating Session...
+                                    </span>
+                                    <span class="not-loading">
+                                        <i class="fas fa-plus me-2"></i>Schedule Session
+                                    </span>
+                                </button>
+                                <a href="sessions.html" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-arrow-left me-2"></i>Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p>&copy; 2025 Study Schedule Portal. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="global-auth.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('createSessionForm');
+            const alertContainer = document.getElementById('alertContainer');
+
+            // Check authentication
+            if (!StudyAuth.isLoggedIn()) {
+                StudyAuth.showMessage('Please login to create a study session.', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return;
+            }
+
+            // Set minimum date to today
+            const dateInput = document.getElementById('sessionDate');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
+            dateInput.value = today;
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleCreateSession();
+            });
+
+            function handleCreateSession() {
+                const formData = new FormData(form);
+                const sessionData = {
+                    id: Date.now().toString(),
+                    title: formData.get('sessionTitle'),
+                    subject: formData.get('subject'),
+                    description: formData.get('description') || '',
+                    date: formData.get('sessionDate'),
+                    time: formData.get('sessionTime'),
+                    duration: parseInt(formData.get('duration')),
+                    sessionType: formData.get('sessionType'),
+                    location: formData.get('location') || '',
+                    priority: formData.get('priority'),
+                    goals: formData.get('goals') || '',
+                    resources: formData.get('resources') ? formData.get('resources').split(',').map(r => r.trim()) : [],
+                    remindMe: formData.get('remindMe') === 'on',
+                    createdBy: StudyAuth.getCurrentUser().id,
+                    createdAt: new Date().toISOString(),
+                    status: 'scheduled'
+                };
+
+                // Validate required fields
+                if (!sessionData.title || !sessionData.subject || !sessionData.date || !sessionData.time || !sessionData.duration) {
+                    showAlert('Please fill in all required fields.', 'danger');
+                    return;
+                }
+
+                // Validate date is not in the past
+                const sessionDateTime = new Date(`${sessionData.date}T${sessionData.time}`);
+                if (sessionDateTime < new Date()) {
+                    showAlert('Session date and time cannot be in the past.', 'danger');
+                    return;
+                }
+
+                // Show loading state
+                showLoading(true);
+
+                // Simulate saving delay
+                setTimeout(() => {
+                    // Save to localStorage
+                    const existingSessions = StudyAuth.loadUserData('userSessions', []);
+                    existingSessions.push(sessionData);
+
+                    if (StudyAuth.saveUserData('userSessions', existingSessions)) {
+                        showAlert('Study session scheduled successfully!', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'sessions.html';
+                        }, 1500);
+                    } else {
+                        showAlert('Failed to schedule session. Please try again.', 'danger');
+                        showLoading(false);
+                    }
+                }, 1000);
+            }
+
+            function showLoading(isLoading) {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const loadingSpan = submitBtn.querySelector('.loading');
+                const notLoadingSpan = submitBtn.querySelector('.not-loading');
+
+                if (isLoading) {
+                    loadingSpan.style.display = 'inline';
+                    notLoadingSpan.style.display = 'none';
+                    submitBtn.disabled = true;
+                } else {
+                    loadingSpan.style.display = 'none';
+                    notLoadingSpan.style.display = 'inline';
+                    submitBtn.disabled = false;
+                }
+            }
+
+            function showAlert(message, type) {
+                alertContainer.innerHTML = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
