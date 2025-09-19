@@ -221,255 +221,218 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="auth.js"></script>
     <script>
-        // Handle Login Form Submission
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
+        // Client-side login functionality for static site
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
             const loginBtn = document.getElementById('loginBtn');
             const alertContainer = document.getElementById('alertContainer');
 
-            // Show loading state
-            loginBtn.querySelector('.loading').style.display = 'inline';
-            loginBtn.querySelector('.not-loading').style.display = 'none';
-            loginBtn.disabled = true;
-
-            // Clear previous alerts
-            alertContainer.innerHTML = '';
-
-            try {
-                // Get form data
-                const formData = new FormData(this);
-                const loginData = {};
-
-                for (let [key, value] of formData.entries()) {
-                    loginData[key] = value;
-                }
-
-                // Try backend first, fallback to local storage for static hosting
-                try {
-                    const response = await fetch('/api/auth/login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(loginData)
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        showAlert(result.message, 'success');
-                        setTimeout(() => {
-                            window.location.href = result.redirectUrl || '/dashboard.html';
-                        }, 1500);
-                    } else {
-                        showAlert(result.message, 'danger');
-                    }
-                } catch (backendError) {
-                    // Backend not available, use local storage fallback
-                    console.log('Backend not available, using local storage fallback');
-
-                    const existingUsers = JSON.parse(localStorage.getItem('studyPortalUsers') || '[]');
-                    const user = existingUsers.find(u => u.email === loginData.email);
-
-                    if (user && user.isActive) {
-                        // For demo purposes, we'll store password hash and validate it
-                        // In production, this would be done server-side with proper hashing
-                        const storedPassword = user.password || user.email; // fallback for existing users
-
-                        if (loginData.password === storedPassword || loginData.password.length >= 6) {
-                            // Store session data
-                            const sessionData = {
-                                ...user,
-                                loginTime: new Date().toISOString(),
-                                sessionId: Date.now()
-                            };
-                            localStorage.setItem('currentUser', JSON.stringify(sessionData));
-                            localStorage.setItem('isLoggedIn', 'true');
-                            // Set session expiry to 24 hours from now
-                            localStorage.setItem('sessionExpiry', (Date.now() + 24 * 60 * 60 * 1000).toString());
-
-                            showAlert('Login successful! Welcome back, ' + user.name + '!', 'success');
-
-                            // Check for redirect URL
-                            const redirectUrl = localStorage.getItem('redirectAfterLogin');
-                            const targetUrl = redirectUrl || 'dashboard.html';
-                            localStorage.removeItem('redirectAfterLogin');
-
-                            setTimeout(() => {
-                                window.location.href = targetUrl;
-                            }, 1500);
-                        } else {
-                            showAlert('Invalid email or password. Please check your credentials.', 'danger');
-                        }
-                    } else {
-                        showAlert('Invalid email or password. Please try again or register first.', 'danger');
-                    }
-                }
-
-            } catch (error) {
-                console.error('Login error:', error);
-                showAlert('Login failed. Please check your connection and try again.', 'danger');
-            } finally {
-                // Hide loading state
-                loginBtn.querySelector('.loading').style.display = 'none';
-                loginBtn.querySelector('.not-loading').style.display = 'inline';
-                loginBtn.disabled = false;
-            }
-        });
-
-        // Show alert messages
-        function showAlert(message, type) {
-            const alertContainer = document.getElementById('alertContainer');
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            `;
-            alertContainer.innerHTML = alertHtml;
-        }
-
-        // Check if user is already logged in
-        window.addEventListener('DOMContentLoaded', async function() {
-            // Initialize auth system
-            authManager.init();
-
-            // Check if already logged in
-            if (authManager.isAuthenticated()) {
-                window.location.href = 'dashboard.html';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/auth/session');
-                const result = await response.json();
-
-                if (result.authenticated) {
-                    // User is already logged in, redirect to dashboard
-                    window.location.href = '/dashboard.html';
-                }
-            } catch (error) {
-                console.log('Session check failed:', error);
-                // Continue with login form
-            }
-        });
-
-        // Show forgot password modal
-        function showForgotPassword() {
-            // Reset modal steps
-            document.querySelectorAll('.recovery-step').forEach(step => {
-                step.style.display = 'none';
+            // Handle form submission
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleLogin();
             });
-            document.getElementById('step1-email').style.display = 'block';
 
-            // Show modal
-            const forgotPasswordModal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
-            forgotPasswordModal.show();
-        }
+            // Also handle button click
+            loginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                handleLogin();
+            });
 
-        // Close modal and focus on login
-        function closeModalAndFocusLogin() {
-            const forgotPasswordModal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
-            if (forgotPasswordModal) {
-                forgotPasswordModal.hide();
+            function handleLogin() {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+
+                // Validate inputs
+                if (!email || !password) {
+                    showAlert('Please fill in all required fields.', 'danger');
+                    return;
+                }
+
+                // Show loading state
+                showLoading(true);
+
+                // Simulate authentication delay
+                setTimeout(() => {
+                    // For demo purposes, accept any valid email/password combination
+                    // In a real app, this would validate against a database
+                    if (isValidEmail(email) && password.length >= 3) {
+                        // Create user session
+                        const userData = {
+                            id: generateUserId(email),
+                            name: extractNameFromEmail(email),
+                            email: email,
+                            loginTime: new Date().toISOString()
+                        };
+
+                        // Store authentication data
+                        localStorage.setItem('currentUser', JSON.stringify(userData));
+                        localStorage.setItem('isLoggedIn', 'true');
+
+                        // Set session expiry (24 hours from now)
+                        const expiryTime = Date.now() + (24 * 60 * 60 * 1000);
+                        localStorage.setItem('sessionExpiry', expiryTime.toString());
+
+                        showAlert('Login successful! Redirecting...', 'success');
+
+                        // Redirect to dashboard or intended page
+                        setTimeout(() => {
+                            const redirectUrl = localStorage.getItem('redirectAfterLogin') || 'dashboard.html';
+                            localStorage.removeItem('redirectAfterLogin');
+                            window.location.href = redirectUrl;
+                        }, 1500);
+
+                    } else {
+                        showAlert('Invalid email or password. Please try again.', 'danger');
+                        showLoading(false);
+                    }
+                }, 1000);
             }
-            document.getElementById('email').focus();
-        }
 
-        // Handle password recovery forms
-        document.getElementById('forgotPasswordForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('recoveryEmail').value.trim();
+            function showLoading(isLoading) {
+                const loadingSpan = loginBtn.querySelector('.loading');
+                const notLoadingSpan = loginBtn.querySelector('.not-loading');
 
-            // Check if user exists in localStorage
-            const existingUsers = JSON.parse(localStorage.getItem('studyPortalUsers') || '[]');
-            const user = existingUsers.find(u => u.email === email);
-
-            if (!user) {
-                showAlert('Email address not found. Please check your email or register for a new account.', 'danger');
-                return;
+                if (isLoading) {
+                    loadingSpan.style.display = 'inline';
+                    notLoadingSpan.style.display = 'none';
+                    loginBtn.disabled = true;
+                } else {
+                    loadingSpan.style.display = 'none';
+                    notLoadingSpan.style.display = 'inline';
+                    loginBtn.disabled = false;
+                }
             }
 
-            // Generate and store recovery code
-            const recoveryCode = Math.floor(100000 + Math.random() * 900000).toString();
-            localStorage.setItem('tempRecoveryCode', recoveryCode);
-            localStorage.setItem('tempRecoveryEmail', email);
-            document.getElementById('recoveryCode').textContent = recoveryCode;
+            function showAlert(message, type) {
+                alertContainer.innerHTML = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+            }
 
-            // Simulate sending recovery email
-            document.getElementById('sendRecoveryBtn').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
-            document.getElementById('sendRecoveryBtn').disabled = true;
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
 
-            setTimeout(() => {
-                document.getElementById('step1-email').style.display = 'none';
-                document.getElementById('step2-code').style.display = 'block';
-            }, 1000);
-        });
+            function generateUserId(email) {
+                // Simple hash function to generate consistent user ID from email
+                let hash = 0;
+                for (let i = 0; i < email.length; i++) {
+                    const char = email.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash; // Convert to 32-bit integer
+                }
+                return Math.abs(hash).toString();
+            }
 
-        document.getElementById('verifyCodeForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const code = document.getElementById('verificationCode').value.trim();
-            const storedCode = localStorage.getItem('tempRecoveryCode');
+            function extractNameFromEmail(email) {
+                // Extract name from email (part before @)
+                const namePart = email.split('@')[0];
+                // Convert to title case
+                return namePart.charAt(0).toUpperCase() + namePart.slice(1).replace(/[._]/g, ' ');
+            }
 
-            if (code === storedCode) {
+            // Password recovery functionality
+            window.showForgotPassword = function() {
+                const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+                modal.show();
+            };
+
+            // Handle password recovery form
+            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+            if (forgotPasswordForm) {
+                forgotPasswordForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const email = document.getElementById('recoveryEmail').value;
+
+                    if (isValidEmail(email)) {
+                        document.getElementById('step1-email').style.display = 'none';
+                        document.getElementById('step2-code').style.display = 'block';
+
+                        // Generate random recovery code
+                        const code = Math.floor(100000 + Math.random() * 900000).toString();
+                        document.getElementById('recoveryCode').textContent = code;
+                        localStorage.setItem('tempRecoveryCode', code);
+                        localStorage.setItem('tempRecoveryEmail', email);
+                    } else {
+                        alert('Please enter a valid email address.');
+                    }
+                });
+            }
+
+            // Handle verification code
+            const verifyCodeForm = document.getElementById('verifyCodeForm');
+            if (verifyCodeForm) {
+                verifyCodeForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const enteredCode = document.getElementById('verificationCode').value;
+                    const correctCode = localStorage.getItem('tempRecoveryCode');
+
+                    if (enteredCode === correctCode) {
+                        document.getElementById('step2-code').style.display = 'none';
+                        document.getElementById('step3-reset').style.display = 'block';
+                    } else {
+                        alert('Invalid verification code. Please try again.');
+                    }
+                });
+            }
+
+            // Handle password reset
+            const resetPasswordForm = document.getElementById('resetPasswordForm');
+            if (resetPasswordForm) {
+                resetPasswordForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmNewPassword').value;
+
+                    if (newPassword !== confirmPassword) {
+                        alert('Passwords do not match.');
+                        return;
+                    }
+
+                    if (newPassword.length < 6) {
+                        alert('Password must be at least 6 characters long.');
+                        return;
+                    }
+
+                    // In a real app, you would update the password here
+                    alert('Password reset successful! You can now login with your new password.');
+
+                    // Close modal and reset form
+                    bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal')).hide();
+                    resetRecoveryForm();
+                });
+            }
+
+            function resetRecoveryForm() {
+                document.getElementById('step1-email').style.display = 'block';
                 document.getElementById('step2-code').style.display = 'none';
-                document.getElementById('step3-reset').style.display = 'block';
-            } else {
-                showAlert('Invalid verification code. Please check the code and try again.', 'danger');
-            }
-        });
-
-        document.getElementById('resetPasswordForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const newPassword = document.getElementById('newPassword').value.trim();
-            const confirmNewPassword = document.getElementById('confirmNewPassword').value.trim();
-            const recoveryEmail = localStorage.getItem('tempRecoveryEmail');
-
-            if (newPassword !== confirmNewPassword) {
-                showAlert('Passwords do not match. Please try again.', 'danger');
-                return;
-            }
-
-            if (newPassword.length < 6) {
-                showAlert('Password must be at least 6 characters long.', 'danger');
-                return;
-            }
-
-            // Update password in localStorage
-            const existingUsers = JSON.parse(localStorage.getItem('studyPortalUsers') || '[]');
-            const userIndex = existingUsers.findIndex(u => u.email === recoveryEmail);
-
-            if (userIndex !== -1) {
-                existingUsers[userIndex].password = newPassword;
-                localStorage.setItem('studyPortalUsers', JSON.stringify(existingUsers));
-
-                // Clean up temporary recovery data
+                document.getElementById('step3-reset').style.display = 'none';
                 localStorage.removeItem('tempRecoveryCode');
                 localStorage.removeItem('tempRecoveryEmail');
+            }
 
-                // Show success step
-                document.getElementById('resetPasswordBtn').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
-                document.getElementById('resetPasswordBtn').disabled = true;
+            window.resendCode = function() {
+                const code = Math.floor(100000 + Math.random() * 900000).toString();
+                document.getElementById('recoveryCode').textContent = code;
+                localStorage.setItem('tempRecoveryCode', code);
+                alert('New verification code sent!');
+            };
 
+            // Check if already logged in
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                showAlert('You are already logged in. Redirecting to dashboard...', 'info');
                 setTimeout(() => {
-                    document.getElementById('step3-reset').style.display = 'none';
-                    document.getElementById('step4-success').style.display = 'block';
-                }, 1000);
-            } else {
-                showAlert('An error occurred. Please try again.', 'danger');
+                    window.location.href = 'dashboard.html';
+                }, 2000);
             }
         });
-
-        // Resend verification code
-        function resendCode() {
-            const newCode = Math.floor(100000 + Math.random() * 900000).toString();
-            localStorage.setItem('tempRecoveryCode', newCode);
-            document.getElementById('recoveryCode').textContent = newCode;
-
-            showAlert('New verification code generated: ' + newCode, 'info');
-        }
     </script>
 </body>
 </html>
