@@ -56,8 +56,9 @@
                     return;
                 }
 
+                // Only update the auth section, not the entire navigation
                 authNav.innerHTML = `
-                    <div class="dropdown">
+                    <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user me-1"></i>${user.name}
                         </a>
@@ -73,7 +74,7 @@
                                 <i class="fas fa-sign-out-alt me-2"></i>Logout
                             </a></li>
                         </ul>
-                    </div>
+                    </li>
                 `;
             } else {
                 authNav.innerHTML = `
