@@ -13,15 +13,16 @@ mkdir -p build/static/images
 echo "📁 Copying static files..."
 cp -r static-site/* build/static/
 
-# Copy additional templates as static HTML
+# Copy additional templates as static HTML (but don't overwrite fixed files)
 echo "📄 Converting templates to static HTML..."
-cp src/main/resources/templates/auth/login.html build/static/login.html
-cp src/main/resources/templates/auth/register.html build/static/register.html
-cp src/main/resources/templates/dashboard/index.html build/static/dashboard.html
-cp src/main/resources/templates/groups/form.html build/static/create-group.html
-cp src/main/resources/templates/groups/list.html build/static/groups.html
-cp src/main/resources/templates/sessions/form.html build/static/create-session.html
-cp src/main/resources/templates/sessions/list.html build/static/sessions.html
+# Skip login.html since we have a fixed version in static-site
+# cp src/main/resources/templates/auth/login.html build/static/login.html
+cp src/main/resources/templates/auth/register.html build/static/register.html 2>/dev/null || echo "register.html not found, using static-site version"
+cp src/main/resources/templates/dashboard/index.html build/static/dashboard.html 2>/dev/null || echo "dashboard.html not found, using static-site version"
+cp src/main/resources/templates/groups/form.html build/static/create-group.html 2>/dev/null || echo "create-group.html not found, using static-site version"
+cp src/main/resources/templates/groups/list.html build/static/groups.html 2>/dev/null || echo "groups.html not found, using static-site version"
+cp src/main/resources/templates/sessions/form.html build/static/create-session.html 2>/dev/null || echo "create-session.html not found, using static-site version"
+cp src/main/resources/templates/sessions/list.html build/static/sessions.html 2>/dev/null || echo "sessions.html not found, using static-site version"
 
 # Update paths in HTML files for static deployment
 echo "🔧 Updating paths for static deployment..."
