@@ -19,9 +19,12 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="sessions.html">Sessions</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="schedules.html">Schedules</a>
@@ -30,11 +33,14 @@
                         <a class="nav-link" href="groups.html">Groups</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="sessions.html">Sessions</a>
+                        <a class="nav-link" href="ai-dashboard.html">
+                            <i class="fas fa-robot me-1"></i>AI Assistant
+                        </a>
                     </li>
-                    <li class="nav-item" id="authNav">
-                        <a class="nav-link" href="login.html">Login</a>
-                    </li>
+                </ul>
+                <!-- Auth Navigation -->
+                <ul class="navbar-nav" id="authNav">
+                    <!-- Will be populated by auth system -->
                 </ul>
             </div>
         </div>
@@ -49,102 +55,121 @@
     </div>
 
     <div class="container mt-4">
-        <!-- Login Required Alert -->
-        <div class="alert alert-warning text-center">
-            <h5><i class="fas fa-lock me-2"></i>Login Required</h5>
-            <p class="mb-3">Please login or register to view and schedule study sessions.</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a href="register.html" class="btn btn-primary">
-                    <i class="fas fa-user-plus me-2"></i>Register
-                </a>
-                <a href="login.html" class="btn btn-outline-primary">
-                    <i class="fas fa-sign-in-alt me-2"></i>Login
-                </a>
-            </div>
-        </div>
+        <!-- Alert Messages -->
+        <div id="alertContainer"></div>
 
-        <!-- Statistics Cards with 0 values -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-primary">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <div class="stat-number">0</div>
-                    <div class="text-muted">Total Sessions</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-success">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-number">0</div>
-                    <div class="text-muted">Completed</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-warning">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-number">0</div>
-                    <div class="text-muted">Upcoming</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-info">
-                        <i class="fas fa-hourglass-half"></i>
-                    </div>
-                    <div class="stat-number">0h</div>
-                    <div class="text-muted">Study Hours</div>
+        <!-- Login Required Alert - Only show when not logged in -->
+        <div class="login-required-section" id="loginRequiredSection">
+            <div class="alert alert-warning text-center">
+                <h5><i class="fas fa-lock me-2"></i>Login Required</h5>
+                <p class="mb-3">Please login or register to view and schedule study sessions.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="register.html" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-2"></i>Register
+                    </a>
+                    <a href="login.html" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Empty State -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body text-center py-5">
-                        <i class="fas fa-calendar-times fa-4x text-muted mb-4"></i>
-                        <h4 class="text-muted">No Study Sessions Scheduled</h4>
-                        <p class="text-muted mb-4">Login to create and manage your study sessions.</p>
-                        <div class="d-flex justify-content-center gap-3">
-                            <a href="login.html" class="btn btn-primary">
-                                <i class="fas fa-sign-in-alt me-2"></i>Login to Continue
-                            </a>
+        <!-- Sessions Content - Only shown when logged in -->
+        <div id="sessionsContent" style="display: none;">
+            <!-- Action Button -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">My Study Sessions</h2>
+                <a href="create-session.html" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Create New Session
+                </a>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon text-primary">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-number" id="totalSessions">0</div>
+                        <div class="text-muted">Total Sessions</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon text-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-number" id="completedSessions">0</div>
+                        <div class="text-muted">Completed</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon text-warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-number" id="upcomingSessions">0</div>
+                        <div class="text-muted">Upcoming</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon text-info">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="stat-number" id="studyHours">0h</div>
+                        <div class="text-muted">Study Hours</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sessions List -->
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>All Sessions
+                        </h5>
+                        <div class="input-group" style="max-width: 300px;">
+                            <input type="text" class="form-control" placeholder="Search sessions..." id="sessionSearch">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Features Preview -->
-        <div class="row mt-5">
-            <div class="col-md-12">
-                <h3 class="text-center mb-4">Session Management Features</h3>
-            </div>
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-calendar-plus fa-3x text-primary mb-3"></i>
-                    <h5>Schedule Sessions</h5>
-                    <p class="text-muted">Create and organize your study sessions</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-users fa-3x text-success mb-3"></i>
-                    <h5>Group Sessions</h5>
-                    <p class="text-muted">Join collaborative group study sessions</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
-                    <h5>Track Progress</h5>
-                    <p class="text-muted">Monitor your study progress and achievements</p>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Topic</th>
+                                    <th>Subject</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sessionTableBody">
+                                <!-- Sessions will be loaded here by JS -->
+                                <tr class="no-sessions-row" id="noSessionsRow">
+                                    <td colspan="7" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-calendar-plus fa-3x mb-3 text-muted"></i>
+                                            <h5>No sessions found</h5>
+                                            <p class="text-muted">Create your first study session to get started</p>
+                                            <a href="create-session.html" class="btn btn-primary">
+                                                <i class="fas fa-plus me-2"></i>Create Session
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -161,10 +186,254 @@
     <script src="global-auth.js"></script>
     <script src="script.js"></script>
     <script>
-        // Page-specific functionality for sessions - authentication handled by global-auth.js
+        // Page-specific functionality for sessions
         document.addEventListener('DOMContentLoaded', function() {
-            // StudyAuth.init() is automatically called by global-auth.js
-            console.log('Sessions page loaded - authentication handled by global-auth.js');
+            // Check if user is logged in
+            const isLoggedIn = StudyAuth.isLoggedIn();
+            console.log('Authentication status:', isLoggedIn ? 'Logged in' : 'Not logged in');
+
+            // Toggle sections based on login status
+            const loginRequiredSection = document.getElementById('loginRequiredSection');
+            const sessionsContent = document.getElementById('sessionsContent');
+
+            if (isLoggedIn) {
+                // User is logged in - show sessions
+                loginRequiredSection.style.display = 'none';
+                sessionsContent.style.display = 'block';
+
+                // Load user's sessions
+                loadUserSessions();
+            } else {
+                // User is not logged in - show login required
+                loginRequiredSection.style.display = 'block';
+                sessionsContent.style.display = 'none';
+            }
+
+            // Function to load user's sessions from localStorage
+            function loadUserSessions() {
+                // Get user sessions from localStorage
+                const sessions = StudyAuth.loadUserData('userSessions', []);
+
+                // Update statistics
+                updateSessionStats(sessions);
+
+                // Populate sessions table
+                populateSessionsTable(sessions);
+            }
+
+            // Update session statistics
+            function updateSessionStats(sessions) {
+                const totalElement = document.getElementById('totalSessions');
+                const completedElement = document.getElementById('completedSessions');
+                const upcomingElement = document.getElementById('upcomingSessions');
+                const hoursElement = document.getElementById('studyHours');
+
+                // Count sessions by status
+                const totalCount = sessions.length;
+                let completedCount = 0;
+                let upcomingCount = 0;
+                let totalMinutes = 0;
+
+                const now = new Date();
+
+                sessions.forEach(session => {
+                    const sessionDate = new Date(session.date);
+                    const sessionTimeStr = session.time || '00:00';
+                    const [hours, minutes] = sessionTimeStr.split(':').map(Number);
+
+                    sessionDate.setHours(hours, minutes);
+
+                    if (sessionDate < now) {
+                        // Session in the past is considered completed
+                        completedCount++;
+                    } else {
+                        // Session in the future is upcoming
+                        upcomingCount++;
+                    }
+
+                    // Add session duration to total study time
+                    totalMinutes += parseInt(session.duration) || 0;
+                });
+
+                // Update UI elements
+                totalElement.textContent = totalCount;
+                completedElement.textContent = completedCount;
+                upcomingElement.textContent = upcomingCount;
+                hoursElement.textContent = Math.round(totalMinutes / 60) + 'h';
+            }
+
+            // Populate sessions table
+            function populateSessionsTable(sessions) {
+                const tableBody = document.getElementById('sessionTableBody');
+                const noSessionsRow = document.getElementById('noSessionsRow');
+
+                // Clear existing rows except the no-sessions row
+                Array.from(tableBody.children).forEach(child => {
+                    if (!child.classList.contains('no-sessions-row')) {
+                        child.remove();
+                    }
+                });
+
+                // Show/hide no sessions message
+                if (sessions.length === 0) {
+                    noSessionsRow.style.display = 'table-row';
+                    return;
+                } else {
+                    noSessionsRow.style.display = 'none';
+                }
+
+                // Sort sessions by date/time (closest upcoming first, then past sessions)
+                sessions.sort((a, b) => {
+                    const dateA = new Date(a.date + ' ' + (a.time || '00:00'));
+                    const dateB = new Date(b.date + ' ' + (b.time || '00:00'));
+                    return dateA - dateB;
+                });
+
+                const now = new Date();
+
+                // Add rows for each session
+                sessions.forEach(session => {
+                    const row = document.createElement('tr');
+
+                    // Format date
+                    const sessionDate = new Date(session.date);
+                    const formattedDate = sessionDate.toLocaleDateString();
+
+                    // Format time
+                    const formattedTime = session.time || 'N/A';
+
+                    // Format duration
+                    const duration = session.duration ? `${session.duration} min` : 'N/A';
+
+                    // Determine status
+                    const sessionDateTime = new Date(session.date + ' ' + (session.time || '00:00'));
+                    const isPast = sessionDateTime < now;
+
+                    const statusClass = isPast ? 'bg-success' : 'bg-warning';
+                    const statusText = isPast ? 'Completed' : 'Upcoming';
+
+                    row.innerHTML = `
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <div class="fw-bold">${session.topic || 'Untitled Session'}</div>
+                                    <div class="small text-muted">${session.subject || 'No subject'}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${session.subject || 'N/A'}</td>
+                        <td>${formattedDate}</td>
+                        <td>${formattedTime}</td>
+                        <td>${duration}</td>
+                        <td>
+                            <span class="badge ${statusClass}">${statusText}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-primary view-session" data-id="${session.id}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-success edit-session" data-id="${session.id}" ${isPast ? 'disabled' : ''}>
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger delete-session" data-id="${session.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+
+                // Add event listeners to action buttons
+                setupActionButtons();
+            }
+
+            // Setup action buttons
+            function setupActionButtons() {
+                // View session
+                document.querySelectorAll('.view-session').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const sessionId = this.getAttribute('data-id');
+                        viewSession(sessionId);
+                    });
+                });
+
+                // Edit session
+                document.querySelectorAll('.edit-session').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const sessionId = this.getAttribute('data-id');
+                        editSession(sessionId);
+                    });
+                });
+
+                // Delete session
+                document.querySelectorAll('.delete-session').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const sessionId = this.getAttribute('data-id');
+                        deleteSession(sessionId);
+                    });
+                });
+            }
+
+            // View session details
+            function viewSession(sessionId) {
+                const sessions = StudyAuth.loadUserData('userSessions', []);
+                const session = sessions.find(s => s.id === sessionId);
+
+                if (session) {
+                    // For now, just show details in an alert
+                    StudyAuth.showMessage(`
+                        <strong>${session.topic || 'Untitled Session'}</strong><br>
+                        Subject: ${session.subject || 'N/A'}<br>
+                        Date: ${new Date(session.date).toLocaleDateString()}<br>
+                        Time: ${session.time || 'N/A'}<br>
+                        Duration: ${session.duration} minutes<br>
+                        ${session.notes ? 'Notes: ' + session.notes : ''}
+                    `, 'info');
+                }
+            }
+
+            // Edit session
+            function editSession(sessionId) {
+                // Redirect to edit page with ID
+                window.location.href = `create-session.html?edit=${sessionId}`;
+            }
+
+            // Delete session
+            function deleteSession(sessionId) {
+                if (confirm('Are you sure you want to delete this session?')) {
+                    const sessions = StudyAuth.loadUserData('userSessions', []);
+                    const updatedSessions = sessions.filter(s => s.id !== sessionId);
+
+                    if (StudyAuth.saveUserData('userSessions', updatedSessions)) {
+                        StudyAuth.showMessage('Session deleted successfully.', 'success');
+                        loadUserSessions(); // Reload the list
+                    } else {
+                        StudyAuth.showMessage('Failed to delete session.', 'danger');
+                    }
+                }
+            }
+
+            // Search functionality
+            const searchInput = document.getElementById('sessionSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const sessions = StudyAuth.loadUserData('userSessions', []);
+
+                    // Filter sessions by search term
+                    const filteredSessions = sessions.filter(session =>
+                        (session.topic && session.topic.toLowerCase().includes(searchTerm)) ||
+                        (session.subject && session.subject.toLowerCase().includes(searchTerm)) ||
+                        (session.notes && session.notes.toLowerCase().includes(searchTerm))
+                    );
+
+                    // Update table with filtered results
+                    populateSessionsTable(filteredSessions);
+                });
+            }
         });
     </script>
 </body>

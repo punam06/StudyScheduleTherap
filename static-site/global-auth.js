@@ -13,12 +13,17 @@
 
             // Also check if session has expired
             const sessionExpiry = localStorage.getItem('sessionExpiry');
-            const isExpired = sessionExpiry && parseInt(sessionExpiry) < Date.now();
+            const rememberMe = localStorage.getItem('rememberMe');
 
-            if (isExpired) {
-                console.log('Session expired, logging out');
-                // Don't actually logout to avoid redirect loops - just return false
-                return false;
+            if (sessionExpiry) {
+                const isExpired = parseInt(sessionExpiry) < Date.now();
+
+                if (isExpired) {
+                    console.log('Session expired');
+                    // Clear expired session data
+                    this.logout(false);
+                    return false;
+                }
             }
 
             return currentUser && isLoggedIn === 'true';
@@ -92,6 +97,7 @@
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('sessionExpiry');
             localStorage.removeItem('redirectAfterLogin');
+            localStorage.removeItem('rememberMe');
 
             if (redirect) {
                 // Show logout success message

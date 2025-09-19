@@ -263,15 +263,25 @@
                             id: generateUserId(email),
                             name: extractNameFromEmail(email),
                             email: email,
-                            loginTime: new Date().toISOString()
+                            loginTime: new Date().toISOString(),
+                            rememberMe: rememberMe
                         };
 
                         // Store authentication data
                         localStorage.setItem('currentUser', JSON.stringify(userData));
                         localStorage.setItem('isLoggedIn', 'true');
 
-                        // Set session expiry (24 hours from now)
-                        const expiryTime = Date.now() + (24 * 60 * 60 * 1000);
+                        // Set session expiry based on "Remember Me" option
+                        let expiryTime;
+                        if (rememberMe) {
+                            // Remember for 30 days
+                            expiryTime = Date.now() + (30 * 24 * 60 * 60 * 1000);
+                            localStorage.setItem('rememberMe', 'true');
+                        } else {
+                            // Regular session - 24 hours
+                            expiryTime = Date.now() + (24 * 60 * 60 * 1000);
+                            localStorage.removeItem('rememberMe');
+                        }
                         localStorage.setItem('sessionExpiry', expiryTime.toString());
 
                         StudyAuth.showMessage('Login successful! Redirecting...', 'success');

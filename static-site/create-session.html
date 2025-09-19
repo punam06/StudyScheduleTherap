@@ -19,7 +19,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="dashboard.html">Dashboard</a>
                     </li>
@@ -32,9 +32,15 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="sessions.html">Sessions</a>
                     </li>
-                    <li class="nav-item" id="authNav">
-                        <a class="nav-link" href="login.html">Login</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ai-dashboard.html">
+                            <i class="fas fa-robot me-1"></i>AI Assistant
+                        </a>
                     </li>
+                </ul>
+                <!-- Auth Navigation -->
+                <ul class="navbar-nav" id="authNav">
+                    <!-- Will be populated by auth system -->
                 </ul>
             </div>
         </div>
@@ -76,15 +82,8 @@
                                     </label>
                                     <select class="form-select" id="subject" name="subject" required>
                                         <option value="">Choose Subject</option>
-                                        <option value="Mathematics">Mathematics</option>
-                                        <option value="Physics">Physics</option>
-                                        <option value="Chemistry">Chemistry</option>
-                                        <option value="Biology">Biology</option>
-                                        <option value="Computer Science">Computer Science</option>
-                                        <option value="English">English</option>
-                                        <option value="History">History</option>
-                                        <option value="Economics">Economics</option>
-                                        <option value="Other">Other</option>
+                                        <!-- Subjects will be populated by JavaScript -->
+                                        <option value="custom">+ Add Custom Subject</option>
                                     </select>
                                 </div>
                             </div>
@@ -200,6 +199,20 @@
                                     <i class="fas fa-arrow-left me-2"></i>Cancel
                                 </a>
                             </div>
+
+                            <!-- Custom Subject Input (Hidden by default) -->
+                            <div class="row mb-3" id="customSubjectRow" style="display: none;">
+                                <div class="col-md-12">
+                                    <label for="customSubject" class="form-label">
+                                        <i class="fas fa-plus-circle me-1"></i>Enter Custom Subject
+                                    </label>
+                                    <input type="text" class="form-control" id="customSubject" name="customSubject"
+                                           placeholder="Enter your subject name">
+                                    <div class="form-text mt-1">
+                                        <i class="fas fa-info-circle me-1"></i>Your custom subject will be saved for future use
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -221,6 +234,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('createSessionForm');
             const alertContainer = document.getElementById('alertContainer');
+            const subjectSelect = document.getElementById('subject');
+            const customSubjectRow = document.getElementById('customSubjectRow');
+            const customSubjectInput = document.getElementById('customSubject');
 
             // Check authentication
             if (!StudyAuth.isLoggedIn()) {
@@ -237,6 +253,24 @@
             dateInput.min = today;
             dateInput.value = today;
 
+            // Populate subjects from user data
+            const userSubjects = StudyAuth.loadUserData('userSubjects', []);
+            userSubjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject;
+                option.textContent = subject;
+                subjectSelect.insertBefore(option, subjectSelect.lastElementChild);
+            });
+
+            subjectSelect.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customSubjectRow.style.display = 'block';
+                    customSubjectInput.focus();
+                } else {
+                    customSubjectRow.style.display = 'none';
+                }
+            });
+
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 handleCreateSession();
@@ -247,7 +281,7 @@
                 const sessionData = {
                     id: Date.now().toString(),
                     title: formData.get('sessionTitle'),
-                    subject: formData.get('subject'),
+                    subject: formData.get('subject') === 'custom' ? formData.get('customSubject') : formData.get('subject'),
                     description: formData.get('description') || '',
                     date: formData.get('sessionDate'),
                     time: formData.get('sessionTime'),
@@ -284,6 +318,15 @@
                     // Save to localStorage
                     const existingSessions = StudyAuth.loadUserData('userSessions', []);
                     existingSessions.push(sessionData);
+
+                    // Save custom subject if it's a new one
+                    if (formData.get('subject') === 'custom' && customSubjectInput.value.trim() !== '') {
+                        const newSubject = customSubjectInput.value.trim();
+                        if (!userSubjects.includes(newSubject)) {
+                            userSubjects.push(newSubject);
+                            StudyAuth.saveUserData('userSubjects', userSubjects);
+                        }
+                    }
 
                     if (StudyAuth.saveUserData('userSessions', existingSessions)) {
                         showAlert('Study session scheduled successfully!', 'success');
