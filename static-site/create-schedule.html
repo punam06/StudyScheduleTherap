@@ -76,6 +76,7 @@
                                     </label>
                                     <select class="form-select" id="subject" name="subject" required>
                                         <option value="">Choose Subject</option>
+                                        <!-- Default subjects -->
                                         <option value="Mathematics">Mathematics</option>
                                         <option value="Physics">Physics</option>
                                         <option value="Chemistry">Chemistry</option>
@@ -84,8 +85,23 @@
                                         <option value="English">English</option>
                                         <option value="History">History</option>
                                         <option value="Economics">Economics</option>
-                                        <option value="Other">Other</option>
+                                        <!-- Option to add custom subject -->
+                                        <option value="custom">+ Add Custom Subject</option>
                                     </select>
+                                </div>
+                            </div>
+
+                            <!-- Custom Subject Input (Hidden by default) -->
+                            <div class="row mb-3" id="customSubjectRow" style="display: none;">
+                                <div class="col-md-12">
+                                    <label for="customSubject" class="form-label">
+                                        <i class="fas fa-plus-circle me-1"></i>Enter Custom Subject
+                                    </label>
+                                    <input type="text" class="form-control" id="customSubject" name="customSubject"
+                                           placeholder="Enter your subject name">
+                                    <div class="form-text mt-1">
+                                        <i class="fas fa-info-circle me-1"></i>Your custom subject will be saved for future use
+                                    </div>
                                 </div>
                             </div>
 
@@ -244,6 +260,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('createScheduleForm');
             const alertContainer = document.getElementById('alertContainer');
+            const subjectSelect = document.getElementById('subject');
 
             // Check authentication
             if (!StudyAuth.isLoggedIn()) {
@@ -267,19 +284,182 @@
                 document.getElementById(day).checked = true;
             });
 
+            // Load recommended subjects based on user's major
+            loadRecommendedSubjects();
+
+            // Subject change event to toggle custom subject input
+            subjectSelect.addEventListener('change', function() {
+                const customSubjectRow = document.getElementById('customSubjectRow');
+                if (this.value === 'custom') {
+                    customSubjectRow.style.display = 'block';
+                    document.getElementById('customSubject').focus();
+                } else {
+                    customSubjectRow.style.display = 'none';
+                }
+            });
+
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 handleCreateSchedule();
             });
 
+            // Function to load recommended subjects based on user's major
+            function loadRecommendedSubjects() {
+                const currentUser = StudyAuth.getCurrentUser();
+                if (!currentUser) return;
+
+                // Get custom subjects previously added by user
+                const customSubjects = StudyAuth.loadUserData('customSubjects', []);
+
+                // Get recommended subjects based on major
+                const recommendedSubjects = getRecommendedSubjectsByMajor(currentUser.major);
+
+                // Store the default options (including the "custom" option)
+                const defaultOption = subjectSelect.querySelector('option[value=""]');
+                const customOption = subjectSelect.querySelector('option[value="custom"]');
+
+                // Clear the select options
+                subjectSelect.innerHTML = '';
+
+                // Add back the default option
+                subjectSelect.appendChild(defaultOption);
+
+                // Add recommended subjects with a special class
+                if (recommendedSubjects.length > 0) {
+                    const recommendedGroup = document.createElement('optgroup');
+                    recommendedGroup.label = 'Recommended for ' + currentUser.major;
+
+                    recommendedSubjects.forEach(subject => {
+                        const option = document.createElement('option');
+                        option.value = subject;
+                        option.textContent = subject;
+                        option.classList.add('recommended-subject');
+                        recommendedGroup.appendChild(option);
+                    });
+
+                    subjectSelect.appendChild(recommendedGroup);
+                }
+
+                // Add previously used custom subjects
+                if (customSubjects.length > 0) {
+                    const customGroup = document.createElement('optgroup');
+                    customGroup.label = 'Your Custom Subjects';
+
+                    customSubjects.forEach(subject => {
+                        const option = document.createElement('option');
+                        option.value = subject;
+                        option.textContent = subject;
+                        customGroup.appendChild(option);
+                    });
+
+                    subjectSelect.appendChild(customGroup);
+                }
+
+                // Add standard subjects
+                const standardSubjects = [
+                    'Mathematics', 'Physics', 'Chemistry', 'Biology',
+                    'Computer Science', 'English', 'History', 'Economics'
+                ];
+
+                const standardGroup = document.createElement('optgroup');
+                standardGroup.label = 'Standard Subjects';
+
+                standardSubjects.forEach(subject => {
+                    // Only add if not already in recommended list
+                    if (!recommendedSubjects.includes(subject)) {
+                        const option = document.createElement('option');
+                        option.value = subject;
+                        option.textContent = subject;
+                        standardGroup.appendChild(option);
+                    }
+                });
+
+                subjectSelect.appendChild(standardGroup);
+
+                // Add back the custom option
+                subjectSelect.appendChild(customOption);
+            }
+
+            // Get recommended subjects based on user's major
+            function getRecommendedSubjectsByMajor(major) {
+                const recommendations = {
+                    'Computer Science': [
+                        'Computer Science', 'Mathematics', 'Data Structures', 'Algorithms',
+                        'Database Systems', 'Software Engineering', 'Computer Networks',
+                        'Operating Systems', 'Artificial Intelligence'
+                    ],
+                    'Engineering': [
+                        'Physics', 'Mathematics', 'Engineering Mechanics', 'Thermodynamics',
+                        'Electrical Circuits', 'Materials Science', 'Control Systems',
+                        'Fluid Mechanics'
+                    ],
+                    'Mathematics': [
+                        'Mathematics', 'Calculus', 'Algebra', 'Discrete Mathematics',
+                        'Statistics', 'Probability', 'Number Theory', 'Differential Equations'
+                    ],
+                    'Physics': [
+                        'Physics', 'Mathematics', 'Classical Mechanics', 'Quantum Mechanics',
+                        'Electromagnetism', 'Thermodynamics', 'Optics', 'Relativity'
+                    ],
+                    'Chemistry': [
+                        'Chemistry', 'Organic Chemistry', 'Inorganic Chemistry', 'Physical Chemistry',
+                        'Biochemistry', 'Analytical Chemistry', 'Environmental Chemistry'
+                    ],
+                    'Biology': [
+                        'Biology', 'Genetics', 'Ecology', 'Microbiology', 'Anatomy',
+                        'Physiology', 'Molecular Biology', 'Cell Biology'
+                    ],
+                    'Business': [
+                        'Economics', 'Accounting', 'Finance', 'Marketing', 'Management',
+                        'Business Ethics', 'Business Law', 'Entrepreneurship'
+                    ],
+                    'Economics': [
+                        'Economics', 'Microeconomics', 'Macroeconomics', 'Econometrics',
+                        'International Economics', 'Development Economics', 'Finance'
+                    ],
+                    'Medicine': [
+                        'Anatomy', 'Physiology', 'Biochemistry', 'Pathology', 'Pharmacology',
+                        'Microbiology', 'Immunology', 'Neuroscience'
+                    ],
+                    'Law': [
+                        'Constitutional Law', 'Criminal Law', 'Civil Law', 'International Law',
+                        'Contract Law', 'Property Law', 'Ethics', 'Legal Writing'
+                    ],
+                    'Arts': [
+                        'Literature', 'History', 'Philosophy', 'Art History', 'Music Theory',
+                        'Cultural Studies', 'Linguistics', 'Religious Studies'
+                    ],
+                    'Social Sciences': [
+                        'Psychology', 'Sociology', 'Political Science', 'Anthropology',
+                        'Geography', 'International Relations', 'Cultural Studies'
+                    ]
+                };
+
+                return recommendations[major] || [];
+            }
+
             function handleCreateSchedule() {
                 const formData = new FormData(form);
                 const studyDays = Array.from(form.querySelectorAll('input[name="studyDays"]:checked')).map(cb => cb.value);
 
+                // Handle custom subject
+                let subjectValue = formData.get('subject');
+                if (subjectValue === 'custom') {
+                    const customSubjectValue = formData.get('customSubject').trim();
+                    if (!customSubjectValue) {
+                        StudyAuth.showMessage('Please enter a custom subject name.', 'danger');
+                        return;
+                    }
+                    subjectValue = customSubjectValue;
+
+                    // Save custom subject for future use
+                    saveCustomSubject(customSubjectValue);
+                }
+
                 const scheduleData = {
                     id: Date.now().toString(),
                     title: formData.get('scheduleTitle'),
-                    subject: formData.get('subject'),
+                    subject: subjectValue,
                     description: formData.get('description') || '',
                     startDate: formData.get('startDate'),
                     endDate: formData.get('endDate') || '',
@@ -325,6 +505,17 @@
                         showLoading(false);
                     }
                 }, 1000);
+            }
+
+            // Function to save custom subject for future use
+            function saveCustomSubject(customSubject) {
+                const customSubjects = StudyAuth.loadUserData('customSubjects', []);
+
+                // Only add if not already in the list
+                if (!customSubjects.includes(customSubject)) {
+                    customSubjects.push(customSubject);
+                    StudyAuth.saveUserData('customSubjects', customSubjects);
+                }
             }
 
             function showLoading(isLoading) {
