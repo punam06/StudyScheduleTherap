@@ -2,7 +2,6 @@
 
 // Initialize with empty data instead of mock data
 const mockSchedules = [];
-
 const mockGroups = [];
 
 // Default user data with null/0 values
@@ -18,27 +17,40 @@ const defaultUserData = {
 
 // Utility Functions
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    if (!dateString) return 'No date';
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    } catch (error) {
+        console.error('Date formatting error:', error);
+        return 'Invalid date';
+    }
 }
 
 function formatTime(timeString) {
-    const [hours, minutes] = timeString.split(':');
-    const date = new Date();
-    date.setHours(parseInt(hours), parseInt(minutes));
-    return date.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-    });
+    if (!timeString) return 'No time';
+    try {
+        const [hours, minutes] = timeString.split(':');
+        const date = new Date();
+        date.setHours(parseInt(hours), parseInt(minutes));
+        return date.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+    } catch (error) {
+        console.error('Time formatting error:', error);
+        return 'Invalid time';
+    }
 }
 
 function formatDuration(minutes) {
+    if (!minutes || minutes === 0) return '0m';
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {
@@ -50,284 +62,214 @@ function formatDuration(minutes) {
 // AI Recommendations Generator
 function generateAIRecommendations(subject, currentTime = new Date().getHours()) {
     const recommendations = {
-        Mathematics: {
-            morning: "Morning is ideal for mathematical concepts. Start with problem-solving exercises.",
-            afternoon: "Review theory and practice computational problems.",
-            evening: "Focus on reviewing the day's work and light practice.",
-            duration: "90-120 minutes with 15-minute breaks",
-            technique: "Use the Pomodoro technique with active problem solving"
-        },
-        Physics: {
-            morning: "Perfect time for conceptual understanding and theory.",
-            afternoon: "Ideal for practical problems and laboratory work.",
-            evening: "Review formulas and concepts, avoid complex calculations.",
-            duration: "75-90 minutes with regular breaks",
-            technique: "Combine visual learning with mathematical problem solving"
-        },
-        Programming: {
-            morning: "Best time for learning new concepts and complex algorithms.",
-            afternoon: "Great for coding practice and project work.",
-            evening: "Code review, debugging, and light practice.",
-            duration: "120-180 minutes with frequent breaks",
-            technique: "Learn by doing - practice coding while learning theory"
-        }
+        Mathematics: [
+            "Start with basic concepts before moving to complex problems",
+            "Practice daily calculations for 30 minutes",
+            "Use visual aids for geometric concepts",
+            "Review formulas regularly"
+        ],
+        Physics: [
+            "Connect theoretical concepts with real-world examples",
+            "Practice problem-solving with step-by-step approach",
+            "Use diagrams and graphs for better understanding",
+            "Focus on understanding units and measurements"
+        ],
+        Chemistry: [
+            "Create molecular models for better visualization",
+            "Practice balancing chemical equations daily",
+            "Memorize periodic table systematically",
+            "Relate chemistry concepts to everyday life"
+        ],
+        Biology: [
+            "Use flashcards for terminology",
+            "Create concept maps for complex processes",
+            "Study with diagrams and illustrations",
+            "Connect biological processes to human body"
+        ],
+        "Computer Science": [
+            "Practice coding problems daily",
+            "Break down complex algorithms into smaller parts",
+            "Use pseudocode before actual coding",
+            "Study data structures with real examples"
+        ]
     };
 
-    const timeOfDay = currentTime < 12 ? 'morning' : currentTime < 17 ? 'afternoon' : 'evening';
-    const subjectRec = recommendations[subject] || recommendations['Programming'];
+    const timeBasedTips = {
+        morning: "Morning is great for complex problem-solving and new concepts",
+        afternoon: "Afternoon is perfect for practice and revision",
+        evening: "Evening is ideal for review and light reading"
+    };
+
+    let timeOfDay = 'morning';
+    if (currentTime >= 12 && currentTime < 17) timeOfDay = 'afternoon';
+    if (currentTime >= 17) timeOfDay = 'evening';
+
+    const subjectTips = recommendations[subject] || [
+        "Set clear goals for each study session",
+        "Take regular breaks to maintain focus",
+        "Use active recall techniques",
+        "Practice spaced repetition"
+    ];
 
     return {
-        timeAdvice: subjectRec[timeOfDay],
-        duration: subjectRec.duration,
-        technique: subjectRec.technique,
-        efficiency: Math.floor(Math.random() * 20) + 80 // Mock efficiency score
+        subject: subjectTips,
+        timing: timeBasedTips[timeOfDay],
+        general: [
+            "Stay hydrated during study sessions",
+            "Create a distraction-free environment",
+            "Use the Pomodoro technique for better focus"
+        ]
     };
 }
 
-// Local Storage Functions
-function saveToLocalStorage(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
-}
+// Dashboard Initialization
+function initializeDashboard() {
+    // Check if we're on the dashboard page
+    if (!window.location.pathname.includes('dashboard')) return;
 
-function getFromLocalStorage(key, defaultValue = []) {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : defaultValue;
-}
-
-// Schedule Management
-function loadSchedules() {
-    return getFromLocalStorage('schedules', mockSchedules);
-}
-
-function saveSchedule(schedule) {
-    const schedules = loadSchedules();
-    schedule.id = Date.now();
-    schedules.push(schedule);
-    saveToLocalStorage('schedules', schedules);
-    return schedule;
-}
-
-function deleteSchedule(id) {
-    const schedules = loadSchedules();
-    const filtered = schedules.filter(s => s.id !== parseInt(id));
-    saveToLocalStorage('schedules', filtered);
-}
-
-// Group Management
-function loadGroups() {
-    return getFromLocalStorage('groups', mockGroups);
-}
-
-function joinGroup(groupId) {
-    const groups = loadGroups();
-    const group = groups.find(g => g.id === parseInt(groupId));
-    if (group && group.members < group.maxMembers) {
-        group.members++;
-        saveToLocalStorage('groups', groups);
-        return true;
+    // Initialize charts if Chart.js is available
+    if (typeof Chart !== 'undefined') {
+        initializeCharts();
     }
-    return false;
+
+    // Load user data and update UI
+    updateDashboardStats();
 }
 
-// DOM Manipulation Functions
-function createScheduleCard(schedule) {
-    const priorityClass = `priority-${schedule.priority}`;
-    const statusBadge = schedule.status === 'completed' ?
-        '<span class="badge bg-success">Completed</span>' :
-        '<span class="badge bg-warning">Pending</span>';
-
-    return `
-        <div class="col-md-6 col-lg-4 mb-3">
-            <div class="card schedule-card ${priorityClass} fade-in">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="card-title">${schedule.subject}</h5>
-                        ${statusBadge}
-                    </div>
-                    <h6 class="card-subtitle mb-2 text-muted">${schedule.topic}</h6>
-                    <p class="card-text">
-                        <i class="fas fa-calendar me-2"></i>${formatDate(schedule.date)}<br>
-                        <i class="fas fa-clock me-2"></i>${formatTime(schedule.time)} (${formatDuration(schedule.duration)})
-                    </p>
-                    <div class="d-flex justify-content-between">
-                        <button class="btn btn-sm btn-outline-primary" onclick="viewScheduleDetails(${schedule.id})">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteScheduleConfirm(${schedule.id})">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function createGroupCard(group) {
-    const isFull = group.members >= group.maxMembers;
-    const joinButton = isFull ?
-        '<button class="btn btn-secondary btn-sm" disabled>Full</button>' :
-        `<button class="btn btn-primary btn-sm" onclick="joinGroupConfirm(${group.id})">Join Group</button>`;
-
-    return `
-        <div class="col-md-6 col-lg-4 mb-3">
-            <div class="card group-card fade-in">
-                <div class="group-header">
-                    <h5 class="mb-1">${group.name}</h5>
-                    <span class="badge bg-light text-dark">${group.subject}</span>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">${group.description}</p>
-                    <div class="row text-center mb-3">
-                        <div class="col-6">
-                            <strong>${group.members}/${group.maxMembers}</strong><br>
-                            <small class="text-muted">Members</small>
-                        </div>
-                        <div class="col-6">
-                            <strong>${formatDate(group.nextSession.split(' ')[0])}</strong><br>
-                            <small class="text-muted">Next Session</small>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        ${joinButton}
-                        <button class="btn btn-outline-info btn-sm" onclick="viewGroupDetails(${group.id})">
-                            <i class="fas fa-info-circle"></i> Details
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-// Event Handlers
-function viewScheduleDetails(id) {
-    const schedules = loadSchedules();
-    const schedule = schedules.find(s => s.id === id);
-    if (schedule) {
-        const recommendations = generateAIRecommendations(schedule.subject);
-        alert(`Schedule Details:\n\nSubject: ${schedule.subject}\nTopic: ${schedule.topic}\nDate: ${formatDate(schedule.date)}\nTime: ${formatTime(schedule.time)}\nDuration: ${formatDuration(schedule.duration)}\n\nAI Recommendation:\n${recommendations.timeAdvice}\n\nSuggested Duration: ${recommendations.duration}\nTechnique: ${recommendations.technique}`);
-    }
-}
-
-function deleteScheduleConfirm(id) {
-    if (confirm('Are you sure you want to delete this schedule?')) {
-        deleteSchedule(id);
-        if (typeof renderSchedules === 'function') {
-            renderSchedules();
-        }
-        showNotification('Schedule deleted successfully!', 'success');
-    }
-}
-
-function joinGroupConfirm(groupId) {
-    if (confirm('Do you want to join this study group?')) {
-        if (joinGroup(groupId)) {
-            if (typeof renderGroups === 'function') {
-                renderGroups();
-            }
-            showNotification('Successfully joined the group!', 'success');
-        } else {
-            showNotification('Unable to join group. It may be full.', 'error');
-        }
-    }
-}
-
-function viewGroupDetails(id) {
-    const groups = loadGroups();
-    const group = groups.find(g => g.id === id);
-    if (group) {
-        alert(`Group Details:\n\nName: ${group.name}\nSubject: ${group.subject}\nMembers: ${group.members}/${group.maxMembers}\nDescription: ${group.description}\nNext Session: ${formatDate(group.nextSession.split(' ')[0])} at ${formatTime(group.nextSession.split(' ')[1])}`);
-    }
-}
-
-// Notification System
-function showNotification(message, type = 'info') {
-    const alertClass = type === 'success' ? 'alert-success' :
-                     type === 'error' ? 'alert-danger' : 'alert-info';
-
-    const notification = document.createElement('div');
-    notification.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
-    notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
-    notification.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.remove();
-        }
-    }, 5000);
-}
-
-// Form Handling
-function handleScheduleForm(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-
-    const schedule = {
-        subject: formData.get('subject'),
-        topic: formData.get('topic'),
-        date: formData.get('date'),
-        time: formData.get('time'),
-        duration: parseInt(formData.get('duration')),
-        priority: formData.get('priority'),
-        status: 'pending'
-    };
-
-    saveSchedule(schedule);
-    showNotification('Schedule created successfully!', 'success');
-    event.target.reset();
-
-    // Redirect to schedules page after a short delay
-    setTimeout(() => {
-        window.location.href = 'schedules.html';
-    }, 1500);
-}
-
-// Initialize page-specific functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth'
-                });
+// Chart Initialization
+function initializeCharts() {
+    // Progress Chart
+    const progressCtx = document.getElementById('progressChart');
+    if (progressCtx) {
+        new Chart(progressCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed', 'In Progress', 'Pending'],
+                datasets: [{
+                    data: [65, 25, 10],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
             }
         });
-    });
+    }
 
-    // Add fade-in animation to cards
-    const cards = document.querySelectorAll('.card');
-    cards.forEach((card, index) => {
-        setTimeout(() => {
-            card.classList.add('fade-in');
-        }, index * 100);
-    });
+    // Study Hours Chart
+    const hoursCtx = document.getElementById('studyHoursChart');
+    if (hoursCtx) {
+        new Chart(hoursCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Study Hours',
+                    data: [4, 6, 5, 7, 8, 6, 4],
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10
+                    }
+                }
+            }
+        });
+    }
+}
 
-    // Initialize tooltips
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+// Update Dashboard Statistics
+function updateDashboardStats() {
+    if (typeof StudyAuth !== 'undefined' && StudyAuth.isLoggedIn()) {
+        const schedules = StudyAuth.loadUserData('userSchedules', []);
+        const sessions = StudyAuth.loadUserData('userSessions', []);
+        const groups = StudyAuth.loadUserData('userGroups', []);
+
+        // Update stat cards if they exist
+        const statCards = document.querySelectorAll('.stat-number');
+        if (statCards.length >= 4) {
+            statCards[0].textContent = schedules.length;
+            statCards[1].textContent = sessions.filter(s => s.status === 'scheduled').length;
+            statCards[2].textContent = groups.length;
+            statCards[3].textContent = Math.round((schedules.reduce((sum, s) => sum + (s.duration || 0), 0) +
+                                                  sessions.reduce((sum, s) => sum + (s.duration || 0), 0)) / 60) + 'h';
+        }
+    }
+}
+
+// Form Validation Utilities
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function validatePassword(password) {
+    return password && password.length >= 6;
+}
+
+function validateRequired(value) {
+    return value && value.trim().length > 0;
+}
+
+// Error Handling Utilities
+function showErrorMessage(message, containerId = 'alertContainer') {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+    }
+}
+
+function showSuccessMessage(message, containerId = 'alertContainer') {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.innerHTML = `
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize dashboard if we're on that page
+    initializeDashboard();
+
+    // Initialize any page-specific functionality
+    console.log('Study Portal JavaScript initialized');
 });
 
 // Export functions for use in other scripts
 window.StudyPortal = {
-    loadSchedules,
-    saveSchedule,
-    deleteSchedule,
-    loadGroups,
-    joinGroup,
+    formatDate,
+    formatTime,
+    formatDuration,
     generateAIRecommendations,
-    createScheduleCard,
-    createGroupCard,
-    handleScheduleForm,
-    showNotification
+    validateEmail,
+    validatePassword,
+    validateRequired,
+    showErrorMessage,
+    showSuccessMessage
 };
