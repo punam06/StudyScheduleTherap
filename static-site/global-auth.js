@@ -292,8 +292,15 @@
 
         // Display schedules
         displaySchedules: function(schedules) {
-            // Replace empty state with actual schedules
-            const emptyState = document.querySelector('.card .card-body.text-center');
+            // Find the main content area - try multiple selectors
+            let emptyState = document.querySelector('.row .col-12 .card .card-body.text-center');
+            if (!emptyState) {
+                emptyState = document.querySelector('.card .card-body.text-center');
+            }
+            if (!emptyState) {
+                emptyState = document.querySelector('.row:last-child .col-12');
+            }
+
             if (emptyState) {
                 emptyState.innerHTML = `
                     <h4>Your Study Schedules</h4>
@@ -303,14 +310,18 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="card-title">${schedule.title}</h5>
-                                        <p class="card-text">${schedule.subject}</p>
+                                        <p class="card-text"><i class="fas fa-book me-1"></i>${schedule.subject}</p>
+                                        <p class="card-text"><small class="text-muted">${schedule.description || 'No description'}</small></p>
                                         <span class="badge bg-${schedule.status === 'completed' ? 'success' : 'warning'}">${schedule.status}</span>
+                                        <div class="mt-2">
+                                            <small class="text-muted"><i class="fas fa-clock me-1"></i>${schedule.duration || 60} min</small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
-                    <div class="mt-3">
+                    <div class="mt-3 text-center">
                         <a href="create-schedule.html" class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Create New Schedule
                         </a>
@@ -321,7 +332,15 @@
 
         // Display sessions
         displaySessions: function(sessions) {
-            const emptyState = document.querySelector('.card .card-body.text-center');
+            // Find the main content area - try multiple selectors
+            let emptyState = document.querySelector('.row .col-12 .card .card-body.text-center');
+            if (!emptyState) {
+                emptyState = document.querySelector('.card .card-body.text-center');
+            }
+            if (!emptyState) {
+                emptyState = document.querySelector('.row:last-child .col-12');
+            }
+
             if (emptyState) {
                 emptyState.innerHTML = `
                     <h4>Your Study Sessions</h4>
@@ -331,14 +350,19 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="card-title">${session.title}</h5>
-                                        <p class="card-text">${session.subject}</p>
-                                        <span class="badge bg-${session.status === 'completed' ? 'success' : 'primary'}">${session.status}</span>
+                                        <p class="card-text"><i class="fas fa-book me-1"></i>${session.subject}</p>
+                                        <p class="card-text"><small class="text-muted">${session.description || 'No description'}</small></p>
+                                        <span class="badge bg-${session.status === 'completed' ? 'success' : session.status === 'scheduled' ? 'primary' : 'warning'}">${session.status}</span>
+                                        <div class="mt-2">
+                                            <small class="text-muted"><i class="fas fa-clock me-1"></i>${session.duration || 60} min</small>
+                                            ${session.date ? `<br><small class="text-muted"><i class="fas fa-calendar me-1"></i>${session.date}</small>` : ''}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
-                    <div class="mt-3">
+                    <div class="mt-3 text-center">
                         <a href="create-session.html" class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Create New Session
                         </a>
@@ -349,7 +373,15 @@
 
         // Display groups
         displayGroups: function(groups) {
-            const emptyState = document.querySelector('.card .card-body.text-center');
+            // Find the main content area - try multiple selectors
+            let emptyState = document.querySelector('.row .col-12 .card .card-body.text-center');
+            if (!emptyState) {
+                emptyState = document.querySelector('.card .card-body.text-center');
+            }
+            if (!emptyState) {
+                emptyState = document.querySelector('.row:last-child .col-12');
+            }
+
             if (emptyState) {
                 emptyState.innerHTML = `
                     <h4>Your Study Groups</h4>
@@ -359,14 +391,19 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="card-title">${group.name}</h5>
-                                        <p class="card-text">${group.description}</p>
+                                        <p class="card-text"><i class="fas fa-book me-1"></i>${group.subject}</p>
+                                        <p class="card-text"><small class="text-muted">${group.description || 'No description'}</small></p>
                                         <span class="badge bg-${group.status === 'active' ? 'success' : 'secondary'}">${group.status}</span>
+                                        <div class="mt-2">
+                                            <small class="text-muted"><i class="fas fa-users me-1"></i>${group.members ? group.members.length : 1} members</small>
+                                            ${group.meetingFrequency ? `<br><small class="text-muted"><i class="fas fa-calendar me-1"></i>${group.meetingFrequency}</small>` : ''}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
-                    <div class="mt-3">
+                    <div class="mt-3 text-center">
                         <a href="create-group.html" class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Create New Group
                         </a>
