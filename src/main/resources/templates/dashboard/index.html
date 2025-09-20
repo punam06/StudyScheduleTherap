@@ -101,13 +101,19 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1>Welcome back, <span th:text="${user.name}">Student</span>!</h1>
-                    <p class="lead mb-0">Ready to achieve your study goals today?</p>
+                    <h1>Welcome back, <span th:text="${user.name}">User</span>!</h1>
+                    <p class="lead mb-0" th:text="${user.title != null ? user.title : 'Student'}">Computer Science Student</p>
                 </div>
                 <div class="col-md-4 text-end">
-                    <div class="progress-ring">
-                        <i class="fas fa-chart-line" style="font-size: 3rem;"></i>
+                    <div class="d-inline-block text-center me-3">
+                        <div class="bg-light text-primary rounded-circle p-2 mb-1" style="width: 50px; height: 50px; display: inline-flex; align-items: center; justify-content: center;">
+                            <span class="fw-bold" th:text="${user.studyStreak != null ? user.studyStreak : '0'}">5</span>
+                        </div>
+                        <div class="small text-light">Day Streak 🔥</div>
                     </div>
+                    <a href="/auth/profile" class="btn btn-outline-light">
+                        <i class="fas fa-user-circle me-1"></i> Profile
+                    </a>
                 </div>
             </div>
         </div>
@@ -119,37 +125,37 @@
             <div class="col-md-3">
                 <div class="stat-card">
                     <div class="stat-icon text-primary">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-book-open"></i>
                     </div>
-                    <div class="stat-number" th:text="${totalGroups}">0</div>
-                    <div class="text-muted">Study Groups</div>
+                    <div class="stat-number" th:text="${user.totalStudyHours ?: '0'}">24</div>
+                    <div class="text-muted">Total Study Hours</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card">
                     <div class="stat-icon text-success">
-                        <i class="fas fa-calendar-check"></i>
+                        <i class="fas fa-tasks"></i>
                     </div>
-                    <div class="stat-number" th:text="${#lists.size(upcomingSessions)}">0</div>
-                    <div class="text-muted">Upcoming Sessions</div>
+                    <div class="stat-number" th:text="${user.completedTasks ?: '0'}">6</div>
+                    <div class="text-muted">Tasks Completed</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card">
                     <div class="stat-icon text-info">
-                        <i class="fas fa-clock"></i>
+                        <i class="fas fa-users"></i>
                     </div>
-                    <div class="stat-number" th:text="${#lists.size(recentSessions)}">0</div>
-                    <div class="text-muted">Recent Sessions</div>
+                    <div class="stat-number" th:text="${user.studyGroups ?: '0'}">0</div>
+                    <div class="text-muted">Study Groups</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card">
                     <div class="stat-icon text-warning">
-                        <i class="fas fa-star"></i>
+                        <i class="fas fa-trophy"></i>
                     </div>
-                    <div class="stat-number" th:text="${user.gpa ?: 'N/A'}">0.0</div>
-                    <div class="text-muted">Current GPA</div>
+                    <div class="stat-number" th:text="${user.achievements ?: '0'}">3</div>
+                    <div class="text-muted">Achievements</div>
                 </div>
             </div>
         </div>

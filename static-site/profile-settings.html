@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -275,7 +275,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="container">
-            <a class="navbar-brand bengali-title fw-bold" href="/">
+            <a class="navbar-brand bengali-title fw-bold" href="index.html">
                 <i class="fas fa-graduation-cap me-2"></i>
                 অধ্যয়ন সঙ্ঘ
             </a>
@@ -285,35 +285,35 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/dashboard}">
+                        <a class="nav-link" href="dashboard.html">
                             <i class="fas fa-tachometer-alt me-1"></i>Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/schedules}">
+                        <a class="nav-link" href="schedules.html">
                             <i class="fas fa-calendar-alt me-1"></i>Schedules
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/groups}">
+                        <a class="nav-link" href="groups.html">
                             <i class="fas fa-users me-1"></i>Groups
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/profile}">
+                        <a class="nav-link active" href="profile-settings.html">
                             <i class="fas fa-user me-1"></i>Profile
                         </a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/notifications}">
+                        <a class="nav-link" href="notifications.html">
                             <i class="fas fa-bell me-1"></i>
                             <span class="real-time-indicator"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/logout}">
+                        <a class="nav-link" href="login.html">
                             <i class="fas fa-sign-out-alt me-1"></i>Logout
                         </a>
                     </li>
@@ -328,7 +328,7 @@
             <div class="row align-items-center">
                 <div class="col-md-3 text-center">
                     <div class="avatar-container">
-                        <img th:src="${user.profilePicture != null ? user.profilePicture : 'https://via.placeholder.com/150x150/667eea/ffffff?text=User'}"
+                        <img src="https://via.placeholder.com/150x150/667eea/ffffff?text=User"
                              alt="Profile Avatar" class="profile-avatar" id="profileAvatar">
                         <button class="avatar-upload" onclick="document.getElementById('avatarInput').click()">
                             <i class="fas fa-camera"></i>
@@ -337,25 +337,25 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <h1 class="bengali-title mb-2" id="userName" th:text="${user.name}">Student</h1>
-                    <p class="h5 mb-2" id="userTitle" th:text="${user.title}">Computer Science Student</p>
-                    <p class="mb-3" id="userBio" th:text="${user.bio}">New learner focusing on academic excellence and personal growth.</p>
+                    <h1 class="bengali-title mb-2" id="userName">Student</h1>
+                    <p class="h5 mb-2" id="userTitle">Computer Science Student</p>
+                    <p class="mb-3" id="userBio">New learner focusing on academic excellence and personal growth.</p>
                     <div class="d-flex flex-wrap">
                         <span class="badge bg-light text-dark me-2 mb-2">
-                            <i class="fas fa-calendar me-1"></i>Joined <span th:text="${#dates.format(user.registrationDate, 'MMMM yyyy')}">September 2024</span>
+                            <i class="fas fa-calendar me-1"></i>Joined September 2024
                         </span>
                         <span class="badge bg-light text-dark me-2 mb-2">
-                            <i class="fas fa-map-marker-alt me-1"></i><span th:text="${user.location}">Dhaka, Bangladesh</span>
+                            <i class="fas fa-map-marker-alt me-1"></i>Dhaka, Bangladesh
                         </span>
                         <span class="badge bg-light text-dark me-2 mb-2">
-                            <i class="fas fa-clock me-1"></i>Last active: <span id="lastActive" th:text="${user.lastActive}">Just now</span>
+                            <i class="fas fa-clock me-1"></i>Last active: <span id="lastActive">Just now</span>
                         </span>
                     </div>
                 </div>
                 <div class="col-md-3 text-center">
                     <div class="study-streak">
                         <div style="position: relative; z-index: 2;">
-                            <h2 class="mb-1" id="studyStreak" th:text="${user.studyStreak}">5</h2>
+                            <h2 class="mb-1" id="studyStreak">5</h2>
                             <p class="mb-0">Day Streak 🔥</p>
                         </div>
                     </div>
@@ -370,7 +370,7 @@
                     <div class="stat-icon" style="background: linear-gradient(45deg, #667eea, #764ba2);">
                         <i class="fas fa-book-open"></i>
                     </div>
-                    <h3 class="mb-1" id="totalStudyHours" th:text="${user.totalStudyHours}">24</h3>
+                    <h3 class="mb-1" id="totalStudyHours">24</h3>
                     <p class="text-muted mb-2">Total Study Hours</p>
                     <small class="text-success">
                         <i class="fas fa-arrow-up me-1"></i>+12% this week
@@ -382,7 +382,7 @@
                     <div class="stat-icon" style="background: linear-gradient(45deg, #00b894, #00a085);">
                         <i class="fas fa-tasks"></i>
                     </div>
-                    <h3 class="mb-1" id="completedTasks" th:text="${user.completedTasks}">6</h3>
+                    <h3 class="mb-1" id="completedTasks">6</h3>
                     <p class="text-muted mb-2">Tasks Completed</p>
                     <small class="text-success">
                         <i class="fas fa-arrow-up me-1"></i>+2 today
@@ -394,13 +394,10 @@
                     <div class="stat-icon" style="background: linear-gradient(45deg, #fdcb6e, #e17055);">
                         <i class="fas fa-users"></i>
                     </div>
-                    <h3 class="mb-1" id="studyGroups" th:text="${user.studyGroups}">0</h3>
+                    <h3 class="mb-1" id="studyGroups">0</h3>
                     <p class="text-muted mb-2">Study Groups</p>
-                    <small class="text-muted" th:if="${user.studyGroups == 0}">
+                    <small class="text-muted" id="groupStatus">
                         <i class="fas fa-plus me-1"></i>Join your first group
-                    </small>
-                    <small class="text-success" th:if="${user.studyGroups > 0}">
-                        <i class="fas fa-check-circle me-1"></i>Active member
                     </small>
                 </div>
             </div>
@@ -409,7 +406,7 @@
                     <div class="stat-icon" style="background: linear-gradient(45deg, #74b9ff, #0984e3);">
                         <i class="fas fa-trophy"></i>
                     </div>
-                    <h3 class="mb-1" id="achievements" th:text="${user.achievements}">3</h3>
+                    <h3 class="mb-1" id="achievements">3</h3>
                     <p class="text-muted mb-2">Achievements</p>
                     <small class="text-warning">
                         <i class="fas fa-star me-1"></i>Great start!
@@ -466,22 +463,22 @@
                                     <circle class="progress" cx="60" cy="60" r="45"/>
                                 </svg>
                                 <div class="progress-text">
-                                    <h4 class="mb-0" th:text="${user.todayProgressPercentage + '%'}">75%</h4>
+                                    <h4 class="mb-0">75%</h4>
                                     <small class="text-muted">Complete</small>
                                 </div>
                             </div>
                             <div class="mt-3">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Study Time</span>
-                                    <span class="text-primary" th:text="${user.todayStudyHours + 'h / ' + user.dailyGoalHours + 'h'}">4.5h / 6h</span>
+                                    <span class="text-primary">4.5h / 6h</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Tasks Done</span>
-                                    <span class="text-success" th:text="${user.todayCompletedTasks + ' / ' + user.todayTotalTasks}">4 / 6</span>
+                                    <span class="text-success">4 / 6</span>
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <span>Focus Score</span>
-                                    <span class="text-info" th:text="${user.focusScore + '%'}">78%</span>
+                                    <span class="text-info">78%</span>
                                 </div>
                             </div>
                         </div>
@@ -491,23 +488,31 @@
                 <div class="settings-section">
                     <h6 class="mb-3">Recent Activity</h6>
                     <div class="activity-timeline" id="activityTimeline">
-                        <div class="timeline-item" th:each="activity : ${userActivities}">
+                        <div class="timeline-item">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <h6 class="mb-1" th:text="${activity.title}">Activity Title</h6>
-                                    <p class="text-muted mb-0" th:text="${activity.description}">Activity description</p>
+                                    <h6 class="mb-1">Created Study Schedule</h6>
+                                    <p class="text-muted mb-0">Set up weekly study plan for Computer Science subjects</p>
                                 </div>
-                                <small class="text-muted" th:text="${activity.timeAgo}">Time ago</small>
+                                <small class="text-muted">30 min ago</small>
                             </div>
                         </div>
-                        <!-- Fallback if no activities -->
-                        <div class="timeline-item" th:if="${#lists.isEmpty(userActivities)}">
+                        <div class="timeline-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">Completed Programming Assignment</h6>
+                                    <p class="text-muted mb-0">Finished Java fundamentals exercise successfully</p>
+                                </div>
+                                <small class="text-muted">2 hours ago</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
                                     <h6 class="mb-1">Account Created</h6>
                                     <p class="text-muted mb-0">Welcome to StudyScheduleTherap!</p>
                                 </div>
-                                <small class="text-muted" th:text="${#dates.format(user.registrationDate, 'MMMM d')}">September 18</small>
+                                <small class="text-muted">September 18</small>
                             </div>
                         </div>
                     </div>
@@ -542,25 +547,25 @@
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <div class="text-center p-3 bg-light rounded">
-                                <h4 class="text-primary mb-1" th:text="${user.avgFocusTime}">35</h4>
+                                <h4 class="text-primary mb-1">35</h4>
                                 <small class="text-muted">Avg Focus Time (min)</small>
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
                             <div class="text-center p-3 bg-light rounded">
-                                <h4 class="text-success mb-1" th:text="${user.completionRate}">75</h4>
+                                <h4 class="text-success mb-1">75</h4>
                                 <small class="text-muted">Completion Rate (%)</small>
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
                             <div class="text-center p-3 bg-light rounded">
-                                <h4 class="text-warning mb-1" th:text="${user.weeklyGoalProgress}">65</h4>
+                                <h4 class="text-warning mb-1">65</h4>
                                 <small class="text-muted">Weekly Goal (%)</small>
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
                             <div class="text-center p-3 bg-light rounded">
-                                <h4 class="text-info mb-1" th:text="${user.leaderboardRank ?: '-'}">-</h4>
+                                <h4 class="text-info mb-1">-</h4>
                                 <small class="text-muted">Leaderboard Rank</small>
                             </div>
                         </div>
@@ -574,14 +579,14 @@
                     <h6 class="mb-4">Your Achievements</h6>
                     <div class="row">
                         <div class="col-12 mb-3">
-                            <div class="achievement-badge" th:each="badge : ${userAchievements}">
-                                <i th:class="${badge.icon + ' me-2'}"></i>
-                                <span th:text="${badge.name + ' - ' + badge.description}"></span>
-                            </div>
-
-                            <!-- Default achievements if none -->
-                            <div class="achievement-badge" th:if="${#lists.isEmpty(userAchievements)}">
+                            <div class="achievement-badge">
                                 <i class="fas fa-user-plus me-2"></i>Welcome! - Account Created
+                            </div>
+                            <div class="achievement-badge">
+                                <i class="fas fa-calendar me-2"></i>First Schedule - Created Study Plan
+                            </div>
+                            <div class="achievement-badge">
+                                <i class="fas fa-fire me-2"></i>5 Day Streak - Consistent Learning
                             </div>
                         </div>
                     </div>
@@ -589,21 +594,7 @@
 
                 <div class="settings-section">
                     <h6 class="mb-3">Progress Towards Next Achievement</h6>
-                    <div class="mb-3" th:each="nextAchievement : ${nextAchievements}">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span>
-                                <i th:class="${nextAchievement.icon + ' me-2'}"></i>
-                                <span th:text="${nextAchievement.name + ' (' + nextAchievement.current + '/' + nextAchievement.required + ' ' + nextAchievement.unit + ')'}"></span>
-                            </span>
-                            <span th:class="${'text-' + nextAchievement.color}" th:text="${nextAchievement.percentage + '%'}">0%</span>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                            <div th:class="${'progress-bar bg-' + nextAchievement.color}" th:style="${'width: ' + nextAchievement.percentage + '%'}"></div>
-                        </div>
-                    </div>
-
-                    <!-- Default next achievements if none -->
-                    <div class="mb-3" th:if="${#lists.isEmpty(nextAchievements)}">
+                    <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span><i class="fas fa-users me-2"></i>Team Player (0/1 groups joined)</span>
                             <span class="text-primary">0%</span>
@@ -612,35 +603,44 @@
                             <div class="progress-bar bg-primary" style="width: 0%"></div>
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="fas fa-book me-2"></i>Study Master (24/50 hours)</span>
+                            <span class="text-success">48%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: 48%"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Settings Tab -->
             <div class="tab-pane fade" id="settings">
-                <form th:action="@{/profile/update}" method="post" id="profileForm">
+                <form id="profileForm">
                     <!-- Personal Information -->
                     <div class="settings-section">
                         <h6 class="mb-4">Personal Information</h6>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Full Name</label>
-                                <input type="text" class="form-control" name="fullName" th:value="${user.name}" id="fullName" placeholder="Enter your name">
+                                <input type="text" class="form-control" name="fullName" value="" id="fullName" placeholder="Enter your name">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" th:value="${user.email}" id="email" placeholder="your.email@example.com">
+                                <input type="email" class="form-control" name="email" value="" id="email" placeholder="your.email@example.com">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Phone</label>
-                                <input type="tel" class="form-control" name="phone" th:value="${user.phone}" id="phone" placeholder="+880 1XXX-XXXXXX">
+                                <input type="tel" class="form-control" name="phone" value="" id="phone" placeholder="+880 1XXX-XXXXXX">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Location</label>
-                                <input type="text" class="form-control" name="location" th:value="${user.location}" id="location">
+                                <input type="text" class="form-control" name="location" value="Dhaka, Bangladesh" id="location">
                             </div>
                             <div class="col-12 mb-3">
                                 <label class="form-label">Bio</label>
-                                <textarea class="form-control" name="bio" rows="3" id="bio" placeholder="Tell us about yourself and your learning goals..." th:text="${user.bio}"></textarea>
+                                <textarea class="form-control" name="bio" rows="3" id="bio" placeholder="Tell us about yourself and your learning goals..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -652,15 +652,15 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Preferred Study Time</label>
                                 <select class="form-select" id="studyTime" name="studyTime">
-                                    <option value="morning" th:selected="${user.preferredStudyTime == 'morning'}">Morning (6 AM - 12 PM)</option>
-                                    <option value="afternoon" th:selected="${user.preferredStudyTime == 'afternoon'}">Afternoon (12 PM - 6 PM)</option>
-                                    <option value="evening" th:selected="${user.preferredStudyTime == 'evening'}">Evening (6 PM - 12 AM)</option>
-                                    <option value="night" th:selected="${user.preferredStudyTime == 'night'}">Night (12 AM - 6 AM)</option>
+                                    <option value="morning" selected>Morning (6 AM - 12 PM)</option>
+                                    <option value="afternoon">Afternoon (12 PM - 6 PM)</option>
+                                    <option value="evening">Evening (6 PM - 12 AM)</option>
+                                    <option value="night">Night (12 AM - 6 AM)</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Daily Study Goal (hours)</label>
-                                <input type="number" class="form-control" name="studyGoal" th:value="${user.dailyGoalHours}" min="1" max="24" id="studyGoal">
+                                <input type="number" class="form-control" name="studyGoal" value="6" min="1" max="24" id="studyGoal">
                             </div>
                         </div>
                     </div>
@@ -676,7 +676,7 @@
                                         <small class="text-muted">Get notified about your scheduled study sessions</small>
                                     </div>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" name="studyReminders" th:checked="${user.notificationSettings?.studyReminders}">
+                                        <input type="checkbox" name="studyReminders" checked>
                                         <span class="slider"></span>
                                     </label>
                                 </div>
@@ -688,7 +688,7 @@
                                         <small class="text-muted">Notifications from your study groups</small>
                                     </div>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" name="groupActivities" th:checked="${user.notificationSettings?.groupActivities}">
+                                        <input type="checkbox" name="groupActivities" checked>
                                         <span class="slider"></span>
                                     </label>
                                 </div>
@@ -700,7 +700,7 @@
                                         <small class="text-muted">Celebrate your learning milestones</small>
                                     </div>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" name="achievementAlerts" th:checked="${user.notificationSettings?.achievementAlerts}">
+                                        <input type="checkbox" name="achievementAlerts" checked>
                                         <span class="slider"></span>
                                     </label>
                                 </div>
@@ -712,7 +712,7 @@
                                         <small class="text-muted">Personalized study suggestions</small>
                                     </div>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" name="aiRecommendations" th:checked="${user.notificationSettings?.aiRecommendations}">
+                                        <input type="checkbox" name="aiRecommendations" checked>
                                         <span class="slider"></span>
                                     </label>
                                 </div>
@@ -731,7 +731,7 @@
                                         <small class="text-muted">Make your profile visible to other users</small>
                                     </div>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" name="profileVisibility" th:checked="${user.privacySettings?.profileVisibility}">
+                                        <input type="checkbox" name="profileVisibility" checked>
                                         <span class="slider"></span>
                                     </label>
                                 </div>
@@ -743,7 +743,7 @@
                                         <small class="text-muted">Allow others to see your progress</small>
                                     </div>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" name="shareStudyStats" th:checked="${user.privacySettings?.shareStudyStats}">
+                                        <input type="checkbox" name="shareStudyStats" checked>
                                         <span class="slider"></span>
                                     </label>
                                 </div>
@@ -753,7 +753,7 @@
 
                     <!-- Action Buttons -->
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary btn-lg me-3">
+                        <button type="button" class="btn btn-primary btn-lg me-3" onclick="saveProfile()">
                             <i class="fas fa-save me-2"></i>Save Changes
                         </button>
                         <button type="reset" class="btn btn-outline-secondary btn-lg">
@@ -767,8 +767,12 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="global-auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize user data
+            initializeUserData();
+
             // Study Progress Chart
             const studyProgressCtx = document.getElementById('studyProgressChart').getContext('2d');
             const studyProgressChart = new Chart(studyProgressCtx, {
@@ -908,19 +912,123 @@
                     reader.readAsDataURL(file);
                 }
             });
+
+            // Load user profile data
+            loadUserProfile();
         });
 
-        // Profile form submission handler
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
-            // In a real application, you would handle form submission normally
-            // For the static demo, we'll prevent default and show a success message
+        // Initialize user data with correct values
+        function initializeUserData() {
+            // Set actual registration date and calculate streak
+            const registrationDate = new Date('2024-09-18');
+            const currentDate = new Date();
+            const daysDifference = Math.floor((currentDate - registrationDate) / (1000 * 60 * 60 * 24));
+            const actualStreak = Math.max(1, Math.min(daysDifference + 1, 5));
 
-            // Uncomment this in static mode
-            /*
-            e.preventDefault();
-            alert('Profile updated successfully!');
-            */
-        });
+            // Set correct statistics
+            localStorage.setItem('registrationDate', '2024-09-18');
+            localStorage.setItem('totalSchedules', '8');
+            localStorage.setItem('completedSchedules', '6');
+            localStorage.setItem('studyGroups', '0'); // No groups joined
+            localStorage.setItem('totalStudyHours', '24');
+            localStorage.setItem('studyStreak', actualStreak.toString());
+
+            console.log('Profile initialized with correct data: 5-day streak, 0 groups, 24 hours');
+        }
+
+        // Load and display user profile
+        function loadUserProfile() {
+            try {
+                let userData = {};
+
+                // Get data from auth system or localStorage
+                if (window.StudyAuth && window.StudyAuth.isLoggedIn()) {
+                    userData = window.StudyAuth.getCurrentUser() || {};
+                }
+
+                // Fill in missing data from localStorage
+                userData.name = userData.name || localStorage.getItem('userName') || 'Student';
+                userData.email = userData.email || localStorage.getItem('userEmail') || '';
+                userData.title = userData.title || localStorage.getItem('userTitle') || 'Computer Science Student';
+                userData.phone = userData.phone || localStorage.getItem('userPhone') || '';
+                userData.bio = userData.bio || localStorage.getItem('userBio') || 'New learner focusing on academic excellence and personal growth.';
+                userData.studyStreak = parseInt(localStorage.getItem('studyStreak') || '5');
+                userData.totalStudyHours = parseInt(localStorage.getItem('totalStudyHours') || '24');
+                userData.completedTasks = parseInt(localStorage.getItem('completedTasks') || '6');
+                userData.studyGroups = parseInt(localStorage.getItem('studyGroups') || '0');
+
+                // Update UI with user data
+                document.getElementById('userName').textContent = userData.name;
+                document.getElementById('userTitle').textContent = userData.title;
+                document.getElementById('userBio').textContent = userData.bio;
+                document.getElementById('studyStreak').textContent = userData.studyStreak;
+                document.getElementById('totalStudyHours').textContent = userData.totalStudyHours;
+                document.getElementById('completedTasks').textContent = userData.completedTasks;
+                document.getElementById('studyGroups').textContent = userData.studyGroups;
+
+                // Populate form fields
+                document.getElementById('fullName').value = userData.name;
+                document.getElementById('email').value = userData.email;
+                document.getElementById('phone').value = userData.phone;
+                document.getElementById('bio').value = userData.bio;
+
+                // Update group status text
+                if (userData.studyGroups > 0) {
+                    document.getElementById('groupStatus').innerHTML = '<i class="fas fa-check-circle me-1"></i>Active member';
+                    document.getElementById('groupStatus').className = 'text-success';
+                }
+
+                console.log('User profile loaded successfully');
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+            }
+        }
+
+        // Save profile changes
+        function saveProfile() {
+            try {
+                // Get form data
+                const name = document.getElementById('fullName').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const location = document.getElementById('location').value;
+                const bio = document.getElementById('bio').value;
+                const studyTime = document.getElementById('studyTime').value;
+                const studyGoal = document.getElementById('studyGoal').value;
+
+                // Save to localStorage
+                localStorage.setItem('userName', name);
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('userPhone', phone);
+                localStorage.setItem('userLocation', location);
+                localStorage.setItem('userBio', bio);
+                localStorage.setItem('preferredStudyTime', studyTime);
+                localStorage.setItem('dailyStudyGoal', studyGoal);
+
+                // Update displayed values
+                document.getElementById('userName').textContent = name;
+                document.getElementById('userBio').textContent = bio;
+
+                // If using auth system, save there too
+                if (window.StudyAuth && window.StudyAuth.isLoggedIn()) {
+                    window.StudyAuth.updateUserProfile({
+                        name,
+                        email,
+                        phone,
+                        location,
+                        bio,
+                        preferredStudyTime: studyTime,
+                        dailyStudyGoal: studyGoal
+                    });
+                }
+
+                alert('Profile updated successfully!');
+                console.log('Profile saved successfully');
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('There was an error saving your profile. Please try again.');
+            }
+        }
     </script>
 </body>
 </html>

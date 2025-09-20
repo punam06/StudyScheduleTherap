@@ -307,28 +307,28 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="stat-card primary">
                     <div class="stat-icon primary">
-                        <i class="fas fa-calendar-check"></i>
+                        <i class="fas fa-book-open"></i>
                     </div>
-                    <h3 id="totalSchedulesCount" class="h2 mb-2 text-primary">0</h3>
-                    <h6 class="text-muted mb-2">Total Schedules</h6>
+                    <h3 id="totalStudyHours" class="h2 mb-2 text-primary">24</h3>
+                    <h6 class="text-muted mb-2">Total Study Hours</h6>
                     <div class="modern-progress">
                         <div class="progress-bar bg-primary" style="width: 75%"></div>
                     </div>
-                    <small class="text-muted mt-2">75% completion rate</small>
+                    <small class="text-muted mt-2">Great progress! 🎉</small>
                 </div>
             </div>
 
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="stat-card success">
                     <div class="stat-icon success">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-tasks"></i>
                     </div>
-                    <h3 id="completedSchedulesCount" class="h2 mb-2 text-success">0</h3>
-                    <h6 class="text-muted mb-2">Completed Sessions</h6>
+                    <h3 id="completedTasks" class="h2 mb-2 text-success">6</h3>
+                    <h6 class="text-muted mb-2">Tasks Completed</h6>
                     <div class="modern-progress">
                         <div class="progress-bar bg-success" style="width: 85%"></div>
                     </div>
-                    <small class="text-muted mt-2">Great progress! 🎉</small>
+                    <small class="text-muted mt-2">Keep it up! 💪</small>
                 </div>
             </div>
 
@@ -337,12 +337,12 @@
                     <div class="stat-icon warning">
                         <i class="fas fa-users"></i>
                     </div>
-                    <h3 id="totalGroupsCount" class="h2 mb-2 text-warning">0</h3>
+                    <h3 id="studyGroups" class="h2 mb-2 text-warning">0</h3>
                     <h6 class="text-muted mb-2">Study Groups</h6>
                     <div class="modern-progress">
-                        <div class="progress-bar bg-warning" style="width: 60%"></div>
+                        <div class="progress-bar bg-warning" style="width: 0%"></div>
                     </div>
-                    <small class="text-muted mt-2">Active participation</small>
+                    <small class="text-muted mt-2">Join your first group</small>
                 </div>
             </div>
 
@@ -351,10 +351,10 @@
                     <div class="stat-icon info">
                         <i class="fas fa-fire"></i>
                     </div>
-                    <h3 class="h2 mb-2 text-info">7</h3>
+                    <h3 id="studyStreak" class="h2 mb-2 text-info">5</h3>
                     <h6 class="text-muted mb-2">Day Streak</h6>
                     <div class="modern-progress">
-                        <div class="progress-bar bg-info" style="width: 90%"></div>
+                        <div class="progress-bar bg-info" style="width: 70%"></div>
                     </div>
                     <small class="text-muted mt-2">Keep it up! 🔥</small>
                 </div>
@@ -566,39 +566,64 @@
             }
 
             init() {
-                this.loadDashboardData();
+                this.loadUserData();
                 this.initializeChart();
-                this.startRealTimeUpdates();
                 this.setupAnimations();
+                this.startRealTimeUpdates();
             }
 
-            loadDashboardData() {
-                // Load and display dashboard statistics
+            loadUserData() {
+                // Load user data from localStorage (same source as profile page)
+                this.loadUserProfile();
                 this.updateStatistics();
                 this.loadRecentActivity();
             }
 
-            updateStatistics() {
-                // Animate counter numbers
-                this.animateNumber('totalSchedulesCount', 24);
-                this.animateNumber('completedSchedulesCount', 18);
-                this.animateNumber('totalGroupsCount', 3);
+            loadUserProfile() {
+                try {
+                    // Get data from localStorage (matching profile page data)
+                    const userName = localStorage.getItem('userName') || 'Student';
+                    const studyStreak = parseInt(localStorage.getItem('studyStreak') || '5');
+                    const totalStudyHours = parseInt(localStorage.getItem('totalStudyHours') || '24');
+                    const completedTasks = parseInt(localStorage.getItem('completedTasks') || '6');
+                    const studyGroups = parseInt(localStorage.getItem('studyGroups') || '0');
+
+                    // Update UI elements
+                    document.getElementById('userName').textContent = userName;
+
+                    // Update statistics with actual values from localStorage
+                    document.getElementById('studyStreak').textContent = studyStreak;
+                    document.getElementById('totalStudyHours').textContent = totalStudyHours;
+                    document.getElementById('completedTasks').textContent = completedTasks;
+                    document.getElementById('studyGroups').textContent = studyGroups;
+
+                    // Update progress bars based on actual values
+                    const studyHoursProgress = Math.min(totalStudyHours / 32 * 100, 100);
+                    const tasksProgress = Math.min(completedTasks / 7 * 100, 100);
+                    const groupsProgress = Math.min(studyGroups / 1 * 100, 100);
+                    const streakProgress = Math.min(studyStreak / 7 * 100, 100);
+
+                    document.querySelector('.stat-card.primary .progress-bar').style.width = `${studyHoursProgress}%`;
+                    document.querySelector('.stat-card.success .progress-bar').style.width = `${tasksProgress}%`;
+                    document.querySelector('.stat-card.warning .progress-bar').style.width = `${groupsProgress}%`;
+                    document.querySelector('.stat-card.info .progress-bar').style.width = `${streakProgress}%`;
+
+                    // If no study groups, update text
+                    if (studyGroups === 0) {
+                        document.querySelector('.stat-card.warning small').textContent = 'Join your first group';
+                    } else {
+                        document.querySelector('.stat-card.warning small').textContent = 'Active participation';
+                    }
+
+                    console.log('User profile loaded successfully from localStorage');
+                } catch (error) {
+                    console.error('Error loading user profile:', error);
+                }
             }
 
-            animateNumber(elementId, targetValue) {
-                const element = document.getElementById(elementId);
-                let currentValue = 0;
-                const increment = targetValue / 50;
-
-                const timer = setInterval(() => {
-                    currentValue += increment;
-                    if (currentValue >= targetValue) {
-                        element.textContent = targetValue;
-                        clearInterval(timer);
-                    } else {
-                        element.textContent = Math.floor(currentValue);
-                    }
-                }, 30);
+            updateStatistics() {
+                // No need to animate numbers, they're loaded directly from localStorage now
+                console.log('Statistics updated from localStorage');
             }
 
             initializeChart() {
@@ -670,7 +695,7 @@
             startRealTimeUpdates() {
                 // Update dashboard every 30 seconds
                 setInterval(() => {
-                    this.loadDashboardData();
+                    this.loadUserData();
                 }, 30000);
             }
 
@@ -680,8 +705,36 @@
             }
         }
 
+        // Initialize user data if not already set (same logic as profile page)
+        function initializeUserData() {
+            // Only initialize if not already set
+            if (!localStorage.getItem('registrationDate')) {
+                // Set actual registration date and calculate streak
+                const registrationDate = new Date('2024-09-18');
+                const currentDate = new Date();
+                const daysDifference = Math.floor((currentDate - registrationDate) / (1000 * 60 * 60 * 24));
+                const actualStreak = Math.max(1, Math.min(daysDifference + 1, 5));
+
+                // Set correct statistics
+                localStorage.setItem('registrationDate', '2024-09-18');
+                localStorage.setItem('totalSchedules', '8');
+                localStorage.setItem('completedSchedules', '6');
+                localStorage.setItem('studyGroups', '0'); // No groups joined
+                localStorage.setItem('totalStudyHours', '24');
+                localStorage.setItem('studyStreak', actualStreak.toString());
+                localStorage.setItem('completedTasks', '6');
+                localStorage.setItem('userName', 'Student');
+
+                console.log('User data initialized with: 5-day streak, 0 groups, 24 hours, 6 tasks');
+            }
+        }
+
         // Initialize dashboard when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize user data first (if needed)
+            initializeUserData();
+
+            // Then initialize dashboard with that data
             new ModernDashboard();
         });
 
@@ -698,7 +751,8 @@
                           hour < 17 ? greetings.afternoon : greetings.evening;
 
             // This would normally get the actual user name from auth
-            document.getElementById('userName').textContent = 'Student';
+            const userName = localStorage.getItem('userName') || 'Student';
+            document.getElementById('userName').textContent = userName;
         }
 
         updateWelcomeMessage();
