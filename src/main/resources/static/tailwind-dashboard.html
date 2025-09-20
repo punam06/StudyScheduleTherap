@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অধ্যয়ন সঙ্ঘ - Tailwind CSS Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'study-primary': '#1976d2',
+                        'study-secondary': '#388e3c',
+                        'study-accent': '#f57c00',
+                        'study-purple': '#7b1fa2',
+                    },
+                    fontFamily: {
+                        'bengali': ['Noto Sans Bengali', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-gray-900 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="text-white font-bengali text-xl font-bold">
+                        <i class="fas fa-graduation-cap mr-2"></i>
+                        অধ্যয়ন সঙ্ঘ
+                    </div>
+                    <span class="ml-3 px-2 py-1 text-xs bg-blue-600 text-white rounded">Tailwind CSS</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Dashboard</a>
+                        <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Schedules</a>
+                        <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Groups</a>
+                        <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">AI Insights</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="px-4 py-6 sm:px-0">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 font-bengali">
+                    <i class="fas fa-chart-line text-study-primary mr-3"></i>
+                    Study Analytics Dashboard
+                </h1>
+                <p class="mt-2 text-gray-600">Powered by Tailwind CSS utility-first framework</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total Sessions Card -->
+                <div class="bg-gradient-to-r from-study-primary to-blue-600 rounded-lg shadow-md p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-blue-100 text-sm font-medium uppercase tracking-wide">Total Sessions</p>
+                            <p class="text-3xl font-bold">127</p>
+                        </div>
+                        <div class="bg-blue-500 bg-opacity-30 rounded-full p-3">
+                            <i class="fas fa-calendar-check text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-green-200 text-sm font-semibold">↗ 12%</span>
+                        <span class="text-blue-100 text-sm ml-2">vs last month</span>
+                    </div>
+                </div>
+
+                <!-- Study Hours Card -->
+                <div class="bg-gradient-to-r from-study-secondary to-green-600 rounded-lg shadow-md p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-100 text-sm font-medium uppercase tracking-wide">Study Hours</p>
+                            <p class="text-3xl font-bold">94.5h</p>
+                        </div>
+                        <div class="bg-green-500 bg-opacity-30 rounded-full p-3">
+                            <i class="fas fa-clock text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-green-200 text-sm font-semibold">↗ 8%</span>
+                        <span class="text-green-100 text-sm ml-2">vs last month</span>
+                    </div>
+                </div>
+
+                <!-- AI Recommendations Card -->
+                <div class="bg-gradient-to-r from-study-accent to-orange-600 rounded-lg shadow-md p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-orange-100 text-sm font-medium uppercase tracking-wide">AI Insights</p>
+                            <p class="text-3xl font-bold">23</p>
+                        </div>
+                        <div class="bg-orange-500 bg-opacity-30 rounded-full p-3">
+                            <i class="fas fa-robot text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-yellow-200 text-sm font-semibold">New</span>
+                        <span class="text-orange-100 text-sm ml-2">recommendations</span>
+                    </div>
+                </div>
+
+                <!-- Performance Score Card -->
+                <div class="bg-gradient-to-r from-study-purple to-purple-600 rounded-lg shadow-md p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-purple-100 text-sm font-medium uppercase tracking-wide">Performance</p>
+                            <p class="text-3xl font-bold">A+</p>
+                        </div>
+                        <div class="bg-purple-500 bg-opacity-30 rounded-full p-3">
+                            <i class="fas fa-trophy text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-purple-200 text-sm font-semibold">Excellent</span>
+                        <span class="text-purple-100 text-sm ml-2">this week</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- AI Recommendations Panel -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">
+                                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                AI Study Recommendations
+                            </h3>
+                            <button class="bg-study-primary hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                                <i class="fas fa-sync-alt mr-1"></i>Refresh
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-brain text-white text-sm"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="text-sm font-semibold text-gray-900">Optimize Study Sessions</h4>
+                                        <p class="text-sm text-gray-700 mt-1">Consider 45-minute focused sessions with 15-minute breaks for maximum retention.</p>
+                                        <span class="inline-block mt-2 px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">High Priority</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start space-x-4 p-4 bg-green-50 rounded-lg border-l-4 border-green-400">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-users text-white text-sm"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="text-sm font-semibold text-gray-900">Join Study Groups</h4>
+                                        <p class="text-sm text-gray-700 mt-1">Collaborative learning shows 23% improvement in comprehension rates.</p>
+                                        <span class="inline-block mt-2 px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">Medium Priority</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start space-x-4 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-400">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-chart-line text-white text-sm"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="text-sm font-semibold text-gray-900">Peak Performance Hours</h4>
+                                        <p class="text-sm text-gray-700 mt-1">Your best study times are 9-11 AM and 2-4 PM based on performance data.</p>
+                                        <span class="inline-block mt-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Low Priority</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions & Analytics -->
+                <div class="space-y-6">
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900">
+                                <i class="fas fa-zap text-yellow-500 mr-2"></i>
+                                Quick Actions
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <button class="w-full bg-study-primary hover:bg-blue-700 text-white px-4 py-3 rounded-md text-sm font-medium transition-colors flex items-center">
+                                <i class="fas fa-plus mr-2"></i>New Schedule
+                            </button>
+                            <button class="w-full bg-study-secondary hover:bg-green-700 text-white px-4 py-3 rounded-md text-sm font-medium transition-colors flex items-center">
+                                <i class="fas fa-users mr-2"></i>Join Group
+                            </button>
+                            <button class="w-full bg-study-accent hover:bg-orange-700 text-white px-4 py-3 rounded-md text-sm font-medium transition-colors flex items-center">
+                                <i class="fas fa-robot mr-2"></i>AI Analysis
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900">
+                                <i class="fas fa-history text-gray-500 mr-2"></i>
+                                Recent Activity
+                            </h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <div class="flex-1 text-sm text-gray-700">Completed Mathematics session</div>
+                                    <div class="text-xs text-gray-500">2h ago</div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                    <div class="flex-1 text-sm text-gray-700">Joined Physics study group</div>
+                                    <div class="text-xs text-gray-500">4h ago</div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                                    <div class="flex-1 text-sm text-gray-700">AI recommended new schedule</div>
+                                    <div class="text-xs text-gray-500">6h ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
