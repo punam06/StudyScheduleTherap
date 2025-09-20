@@ -3,17 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Study Portal</title>
+    <title>অধ্যয়ন সঙ্ঘ - Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .bengali-title { font-family: 'Noto Sans Bengali', sans-serif; }
+
+        /* Modern Navigation */
+        .modern-navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Hero Dashboard Header */
+        .dashboard-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="white" opacity="0.1"><polygon points="0,0 1000,0 1000,100 0,20"/></svg>') no-repeat center bottom;
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Modern Cards */
+        .stat-card {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--card-gradient, #667eea), var(--card-gradient-end, #764ba2));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .stat-card.primary { --card-gradient: #667eea; --card-gradient-end: #764ba2; }
+        .stat-card.success { --card-gradient: #4ecdc4; --card-gradient-end: #44a08d; }
+        .stat-card.warning { --card-gradient: #ffeaa7; --card-gradient-end: #fab1a0; }
+        .stat-card.info { --card-gradient: #74b9ff; --card-gradient-end: #0984e3; }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .stat-icon.primary { background: linear-gradient(45deg, #667eea, #764ba2); }
+        .stat-icon.success { background: linear-gradient(45deg, #4ecdc4, #44a08d); }
+        .stat-icon.warning { background: linear-gradient(45deg, #fdcb6e, #e17055); }
+        .stat-icon.info { background: linear-gradient(45deg, #74b9ff, #0984e3); }
+
+        /* Quick Actions */
+        .action-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin: 0 auto 15px;
+        }
+
+        /* Recent Activity */
+        .activity-item {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .activity-item.completed { border-left-color: #00b894; }
+        .activity-item.pending { border-left-color: #fdcb6e; }
+        .activity-item.upcoming { border-left-color: #74b9ff; }
+
+        /* Progress Bars */
+        .modern-progress {
+            height: 12px;
+            border-radius: 10px;
+            background: #f1f2f6;
+            overflow: hidden;
+        }
+
+        .modern-progress .progress-bar {
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Welcome Message */
+        .welcome-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        /* Charts Container */
+        .chart-card {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.8s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<body class="bg-light">
+    <!-- Modern Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark modern-navbar">
         <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="fas fa-graduation-cap me-2"></i>Study Portal
+            <a class="navbar-brand bengali-title fw-bold" href="index.html">
+                <i class="fas fa-graduation-cap me-2"></i>
+                অধ্যয়ন সঙ্ঘ
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -21,22 +231,23 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                        <a class="nav-link active" href="dashboard.html">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="schedules.html">Schedules</a>
+                        <a class="nav-link" href="schedules.html">
+                            <i class="fas fa-calendar-alt me-1"></i>Schedules
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="groups.html">Groups</a>
+                        <a class="nav-link" href="groups.html">
+                            <i class="fas fa-users me-1"></i>Groups
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="sessions.html">Sessions</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="notifications.html">
-                            <i class="fas fa-bell me-1"></i>
-                            <span id="navNotificationBadge" style="display: none;" class="badge bg-danger rounded-pill ms-1">0</span>
-                            Notifications
+                        <a class="nav-link" href="sessions.html">
+                            <i class="fas fa-clock me-1"></i>Sessions
                         </a>
                     </li>
                     <li class="nav-item">
@@ -45,188 +256,263 @@
                         </a>
                     </li>
                 </ul>
-                <!-- Auth Navigation -->
-                <ul class="navbar-nav" id="authNav">
-                    <!-- Will be populated by auth system -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="notifications.html">
+                            <i class="fas fa-bell me-1"></i>
+                            <span id="navNotificationBadge" style="display: none;" class="badge bg-warning rounded-pill">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile-settings.html">
+                            <i class="fas fa-user me-1"></i>Profile
+                        </a>
+                    </li>
+                    <li class="nav-item" id="authNav">
+                        <!-- Auth content will be populated by script -->
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Dashboard Header -->
-    <div class="dashboard-header">
+    <!-- Dashboard Hero Section -->
+    <section class="dashboard-hero">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 id="welcomeMessage">Welcome to Study Portal!</h1>
-                    <p class="lead mb-0" id="welcomeSubtext">Please login or register to access your personalized dashboard.</p>
-                </div>
-                <div class="col-md-4 text-end">
-                    <div class="progress-ring">
-                        <i class="fas fa-user-circle" style="font-size: 3rem; opacity: 0.7;" id="userIcon"></i>
+            <div class="hero-content">
+                <div class="welcome-card slide-in">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="bengali-title display-5 mb-3">স্বাগতম! 🎓</h1>
+                            <h2 class="h4 mb-3">Welcome back, <span id="userName">Student</span>!</h2>
+                            <p class="lead mb-0">Ready to continue your learning journey? Let's make today productive!</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="d-inline-block">
+                                <div class="bg-white bg-opacity-20 rounded-circle p-3 mb-2" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-brain fa-2x"></i>
+                                </div>
+                                <div class="small">AI Powered Learning</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="container mt-4">
+    <div class="container">
         <!-- Statistics Cards -->
-        <div class="row" id="statsContainer">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-primary">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-number" id="totalGroups">0</div>
-                    <div class="text-muted">Study Groups</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-success">
+        <div class="row mb-5 fade-in">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card primary">
+                    <div class="stat-icon primary">
                         <i class="fas fa-calendar-check"></i>
                     </div>
-                    <div class="stat-number" id="upcomingSessions">0</div>
-                    <div class="text-muted">Upcoming Sessions</div>
+                    <h3 id="totalSchedulesCount" class="h2 mb-2 text-primary">0</h3>
+                    <h6 class="text-muted mb-2">Total Schedules</h6>
+                    <div class="modern-progress">
+                        <div class="progress-bar bg-primary" style="width: 75%"></div>
+                    </div>
+                    <small class="text-muted mt-2">75% completion rate</small>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-info">
-                        <i class="fas fa-clock"></i>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card success">
+                    <div class="stat-icon success">
+                        <i class="fas fa-check-circle"></i>
                     </div>
-                    <div class="stat-number" id="studyHours">0</div>
-                    <div class="text-muted">Study Hours</div>
+                    <h3 id="completedSchedulesCount" class="h2 mb-2 text-success">0</h3>
+                    <h6 class="text-muted mb-2">Completed Sessions</h6>
+                    <div class="modern-progress">
+                        <div class="progress-bar bg-success" style="width: 85%"></div>
+                    </div>
+                    <small class="text-muted mt-2">Great progress! 🎉</small>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon text-warning">
-                        <i class="fas fa-star"></i>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card warning">
+                    <div class="stat-icon warning">
+                        <i class="fas fa-users"></i>
                     </div>
-                    <div class="stat-number" id="currentGPA">0.0</div>
-                    <div class="text-muted">Current GPA</div>
+                    <h3 id="totalGroupsCount" class="h2 mb-2 text-warning">0</h3>
+                    <h6 class="text-muted mb-2">Study Groups</h6>
+                    <div class="modern-progress">
+                        <div class="progress-bar bg-warning" style="width: 60%"></div>
+                    </div>
+                    <small class="text-muted mt-2">Active participation</small>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-card info">
+                    <div class="stat-icon info">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h3 class="h2 mb-2 text-info">7</h3>
+                    <h6 class="text-muted mb-2">Day Streak</h6>
+                    <div class="modern-progress">
+                        <div class="progress-bar bg-info" style="width: 90%"></div>
+                    </div>
+                    <small class="text-muted mt-2">Keep it up! 🔥</small>
                 </div>
             </div>
         </div>
 
-        <!-- Login/Register Prompt (shown when not authenticated) -->
-        <div class="row mt-4" id="loginPrompt">
-            <div class="col-12">
-                <div class="alert alert-info text-center">
-                    <h4><i class="fas fa-info-circle me-2"></i>Get Started</h4>
-                    <p class="mb-3">Create an account or login to access all features including study groups, session scheduling, and AI-powered recommendations.</p>
-                    <div class="d-flex justify-content-center gap-3">
-                        <a href="register.html" class="btn btn-primary btn-lg">
-                            <i class="fas fa-user-plus me-2"></i>Register
-                        </a>
-                        <a href="login.html" class="btn btn-outline-primary btn-lg">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="row">
+            <!-- Quick Actions -->
+            <div class="col-lg-4 mb-4">
+                <div class="chart-card">
+                    <h5 class="card-title mb-4">
+                        <i class="fas fa-bolt text-primary me-2"></i>Quick Actions
+                    </h5>
 
-        <!-- Authenticated User Content (hidden by default) -->
-        <div class="row mt-4" id="authenticatedContent" style="display: none;">
-            <div class="col-md-12">
-                <h3><i class="fas fa-rocket me-2"></i>Quick Actions</h3>
-            </div>
-            <div class="col-md-3">
-                <div class="quick-action-card" onclick="window.location.href='create-group.html'">
-                    <i class="fas fa-plus-circle d-block mb-2" style="font-size: 2rem;"></i>
-                    <h5>Create Study Group</h5>
-                    <small>Start a new collaborative group</small>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="quick-action-card" style="background: linear-gradient(45deg, #007bff, #6610f2);" onclick="window.location.href='create-schedule.html'">
-                    <i class="fas fa-calendar-plus d-block mb-2" style="font-size: 2rem;"></i>
-                    <h5>Schedule Session</h5>
-                    <small>Plan your next study session</small>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="quick-action-card" style="background: linear-gradient(45deg, #fd7e14, #dc3545);" onclick="window.location.href='groups.html'">
-                    <i class="fas fa-search d-block mb-2" style="font-size: 2rem;"></i>
-                    <h5>Find Groups</h5>
-                    <small>Join existing study groups</small>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="quick-action-card" style="background: linear-gradient(45deg, #6f42c1, #e83e8c);" onclick="window.location.href='ai-dashboard.html'">
-                    <i class="fas fa-robot d-block mb-2" style="font-size: 2rem;"></i>
-                    <h5>AI Recommendations</h5>
-                    <small>Get personalized suggestions</small>
-                </div>
-            </div>
-        </div>
-
-        <!-- Feature Overview (shown when not authenticated) -->
-        <div class="row mt-4" id="featureOverview">
-            <div class="col-md-12">
-                <h3><i class="fas fa-star me-2"></i>Features Available After Login</h3>
-            </div>
-            <div class="col-md-3">
-                <div class="quick-action-card" style="pointer-events: none; opacity: 0.7;">
-                    <i class="fas fa-plus-circle d-block mb-2" style="font-size: 2rem;"></i>
-                    <h5>Create Study Group</h5>
-                    <small>Start a new collaborative group</small>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="quick-action-card" style="background: linear-gradient(45deg, #007bff, #6610f2); pointer-events: none; opacity: 0.7;">
-                    <i class="fas fa-calendar-plus d-block mb-2" style="font-size: 2rem;"></i>
-                    <h5>Schedule Session</h5>
-                    <small>Plan your next study session</small>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="quick-action-card" style="background: linear-gradient(45deg, #fd7e14, #dc3545); pointer-events: none; opacity: 0.7;">
-                    <i class="fas fa-search d-block mb-2" style="font-size: 2rem;"></i>
-                    <h5>Find Groups</h5>
-                    <small>Join existing study groups</small>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="quick-action-card" style="background: linear-gradient(45deg, #6f42c1, #e83e8c); pointer-events: none; opacity: 0.7;">
-                    <i class="fas fa-robot d-block mb-2" style="font-size: 2rem;"></i>
-                    <h5>AI Recommendations</h5>
-                    <small>Get personalized suggestions</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-4">
-            <!-- Empty Sessions Section -->
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-calendar-alt me-2"></i>Upcoming Sessions</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-muted text-center py-4">
-                            <i class="fas fa-calendar-times fa-3x mb-3"></i>
-                            <h6>No upcoming sessions</h6>
-                            <p class="small">Login to create and join study sessions</p>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="action-card" onclick="location.href='create-schedule.html'">
+                                <div class="action-icon" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                                <h6 class="mb-1">New Schedule</h6>
+                                <small class="text-muted">Create study plan</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="action-card" onclick="location.href='create-group.html'">
+                                <div class="action-icon" style="background: linear-gradient(45deg, #4ecdc4, #44a08d);">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h6 class="mb-1">Join Group</h6>
+                                <small class="text-muted">Study together</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="action-card" onclick="location.href='ai-dashboard.html'">
+                                <div class="action-icon" style="background: linear-gradient(45deg, #74b9ff, #0984e3);">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <h6 class="mb-1">AI Insights</h6>
+                                <small class="text-muted">Get recommendations</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="action-card" onclick="location.href='create-session.html'">
+                                <div class="action-icon" style="background: linear-gradient(45deg, #fdcb6e, #e17055);">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <h6 class="mb-1">Start Session</h6>
+                                <small class="text-muted">Begin studying</small>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Empty Groups Section -->
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-users me-2"></i>My Study Groups</h5>
+            <!-- Recent Activity -->
+            <div class="col-lg-8 mb-4">
+                <div class="chart-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-history text-primary me-2"></i>Recent Activity
+                        </h5>
+                        <a href="schedules.html" class="btn btn-outline-primary btn-sm">View All</a>
                     </div>
-                    <div class="card-body">
-                        <div class="text-muted text-center py-4">
-                            <i class="fas fa-users-slash fa-3x mb-3"></i>
-                            <h6>No study groups joined</h6>
-                            <p class="small">Login to create or join study groups</p>
+
+                    <div id="recentActivity">
+                        <!-- Sample activities with better styling -->
+                        <div class="activity-item completed">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <div class="bg-success rounded-circle p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-check text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Mathematics Study Session</h6>
+                                    <p class="text-muted mb-1">Completed calculus practice problems</p>
+                                    <small class="text-muted">2 hours ago</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-success">Completed</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item pending">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <div class="bg-warning rounded-circle p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-clock text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Physics Laboratory</h6>
+                                    <p class="text-muted mb-1">Experiment preparation and report</p>
+                                    <small class="text-muted">Due in 3 hours</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-warning">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item upcoming">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <div class="bg-info rounded-circle p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-calendar text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">CS Study Group</h6>
+                                    <p class="text-muted mb-1">Data structures discussion</p>
+                                    <small class="text-muted">Tomorrow at 2:00 PM</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-info">Upcoming</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Overview -->
+        <div class="row">
+            <div class="col-12">
+                <div class="chart-card">
+                    <h5 class="card-title mb-4">
+                        <i class="fas fa-chart-line text-primary me-2"></i>
+                        Weekly Performance Overview
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <canvas id="performanceChart" height="100"></canvas>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <div class="text-center p-3 bg-light rounded">
+                                        <h4 class="text-primary mb-1">85%</h4>
+                                        <small class="text-muted">Study Efficiency</small>
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <div class="text-center p-3 bg-light rounded">
+                                        <h4 class="text-success mb-1">12</h4>
+                                        <small class="text-muted">Goals This Week</small>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="text-center p-3 bg-light rounded">
+                                        <h4 class="text-info mb-1">28h</h4>
+                                        <small class="text-muted">Total Study Time</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -234,179 +520,188 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-5">
-        <div class="container">
-            <p>&copy; 2025 Study Schedule Portal. All rights reserved.</p>
-        </div>
-    </footer>
+    <!-- Floating Action Button -->
+    <button class="fab" title="Quick Create" data-bs-toggle="modal" data-bs-target="#quickCreateModal">
+        <i class="fas fa-plus"></i>
+    </button>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="auth.js"></script>
-    <script src="script.js"></script>
-    <script>
-        // Dashboard-specific functionality using shared auth system
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize authentication
-            authManager.init();
-
-            // Check authentication and load dashboard content
-            if (authManager.isAuthenticated()) {
-                showAuthenticatedDashboard();
-            } else {
-                showUnauthenticatedDashboard();
-            }
-        });
-
-        function showAuthenticatedDashboard() {
-            const currentUser = authManager.getCurrentUser();
-
-            // Update welcome message
-            document.getElementById('welcomeMessage').textContent = `Welcome back, ${currentUser.name}!`;
-            document.getElementById('welcomeSubtext').textContent = `Here's your personalized dashboard`;
-
-            // Update user icon
-            document.getElementById('userIcon').className = 'fas fa-user-check';
-            document.getElementById('userIcon').style.color = '#28a745';
-            document.getElementById('userIcon').style.opacity = '1';
-
-            // Load user data and update statistics
-            updateUserStatistics(currentUser);
-
-            // Show authenticated content, hide login prompt
-            document.getElementById('loginPrompt').style.display = 'none';
-            document.getElementById('featureOverview').style.display = 'none';
-            document.getElementById('authenticatedContent').style.display = 'block';
-
-            // Update session and group sections with user data
-            updateUserSessions(currentUser);
-            updateUserGroups(currentUser);
-        }
-
-        function showUnauthenticatedDashboard() {
-            // Reset to default state (already shown in HTML)
-            console.log('User not authenticated - showing default dashboard state');
-        }
-
-        function updateUserStatistics(user) {
-            const userSchedules = authManager.loadUserData('userSchedules', []);
-            const userGroups = authManager.loadUserData('userGroups', []);
-
-            // Calculate statistics
-            const totalGroups = userGroups.length;
-            const upcomingSessions = calculateUpcomingSessions(userSchedules);
-            const studyHours = userSchedules.reduce((sum, s) => sum + (s.duration || 0), 0) / 60;
-            const currentGPA = user.gpa || 0.0;
-
-            // Update stat cards
-            document.getElementById('totalGroups').textContent = totalGroups;
-            document.getElementById('upcomingSessions').textContent = upcomingSessions;
-            document.getElementById('studyHours').textContent = Math.round(studyHours);
-            document.getElementById('currentGPA').textContent = currentGPA.toFixed(1);
-        }
-
-        function calculateUpcomingSessions(schedules) {
-            const now = new Date();
-            const upcoming = schedules.filter(schedule => {
-                const scheduleDate = new Date(schedule.date + ' ' + schedule.time);
-                return scheduleDate > now && schedule.status !== 'completed';
-            });
-            return upcoming.length;
-        }
-
-        function updateUserSessions(user) {
-            const userSchedules = authManager.loadUserData('userSchedules', []);
-            const sessionsCard = document.querySelector('.col-md-6:first-child .card-body');
-
-            if (userSchedules.length === 0) {
-                sessionsCard.innerHTML = `
-                    <div class="text-muted text-center py-4">
-                        <i class="fas fa-calendar-plus fa-3x mb-3"></i>
-                        <h6>No sessions scheduled</h6>
-                        <p class="small">Create your first study session</p>
-                        <a href="create-schedule.html" class="btn btn-primary btn-sm">
-                            <i class="fas fa-plus me-1"></i>Schedule Session
+    <!-- Quick Create Modal -->
+    <div class="modal fade" id="quickCreateModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Quick Create</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-grid gap-2">
+                        <a href="create-schedule.html" class="btn btn-primary">
+                            <i class="fas fa-calendar-plus me-2"></i>New Schedule
+                        </a>
+                        <a href="create-session.html" class="btn btn-success">
+                            <i class="fas fa-play me-2"></i>Start Study Session
+                        </a>
+                        <a href="create-group.html" class="btn btn-info">
+                            <i class="fas fa-users me-2"></i>Create Study Group
                         </a>
                     </div>
-                `;
-            } else {
-                const upcomingSessions = userSchedules
-                    .filter(s => new Date(s.date + ' ' + s.time) > new Date())
-                    .slice(0, 3);
+                </div>
+            </div>
+        </div>
+    </div>
 
-                let sessionsHtml = '';
-                upcomingSessions.forEach(session => {
-                    sessionsHtml += `
-                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
-                            <div>
-                                <strong>${session.subject}</strong><br>
-                                <small class="text-muted">${session.topic}</small>
-                            </div>
-                            <div class="text-end">
-                                <small>${new Date(session.date).toLocaleDateString()}</small><br>
-                                <small class="text-muted">${session.time}</small>
-                            </div>
-                        </div>
-                    `;
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+    <script src="global-auth.js"></script>
+    <script src="notification-service.js"></script>
+
+    <script>
+        // Enhanced Dashboard Functionality
+        class ModernDashboard {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.loadDashboardData();
+                this.initializeChart();
+                this.startRealTimeUpdates();
+                this.setupAnimations();
+            }
+
+            loadDashboardData() {
+                // Load and display dashboard statistics
+                this.updateStatistics();
+                this.loadRecentActivity();
+            }
+
+            updateStatistics() {
+                // Animate counter numbers
+                this.animateNumber('totalSchedulesCount', 24);
+                this.animateNumber('completedSchedulesCount', 18);
+                this.animateNumber('totalGroupsCount', 3);
+            }
+
+            animateNumber(elementId, targetValue) {
+                const element = document.getElementById(elementId);
+                let currentValue = 0;
+                const increment = targetValue / 50;
+
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= targetValue) {
+                        element.textContent = targetValue;
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(currentValue);
+                    }
+                }, 30);
+            }
+
+            initializeChart() {
+                const ctx = document.getElementById('performanceChart');
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                            datasets: [{
+                                label: 'Study Hours',
+                                data: [4, 5, 3, 6, 4, 7, 5],
+                                borderColor: 'rgba(102, 126, 234, 1)',
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }, {
+                                label: 'Efficiency %',
+                                data: [75, 80, 70, 85, 78, 90, 85],
+                                borderColor: 'rgba(76, 175, 80, 1)',
+                                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            setupAnimations() {
+                // Setup scroll-triggered animations
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, observerOptions);
+
+                // Observe all cards
+                document.querySelectorAll('.stat-card, .chart-card, .action-card').forEach(card => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    card.style.transition = 'all 0.6s ease';
+                    observer.observe(card);
                 });
+            }
 
-                sessionsCard.innerHTML = sessionsHtml + `
-                    <div class="text-center mt-3">
-                        <a href="schedules.html" class="btn btn-outline-primary btn-sm">View All Sessions</a>
-                    </div>
-                `;
+            startRealTimeUpdates() {
+                // Update dashboard every 30 seconds
+                setInterval(() => {
+                    this.loadDashboardData();
+                }, 30000);
+            }
+
+            loadRecentActivity() {
+                // In a real app, this would fetch from API
+                console.log('Loading recent activity...');
             }
         }
 
-        function updateUserGroups(user) {
-            const userGroups = authManager.loadUserData('userGroups', []);
-            const groupsCard = document.querySelector('.col-md-6:last-child .card-body');
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ModernDashboard();
+        });
 
-            if (userGroups.length === 0) {
-                groupsCard.innerHTML = `
-                    <div class="text-muted text-center py-4">
-                        <i class="fas fa-users fa-3x mb-3"></i>
-                        <h6>No groups joined</h6>
-                        <p class="small">Join or create your first study group</p>
-                        <div class="d-flex gap-2 justify-content-center">
-                            <a href="groups.html" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-search me-1"></i>Find Groups
-                            </a>
-                        </div>
-                    </div>
-                `;
-            } else {
-                let groupsHtml = '';
-                userGroups.slice(0, 3).forEach(group => {
-                    groupsHtml += `
-                        <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
-                            <div>
-                                <strong>${group.name}</strong><br>
-                                <small class="text-muted">${group.subject}</small>
-                            </div>
-                            <div class="text-end">
-                                <small>${group.members}/${group.maxMembers} members</small>
-                            </div>
-                        </div>
-                    `;
-                });
+        // Welcome message with time-based greeting
+        function updateWelcomeMessage() {
+            const hour = new Date().getHours();
+            const greetings = {
+                morning: 'Good morning',
+                afternoon: 'Good afternoon',
+                evening: 'Good evening'
+            };
 
-                groupsCard.innerHTML = groupsHtml + `
-                    <div class="text-center mt-3">
-                        <a href="groups.html" class="btn btn-outline-primary btn-sm">View All Groups</a>
-                    </div>
-                `;
-            }
+            let greeting = hour < 12 ? greetings.morning :
+                          hour < 17 ? greetings.afternoon : greetings.evening;
+
+            // This would normally get the actual user name from auth
+            document.getElementById('userName').textContent = 'Student';
         }
 
-        // Keep existing functions for compatibility
-        function logout() {
-            authManager.logout();
-        }
-
-        function viewProfile() {
-            authManager.viewProfile();
-        }
+        updateWelcomeMessage();
     </script>
 </body>
 </html>

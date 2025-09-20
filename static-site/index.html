@@ -7,13 +7,243 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
+    <style>
+        .bengali-title { font-family: 'Noto Sans Bengali', sans-serif; }
+
+        /* Modern Navigation */
+        .modern-navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 15px 0;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" fill="white" opacity="0.1"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"/><path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"/><path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"/></svg>') no-repeat center center;
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 5px 30px rgba(0,0,0,0.08);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--card-gradient, #667eea), var(--card-gradient-end, #764ba2));
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .feature-card.ai { --card-gradient: #667eea; --card-gradient-end: #764ba2; }
+        .feature-card.schedule { --card-gradient: #4ecdc4; --card-gradient-end: #44a08d; }
+        .feature-card.group { --card-gradient: #fdcb6e; --card-gradient-end: #e17055; }
+        .feature-card.analytics { --card-gradient: #74b9ff; --card-gradient-end: #0984e3; }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            margin: 0 auto 25px;
+        }
+
+        .feature-icon.ai { background: linear-gradient(45deg, #667eea, #764ba2); }
+        .feature-icon.schedule { background: linear-gradient(45deg, #4ecdc4, #44a08d); }
+        .feature-icon.group { background: linear-gradient(45deg, #fdcb6e, #e17055); }
+        .feature-icon.analytics { background: linear-gradient(45deg, #74b9ff, #0984e3); }
+
+        /* Stats Section */
+        .stats-section {
+            background: #f8f9fa;
+            padding: 80px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .cta-buttons .btn {
+            margin: 10px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-light:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn-outline-light:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255,255,255,0.2);
+        }
+
+        /* Testimonial Section */
+        .testimonial-section {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .testimonial-card {
+            background: #f8f9fa;
+            border: none;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            font-size: 4rem;
+            color: #667eea;
+            position: absolute;
+            top: 10px;
+            left: 30px;
+            font-family: Georgia, serif;
+        }
+
+        .testimonial-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 20px auto;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-up.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-section {
+                padding: 60px 0;
+                min-height: 80vh;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Modern Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark modern-navbar fixed-top">
         <div class="container">
-            <a class="navbar-brand bengali-title" href="index.html">
+            <a class="navbar-brand bengali-title fw-bold" href="index.html">
                 <i class="fas fa-graduation-cap me-2"></i>
                 অধ্যয়ন সঙ্ঘ
             </a>
@@ -28,18 +258,18 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="schedules.html">
-                            <i class="fas fa-calendar-alt me-1"></i>My Schedule
+                            <i class="fas fa-calendar-alt me-1"></i>Schedules
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="groups.html">
-                            <i class="fas fa-users me-1"></i>Study Groups
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="sessions.html">
-                            <i class="fas fa-clock me-1"></i>Sessions
+                            <i class="fas fa-users me-1"></i>Groups
                         </a>
                     </li>
                     <li class="nav-item">
@@ -49,19 +279,9 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav">
-                    <li class="nav-item">
+                    <li class="nav-item" id="authNav">
                         <a class="nav-link" href="login.html">
                             <i class="fas fa-sign-in-alt me-1"></i>Login
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="register.html">
-                            <i class="fas fa-user-plus me-1"></i>Register
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html">
-                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
                         </a>
                     </li>
                 </ul>
@@ -70,177 +290,374 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="hero-section">
-        <div class="container text-center">
-            <div class="row align-items-center min-vh-75">
-                <div class="col-lg-6">
-                    <h1 class="hero-title mb-4">
-                        <span class="bengali-text">স্বাগতম অধ্যয়ন সঙ্ঘে</span>
-                        <br>
-                        <span class="english-text">Welcome to Study Portal</span>
-                    </h1>
-                    <p class="hero-subtitle mb-4">
-                        AI-Enhanced Study Scheduling & Collaboration Platform
-                        <br>
-                        <span class="bengali-text">এআই-চালিত অধ্যয়ন সময়সূচী ও সহযোগিতা প্ল্যাটফর্ম</span>
-                    </p>
-                    <div class="hero-buttons">
-                        <a href="register.html" class="btn btn-primary btn-lg me-3">
-                            <i class="fas fa-rocket me-2"></i>Get Started
-                        </a>
-                        <a href="ai-dashboard.html" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-robot me-2"></i>AI Assistant
-                        </a>
-                    </div>
+    <section class="hero-section">
+        <!-- Floating Elements -->
+        <div class="floating-element" style="top: 10%; left: 10%;">
+            <i class="fas fa-brain fa-3x"></i>
+        </div>
+        <div class="floating-element" style="top: 20%; right: 15%; animation-delay: -2s;">
+            <i class="fas fa-graduation-cap fa-2x"></i>
+        </div>
+        <div class="floating-element" style="bottom: 30%; left: 20%; animation-delay: -4s;">
+            <i class="fas fa-lightbulb fa-2x"></i>
+        </div>
+
+        <div class="container">
+            <div class="hero-content text-center">
+                <h1 class="hero-title bengali-title fade-up">
+                    স্বাগতম অধ্যয়ন সঙ্ঘে! 🎓
+                </h1>
+                <p class="hero-subtitle fade-up" style="animation-delay: 0.2s;">
+                    AI-Powered Study Scheduling Portal for Smarter Learning
+                </p>
+                <p class="lead mb-5 fade-up" style="animation-delay: 0.4s;">
+                    Transform your study routine with intelligent scheduling, collaborative groups,
+                    and personalized AI recommendations. Join thousands of students achieving their academic goals!
+                </p>
+
+                <div class="cta-buttons fade-up" style="animation-delay: 0.6s;">
+                    <a href="register.html" class="btn btn-light btn-lg">
+                        <i class="fas fa-rocket me-2"></i>Get Started Free
+                    </a>
+                    <a href="dashboard.html" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-play me-2"></i>Try Demo
+                    </a>
                 </div>
-                <div class="col-lg-6">
-                    <div class="hero-image">
-                        <i class="fas fa-graduation-cap hero-icon"></i>
-                        <div class="floating-cards">
-                            <div class="floating-card card-1">
-                                <i class="fas fa-users"></i>
-                                <span>Study Groups</span>
-                            </div>
-                            <div class="floating-card card-2">
-                                <i class="fas fa-calendar-check"></i>
-                                <span>Smart Scheduling</span>
-                            </div>
-                            <div class="floating-card card-3">
-                                <i class="fas fa-brain"></i>
-                                <span>AI Recommendations</span>
-                            </div>
-                        </div>
+
+                <div class="row mt-5 fade-up" style="animation-delay: 0.8s;">
+                    <div class="col-md-4 stat-item">
+                        <span class="stat-number" data-count="1000">0</span>
+                        <div class="stat-label text-white-50">Active Students</div>
+                    </div>
+                    <div class="col-md-4 stat-item">
+                        <span class="stat-number" data-count="50000">0</span>
+                        <div class="stat-label text-white-50">Study Sessions</div>
+                    </div>
+                    <div class="col-md-4 stat-item">
+                        <span class="stat-number" data-count="95">0</span>
+                        <div class="stat-label text-white-50">Success Rate %</div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Features Section -->
-    <div class="features-section py-5">
+    <section class="py-5" style="margin-top: -100px; position: relative; z-index: 10;">
         <div class="container">
-            <div class="row text-center mb-5">
-                <div class="col-12">
-                    <h2 class="section-title">
-                        <span class="bengali-text">আমাদের বৈশিষ্ট্যসমূহ</span>
-                        <br>
-                        <span class="english-text">Our Features</span>
-                    </h2>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="feature-card h-100">
-                        <div class="feature-icon">
-                            <i class="fas fa-users-cog"></i>
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card ai fade-up">
+                        <div class="feature-icon ai">
+                            <i class="fas fa-robot"></i>
                         </div>
-                        <h4>Smart Group Matching</h4>
-                        <p>AI-powered study group recommendations based on your learning style, schedule, and academic goals.</p>
-                        <a href="groups.html" class="btn btn-primary">Explore Groups</a>
+                        <h4 class="mb-3">AI Assistant</h4>
+                        <p class="text-muted">
+                            Get personalized study recommendations, schedule optimization,
+                            and performance insights powered by advanced AI algorithms.
+                        </p>
+                        <a href="ai-dashboard.html" class="btn btn-outline-primary btn-sm mt-3">
+                            Explore AI Features <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="feature-card h-100">
-                        <div class="feature-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <h4>Intelligent Scheduling</h4>
-                        <p>Conflict detection, optimal time suggestions, and automatic scheduling based on group availability.</p>
-                        <a href="create-schedule.html" class="btn btn-primary">Create Schedule</a>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="feature-card h-100">
-                        <div class="feature-icon">
-                            <i class="fas fa-sticky-note"></i>
-                        </div>
-                        <h4>Collaborative Notes</h4>
-                        <p>Rich text editor for session notes, shared resources, and collaborative study materials.</p>
-                        <a href="sessions.html" class="btn btn-primary">View Sessions</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Stats Section -->
-    <div class="stats-section py-5 bg-primary text-white">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-3 mb-3">
-                    <div class="stat-item">
-                        <h3 class="stat-number" data-target="150">0</h3>
-                        <p>Active Students</p>
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card schedule fade-up" style="animation-delay: 0.1s;">
+                        <div class="feature-icon schedule">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h4 class="mb-3">Smart Scheduling</h4>
+                        <p class="text-muted">
+                            Create intelligent study schedules that adapt to your learning patterns,
+                            priorities, and available time slots.
+                        </p>
+                        <a href="create-schedule.html" class="btn btn-outline-success btn-sm mt-3">
+                            Create Schedule <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <div class="stat-item">
-                        <h3 class="stat-number" data-target="45">0</h3>
-                        <p>Study Groups</p>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card group fade-up" style="animation-delay: 0.2s;">
+                        <div class="feature-icon group">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="mb-3">Study Groups</h4>
+                        <p class="text-muted">
+                            Join collaborative study groups, share knowledge, and learn together
+                            with students who have similar academic goals.
+                        </p>
+                        <a href="groups.html" class="btn btn-outline-warning btn-sm mt-3">
+                            Join Groups <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <div class="stat-item">
-                        <h3 class="stat-number" data-target="280">0</h3>
-                        <p>Sessions Completed</p>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="stat-item">
-                        <h3 class="stat-number" data-target="98">0</h3>
-                        <p>Success Rate</p>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card analytics fade-up" style="animation-delay: 0.3s;">
+                        <div class="feature-icon analytics">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="mb-3">Performance Analytics</h4>
+                        <p class="text-muted">
+                            Track your progress with detailed analytics, study efficiency metrics,
+                            and personalized improvement suggestions.
+                        </p>
+                        <a href="dashboard.html" class="btn btn-outline-info btn-sm mt-3">
+                            View Analytics <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonial-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-4">What Students Say</h2>
+                <p class="lead text-muted">Join thousands of students who have transformed their study habits</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="testimonial-card fade-up">
+                        <p class="mb-4">
+                            "The AI recommendations have completely changed how I study. My efficiency increased by 40% in just one month!"
+                        </p>
+                        <div class="testimonial-avatar">RA</div>
+                        <h6 class="fw-bold">Rashida Ahmed</h6>
+                        <small class="text-muted">Computer Science, DU</small>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="testimonial-card fade-up" style="animation-delay: 0.1s;">
+                        <p class="mb-4">
+                            "Study groups here are amazing! I've made great friends and my grades improved significantly through collaborative learning."
+                        </p>
+                        <div class="testimonial-avatar">MH</div>
+                        <h6 class="fw-bold">Mahmud Hassan</h6>
+                        <small class="text-muted">Engineering, BUET</small>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="testimonial-card fade-up" style="animation-delay: 0.2s;">
+                        <p class="mb-4">
+                            "The smart scheduling feature helps me balance my studies perfectly. I never miss important deadlines anymore!"
+                        </p>
+                        <div class="testimonial-avatar">SF</div>
+                        <h6 class="fw-bold">Sabrina Fatima</h6>
+                        <small class="text-muted">Medicine, DMC</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- CTA Section -->
-    <div class="cta-section py-5">
+    <section class="cta-section">
         <div class="container text-center">
+            <h2 class="display-4 fw-bold mb-4">Ready to Transform Your Studies?</h2>
+            <p class="lead mb-5">
+                Join the revolution in AI-powered learning and achieve your academic goals faster than ever before.
+            </p>
+
+            <div class="cta-buttons">
+                <a href="register.html" class="btn btn-light btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Create Free Account
+                </a>
+                <a href="real-time-ai-dashboard.html" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-eye me-2"></i>View Live Demo
+                </a>
+            </div>
+
+            <div class="mt-5">
+                <p class="text-white-50">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    100% Free to Start • No Credit Card Required • Instant Access
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5">
+        <div class="container">
             <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <h2 class="mb-4">
-                        <span class="bengali-text">আজই যোগ দিন</span>
-                        <br>
-                        <span class="english-text">Join Today</span>
-                    </h2>
-                    <p class="lead mb-4">
-                        Start your journey towards more effective studying with AI-powered recommendations and collaborative learning.
+                <div class="col-lg-4 mb-4">
+                    <h5 class="bengali-title fw-bold mb-3">
+                        <i class="fas fa-graduation-cap me-2"></i>
+                        অধ্যয়ন সঙ্ঘ
+                    </h5>
+                    <p class="text-muted">
+                        Empowering students with AI-driven study solutions for better academic performance and collaborative learning.
                     </p>
-                    <div class="cta-buttons">
-                        <a href="register.html" class="btn btn-primary btn-lg me-3">
-                            <i class="fas fa-user-plus me-2"></i>Create Account
-                        </a>
-                        <a href="login.html" class="btn btn-outline-primary btn-lg">
-                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
-                        </a>
+                    <div class="social-links">
+                        <a href="#" class="text-light me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-github fa-lg"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-3">Features</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="ai-dashboard.html" class="text-muted text-decoration-none">AI Assistant</a></li>
+                        <li><a href="schedules.html" class="text-muted text-decoration-none">Smart Scheduling</a></li>
+                        <li><a href="groups.html" class="text-muted text-decoration-none">Study Groups</a></li>
+                        <li><a href="dashboard.html" class="text-muted text-decoration-none">Analytics</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-3">Resources</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted text-decoration-none">Help Center</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Study Tips</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Community</a></li>
+                        <li><a href="tech-stack-demo.html" class="text-muted text-decoration-none">Tech Demo</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-4 mb-4">
+                    <h6 class="fw-bold mb-3">Stay Updated</h6>
+                    <p class="text-muted small">Get the latest updates on new features and study tips.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Footer -->
-    <footer class="footer bg-dark text-white py-4">
-        <div class="container">
-            <div class="row">
+            <hr class="my-4">
+
+            <div class="row align-items-center">
                 <div class="col-md-6">
-                    <h5 class="bengali-text">অধ্যয়ন সঙ্ঘ</h5>
-                    <p>AI-Enhanced Study Scheduling Portal</p>
+                    <p class="text-muted small mb-0">
+                        © 2024 অধ্যয়ন সঙ্ঘ. All rights reserved. | Java Fest 2025
+                    </p>
                 </div>
                 <div class="col-md-6 text-end">
-                    <div class="social-links">
-                        <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-white"><i class="fab fa-linkedin"></i></a>
-                    </div>
+                    <a href="#" class="text-muted text-decoration-none small me-3">Privacy Policy</a>
+                    <a href="#" class="text-muted text-decoration-none small me-3">Terms of Service</a>
+                    <a href="#" class="text-muted text-decoration-none small">Contact</a>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
+    <script src="auth.js"></script>
+    <script src="global-auth.js"></script>
+
+    <script>
+        // Modern Home Page Functionality
+        class ModernHomePage {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.setupScrollAnimations();
+                this.animateCounters();
+                this.setupParallax();
+            }
+
+            setupScrollAnimations() {
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('in-view');
+                        }
+                    });
+                }, observerOptions);
+
+                // Observe all fade-up elements
+                document.querySelectorAll('.fade-up').forEach(el => {
+                    observer.observe(el);
+                });
+            }
+
+            animateCounters() {
+                const counters = document.querySelectorAll('[data-count]');
+
+                const animateCounter = (counter) => {
+                    const target = parseInt(counter.getAttribute('data-count'));
+                    const duration = 2000;
+                    const step = target / (duration / 16);
+                    let current = 0;
+
+                    const timer = setInterval(() => {
+                        current += step;
+                        if (current >= target) {
+                            counter.textContent = target.toLocaleString();
+                            clearInterval(timer);
+                        } else {
+                            counter.textContent = Math.floor(current).toLocaleString();
+                        }
+                    }, 16);
+                };
+
+                // Observe counters
+                const counterObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animateCounter(entry.target);
+                            counterObserver.unobserve(entry.target);
+                        }
+                    });
+                });
+
+                counters.forEach(counter => {
+                    counterObserver.observe(counter);
+                });
+            }
+
+            setupParallax() {
+                window.addEventListener('scroll', () => {
+                    const scrolled = window.pageYOffset;
+                    const parallax = document.querySelectorAll('.floating-element');
+
+                    parallax.forEach(element => {
+                        const speed = 0.5;
+                        element.style.transform = `translateY(${scrolled * speed}px)`;
+                    });
+                });
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ModernHomePage();
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
