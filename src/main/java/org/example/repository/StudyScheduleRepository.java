@@ -32,6 +32,13 @@ public interface StudyScheduleRepository extends JpaRepository<StudySchedule, Lo
     @Query("SELECT s FROM StudySchedule s WHERE s.scheduledTime < :now AND s.completed = false")
     List<StudySchedule> findOverdueSchedules(@Param("now") LocalDateTime now);
 
-    @Query("SELECT DISTINCT s.subject FROM StudySchedule s ORDER BY s.subject")
+    // Student-specific queries
+    List<StudySchedule> findByStudentId(Long studentId);
+
+    List<StudySchedule> findByStudentIdOrderByCreatedAtDesc(Long studentId);
+
+    List<StudySchedule> findByStudentIdAndCompleted(Long studentId, Boolean completed);
+
+    @Query("SELECT DISTINCT s.subject FROM StudySchedule s")
     List<String> findDistinctSubjects();
 }

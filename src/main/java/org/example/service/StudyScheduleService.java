@@ -149,4 +149,19 @@ public class StudyScheduleService {
                 return 75; // Default 1.25 hours
         }
     }
+
+    public List<StudySchedule> getSchedulesByStudentId(Long studentId) {
+        return scheduleRepository.findByStudentId(studentId);
+    }
+
+    public List<StudySchedule> getRecentSchedulesByStudentId(Long studentId, int limit) {
+        return scheduleRepository.findByStudentIdOrderByCreatedAtDesc(studentId)
+                .stream()
+                .limit(limit)
+                .toList();
+    }
+
+    public List<StudySchedule> getCompletedSchedulesByStudentId(Long studentId) {
+        return scheduleRepository.findByStudentIdAndCompleted(studentId, true);
+    }
 }

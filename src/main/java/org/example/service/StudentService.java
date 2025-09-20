@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -100,5 +101,45 @@ public class StudentService {
 
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
+    }
+
+    public Student updateStudentProfile(Long studentId, Map<String, Object> profileData) {
+        Optional<Student> studentOpt = studentRepository.findById(studentId);
+        if (studentOpt.isEmpty()) {
+            throw new IllegalArgumentException("Student not found");
+        }
+
+        Student student = studentOpt.get();
+
+        // Update fields if provided
+        if (profileData.containsKey("name")) {
+            student.setName((String) profileData.get("name"));
+        }
+        if (profileData.containsKey("major")) {
+            student.setMajor((String) profileData.get("major"));
+        }
+        if (profileData.containsKey("year")) {
+            student.setYear(Integer.parseInt(profileData.get("year").toString()));
+        }
+        if (profileData.containsKey("phoneNumber")) {
+            student.setPhoneNumber((String) profileData.get("phoneNumber"));
+        }
+        if (profileData.containsKey("gpa")) {
+            student.setGpa(Double.parseDouble(profileData.get("gpa").toString()));
+        }
+        if (profileData.containsKey("learningStyle")) {
+            student.setLearningStyle((String) profileData.get("learningStyle"));
+        }
+
+        student.setUpdatedAt(LocalDateTime.now());
+        return studentRepository.save(student);
+    }
+
+    public List<Student> getRecentlyActiveStudents(int limit) {
+        // Get students ordered by last activity (simplified)
+        return studentRepository.findAll().stream()
+                .sorted((s1, s2) -> s2.getUpdatedAt().compareTo(s1.getUpdatedAt()))
+                .limit(limit)
+                .toList();
     }
 }

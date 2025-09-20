@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অধ্যয়ন সঙ্ঘ - Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .bengali-title { font-family: 'Noto Sans Bengali', sans-serif; }
+
+        .settings-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .settings-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .settings-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .settings-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .setting-item {
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .theme-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .theme-option {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .theme-option.active {
+            border-color: #667eea;
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+
+        .language-flags {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .flag-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .flag-option:hover {
+            border-color: #667eea;
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+
+        .flag-option.active {
+            border-color: #667eea;
+            background-color: rgba(102, 126, 234, 0.2);
+        }
+
+        .danger-zone {
+            border: 2px solid #dc3545;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .btn-danger-outline {
+            border: 2px solid #dc3545;
+            color: #dc3545;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger-outline:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .settings-sidebar {
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar-nav {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+
+        .sidebar-nav .nav-link {
+            color: #6c757d;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .sidebar-nav .nav-link.active {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .setting-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 16px;
+            color: white;
+        }
+
+        .save-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #00b894;
+            color: white;
+            border-radius: 25px;
+            transform: translateY(-100px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .save-indicator.show {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .settings-container {
+                padding: 10px;
+            }
+
+            .theme-selector {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .language-flags {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="container">
+            <a class="navbar-brand bengali-title fw-bold" href="index.html">
+                <i class="fas fa-graduation-cap me-2"></i>
+                অধ্যয়ন সঙ্ঘ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="schedules.html">
+                            <i class="fas fa-calendar-alt me-1"></i>Schedules
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="groups.html">
+                            <i class="fas fa-users me-1"></i>Groups
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile-settings.html">
+                            <i class="fas fa-user me-1"></i>Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="settings.html">
+                            <i class="fas fa-cog me-1"></i>Settings
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="notifications.html">
+                            <i class="fas fa-bell me-1"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Save Indicator -->
+    <div id="saveIndicator" class="save-indicator">
+        <i class="fas fa-check me-2"></i>Settings Saved!
+    </div>
+
+    <div class="settings-container">
+        <!-- Header -->
+        <div class="settings-header">
+            <h1 class="bengali-title mb-2">
+                <i class="fas fa-cog me-3"></i>
+                সেটিংস
+            </h1>
+            <p class="mb-0">Customize your study experience and app preferences</p>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Navigation -->
+            <div class="col-lg-3 mb-4">
+                <div class="settings-sidebar">
+                    <div class="sidebar-nav">
+                        <h6 class="fw-bold mb-3">Settings Categories</h6>
+                        <div class="nav nav-pills flex-column">
+                            <a class="nav-link active" data-section="general" href="#general">
+                                <i class="fas fa-sliders-h me-2"></i>General
+                            </a>
+                            <a class="nav-link" data-section="study" href="#study">
+                                <i class="fas fa-book me-2"></i>Study Preferences
+                            </a>
+                            <a class="nav-link" data-section="notifications" href="#notifications">
+                                <i class="fas fa-bell me-2"></i>Notifications
+                            </a>
+                            <a class="nav-link" data-section="privacy" href="#privacy">
+                                <i class="fas fa-shield-alt me-2"></i>Privacy & Security
+                            </a>
+                            <a class="nav-link" data-section="appearance" href="#appearance">
+                                <i class="fas fa-palette me-2"></i>Appearance
+                            </a>
+                            <a class="nav-link" data-section="advanced" href="#advanced">
+                                <i class="fas fa-cogs me-2"></i>Advanced
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Content -->
+            <div class="col-lg-9">
+                <!-- General Settings -->
+                <div id="general" class="settings-section">
+                    <div class="settings-card">
+                        <h5 class="mb-4">
+                            <i class="fas fa-sliders-h me-2 text-primary"></i>
+                            General Settings
+                        </h5>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                        <i class="fas fa-globe"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Language & Region</h6>
+                                        <small class="text-muted">Choose your preferred language</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="language-flags">
+                                <div class="flag-option active" data-lang="en">
+                                    🇺🇸 <span>English</span>
+                                </div>
+                                <div class="flag-option" data-lang="bn">
+                                    🇧🇩 <span>বাংলা</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #fdcb6e, #e17055);">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Timezone</h6>
+                                        <small class="text-muted">Automatically detect timezone</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #74b9ff, #0984e3);">
+                                        <i class="fas fa-save"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Auto-save Progress</h6>
+                                        <small class="text-muted">Automatically save your study progress</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Study Preferences -->
+                <div id="study" class="settings-section" style="display: none;">
+                    <div class="settings-card">
+                        <h5 class="mb-4">
+                            <i class="fas fa-book me-2 text-success"></i>
+                            Study Preferences
+                        </h5>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #00b894, #00a085);">
+                                        <i class="fas fa-target"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Daily Study Goal</h6>
+                                        <small class="text-muted">Set your daily study time target</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <input type="range" class="form-range" min="1" max="12" value="6" id="studyGoalRange">
+                                <div class="d-flex justify-content-between">
+                                    <small>1 hour</small>
+                                    <strong id="studyGoalDisplay">6 hours</strong>
+                                    <small>12 hours</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #fd79a8, #fdcb6e);">
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Study Reminders</h6>
+                                        <small class="text-muted">Get notified about study sessions</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #a29bfe, #6c5ce7);">
+                                        <i class="fas fa-brain"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">AI Recommendations</h6>
+                                        <small class="text-muted">Get personalized study suggestions</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #fab1a0, #e17055);">
+                                        <i class="fas fa-pause"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Break Intervals</h6>
+                                        <small class="text-muted">Remind me to take breaks</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <select class="form-select">
+                                    <option value="25">Every 25 minutes (Pomodoro)</option>
+                                    <option value="45" selected>Every 45 minutes</option>
+                                    <option value="60">Every hour</option>
+                                    <option value="90">Every 90 minutes</option>
+                                    <option value="0">Disabled</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <div id="notifications" class="settings-section" style="display: none;">
+                    <div class="settings-card">
+                        <h5 class="mb-4">
+                            <i class="fas fa-bell me-2 text-warning"></i>
+                            Notification Preferences
+                        </h5>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #00cec9, #81ecec);">
+                                        <i class="fas fa-desktop"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Desktop Notifications</h6>
+                                        <small class="text-muted">Show browser notifications</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #fd79a8, #fdcb6e);">
+                                        <i class="fas fa-volume-up"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Sound Notifications</h6>
+                                        <small class="text-muted">Play sounds for important alerts</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #74b9ff, #0984e3);">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Group Activity Alerts</h6>
+                                        <small class="text-muted">Notify about group study sessions</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #fdcb6e, #e17055);">
+                                        <i class="fas fa-trophy"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Achievement Notifications</h6>
+                                        <small class="text-muted">Celebrate your milestones</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacy & Security -->
+                <div id="privacy" class="settings-section" style="display: none;">
+                    <div class="settings-card">
+                        <h5 class="mb-4">
+                            <i class="fas fa-shield-alt me-2 text-info"></i>
+                            Privacy & Security
+                        </h5>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #2d3436, #636e72);">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Profile Visibility</h6>
+                                        <small class="text-muted">Make your profile public to other users</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #00b894, #00a085);">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Share Study Statistics</h6>
+                                        <small class="text-muted">Allow others to see your study progress</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #fd79a8, #fdcb6e);">
+                                        <i class="fas fa-database"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Data Collection</h6>
+                                        <small class="text-muted">Help improve the app with usage analytics</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #e17055, #d63031);">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Two-Factor Authentication</h6>
+                                        <small class="text-muted">Add extra security to your account</small>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm">Enable 2FA</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appearance -->
+                <div id="appearance" class="settings-section" style="display: none;">
+                    <div class="settings-card">
+                        <h5 class="mb-4">
+                            <i class="fas fa-palette me-2 text-secondary"></i>
+                            Appearance & Themes
+                        </h5>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center">
+                                <div class="setting-icon" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                                    <i class="fas fa-moon"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Theme Selection</h6>
+                                    <small class="text-muted">Choose your preferred theme</small>
+                                </div>
+                            </div>
+                            <div class="theme-selector">
+                                <div class="theme-option active" data-theme="light">
+                                    <i class="fas fa-sun fa-2x mb-2 text-warning"></i>
+                                    <div>Light Theme</div>
+                                </div>
+                                <div class="theme-option" data-theme="dark">
+                                    <i class="fas fa-moon fa-2x mb-2 text-primary"></i>
+                                    <div>Dark Theme</div>
+                                </div>
+                                <div class="theme-option" data-theme="auto">
+                                    <i class="fas fa-adjust fa-2x mb-2 text-info"></i>
+                                    <div>Auto</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #fd79a8, #fdcb6e);">
+                                        <i class="fas fa-font"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Font Size</h6>
+                                        <small class="text-muted">Adjust text size for better readability</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <select class="form-select">
+                                    <option value="small">Small</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="large">Large</option>
+                                    <option value="extra-large">Extra Large</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #00cec9, #81ecec);">
+                                        <i class="fas fa-magic"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Animations</h6>
+                                        <small class="text-muted">Enable smooth transitions and effects</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Settings -->
+                <div id="advanced" class="settings-section" style="display: none;">
+                    <div class="settings-card">
+                        <h5 class="mb-4">
+                            <i class="fas fa-cogs me-2 text-danger"></i>
+                            Advanced Settings
+                        </h5>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #74b9ff, #0984e3);">
+                                        <i class="fas fa-download"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Data Export</h6>
+                                        <small class="text-muted">Download your study data</small>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm">Export Data</button>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #00b894, #00a085);">
+                                        <i class="fas fa-sync"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Data Sync</h6>
+                                        <small class="text-muted">Sync data across devices</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="setting-icon" style="background: linear-gradient(45deg, #fdcb6e, #e17055);">
+                                        <i class="fas fa-bug"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Debug Mode</h6>
+                                        <small class="text-muted">Enable detailed logging for troubleshooting</small>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Danger Zone -->
+                        <div class="danger-zone">
+                            <h6 class="text-danger mb-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Danger Zone
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <button class="btn btn-danger-outline w-100">
+                                        <i class="fas fa-trash me-2"></i>
+                                        Clear All Data
+                                    </button>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <button class="btn btn-danger-outline w-100">
+                                        <i class="fas fa-user-times me-2"></i>
+                                        Delete Account
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary btn-lg me-3" onclick="saveAllSettings()">
+                        <i class="fas fa-save me-2"></i>Save All Changes
+                    </button>
+                    <button class="btn btn-outline-secondary btn-lg" onclick="resetAllSettings()">
+                        <i class="fas fa-undo me-2"></i>Reset to Defaults
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="global-auth.js"></script>
+    <script>
+        // Settings Page Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSettings();
+        });
+
+        function initializeSettings() {
+            // Sidebar navigation
+            const sidebarLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+            const sections = document.querySelectorAll('.settings-section');
+
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Remove active class from all links and sections
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    sections.forEach(s => s.style.display = 'none');
+
+                    // Add active class to clicked link
+                    this.classList.add('active');
+
+                    // Show corresponding section
+                    const sectionId = this.getAttribute('data-section');
+                    document.getElementById(sectionId).style.display = 'block';
+                });
+            });
+
+            // Study goal range slider
+            const studyGoalRange = document.getElementById('studyGoalRange');
+            const studyGoalDisplay = document.getElementById('studyGoalDisplay');
+
+            if (studyGoalRange && studyGoalDisplay) {
+                studyGoalRange.addEventListener('input', function() {
+                    const value = this.value;
+                    studyGoalDisplay.textContent = `${value} hour${value > 1 ? 's' : ''}`;
+                });
+            }
+
+            // Theme selection
+            const themeOptions = document.querySelectorAll('.theme-option');
+            themeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    themeOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const theme = this.getAttribute('data-theme');
+                    applyTheme(theme);
+                });
+            });
+
+            // Language selection
+            const languageOptions = document.querySelectorAll('.flag-option');
+            languageOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    languageOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const lang = this.getAttribute('data-lang');
+                    changeLanguage(lang);
+                });
+            });
+
+            // Auto-save on toggle changes
+            const toggleSwitches = document.querySelectorAll('.toggle-switch input');
+            toggleSwitches.forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    autoSaveSettings();
+                });
+            });
+        }
+
+        function applyTheme(theme) {
+            console.log('Applying theme:', theme);
+            // In a real app, this would change the CSS theme
+            localStorage.setItem('theme', theme);
+        }
+
+        function changeLanguage(lang) {
+            console.log('Changing language to:', lang);
+            // In a real app, this would change the interface language
+            localStorage.setItem('language', lang);
+        }
+
+        function autoSaveSettings() {
+            showSaveIndicator();
+            // In a real app, this would save settings to server
+            console.log('Auto-saving settings...');
+        }
+
+        function saveAllSettings() {
+            // Collect all settings
+            const settings = {
+                language: document.querySelector('.flag-option.active')?.getAttribute('data-lang') || 'en',
+                theme: document.querySelector('.theme-option.active')?.getAttribute('data-theme') || 'light',
+                studyGoal: document.getElementById('studyGoalRange')?.value || 6,
+                // Add more settings as needed
+            };
+
+            console.log('Saving all settings:', settings);
+
+            // Simulate API call
+            setTimeout(() => {
+                showSaveIndicator();
+            }, 500);
+        }
+
+        function resetAllSettings() {
+            if (confirm('Are you sure you want to reset all settings to defaults? This cannot be undone.')) {
+                // Reset all form elements
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                document.querySelectorAll('input[type="range"]').forEach(range => {
+                    range.value = range.getAttribute('value') || range.min;
+                    range.dispatchEvent(new Event('input'));
+                });
+                document.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+
+                // Reset theme and language
+                document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
+                document.querySelector('.theme-option[data-theme="light"]').classList.add('active');
+
+                document.querySelectorAll('.flag-option').forEach(opt => opt.classList.remove('active'));
+                document.querySelector('.flag-option[data-lang="en"]').classList.add('active');
+
+                showSaveIndicator('Settings Reset!');
+            }
+        }
+
+        function showSaveIndicator(message = 'Settings Saved!') {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.querySelector('i').nextSibling.textContent = message;
+            indicator.classList.add('show');
+
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+
+        // Export data functionality
+        document.querySelector('[data-section="advanced"]').addEventListener('click', function() {
+            const exportBtn = document.querySelector('button:contains("Export Data")');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function() {
+                    const data = {
+                        studyHours: 127,
+                        completedTasks: 89,
+                        studyGroups: 12,
+                        achievements: 15,
+                        // More data...
+                    };
+
+                    const blob = new Blob([JSON.stringify(data, null, 2)], {
+                        type: 'application/json'
+                    });
+
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'study-data-export.json';
+                    a.click();
+
+                    URL.revokeObjectURL(url);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
